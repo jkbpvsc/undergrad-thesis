@@ -1,8 +1,8 @@
 \documentclass[12pt,a4paper]{article}
 
-\title{Zero-Knowledge proofs}
+\title{Horizons of Zero-Knowledge}
 \author{Jakob Povsic}
-\date{August 2020}
+\date{2020}
 
 \usepackage{tgschola}
 \fontfamily{qcs}
@@ -50,7 +50,19 @@ These ideas were originally defined in a paper published in 1985 by Goldwasser, 
 
 In an interactive proof system proper formalisations exist to express a notion of "knowledge" transmitted from the prover to the verifier. A "Zero-Knowledge proof" is a system where no additional knowledge is transmitted besides the proof.
 
-For example in a Zero-Knowledge proof system a prover can prove to a verifier that the number $221$ is not a prime without revealing the factorisation $11 \cdot 13 = 221$ 
+For example in a Zero-Knowledge proof system a prover can prove to a verifier that the number $221$ is not a prime without revealing the factorisation $11 \cdot 13 = 221$
+
+\section{Zero-Knowledge}
+Interactive proof system formalisation defined by Goldwasser, Micali and Rackoff \cite{10.1145/22145.22178}.
+
+The definition of Zero-Knowledge applies to any interactive protocol (A, B) not necessarily just interactive proof systems.
+
+
+
+
+We can say that an interaction is ZK when the random variable of a view the B has is computationally indistinguishable from a distribution that can be polynomially computed from the parameter x when interacting with A.
+
+ 
 
 \subsection{Proof system}
 In their paper \cite{10.1145/22145.22178} Goldwasser, Micali and Rackoff defined an "interactive proof system" as a system in which a prover can on input $x$ create a string $\alpha$, with which the "verifier" can compute on $x$ and $\alpha$ to check whether $x$ is in $L$.
