@@ -1,0 +1,80 @@
+\documentclass[12pt,a4paper]{article}
+
+\title{Zero-Knowledge proofs}
+\author{Jakob Povsic}
+\date{August 2020}
+
+\usepackage{tgschola}
+\fontfamily{qcs}
+
+\usepackage[backend=bibtex]{biblatex}
+\bibliography{ref}
+
+\begin{document}
+\pagenumbering{Roman}
+
+\maketitle
+\newpage
+
+\tableofcontents
+\newpage
+
+\pagenumbering{arabic}
+\section*{Abstract}
+This paper will focus on the field of Zero-Knowledge proof (ZKP) protocols, their applications and their role in a digitalised society.
+
+The mathematical background of ZKPs by looking at general theorem proofs, properties of interactive proof systems, the definition of Zero-Knowledge and non-interactive ZKPs.
+
+We will look at how specific protocols are implemented using quadratic residues, discrete logarithms and graph isomorphisms as well as how Fiat-Shamir heuristics can be used to make ZKPs non-interactive in protocols like zk-SNARK.
+
+Finally we will provide a prototype implementation of an authentication scheme using a ZKP protocol (tbd which one, hopefully zk-STARK).
+\newpage
+
+\section{Introduction}
+Something about how privacy and security are becoming ever more important as our world is becoming ever more digitalised and connected.
+
+\section{Interactive proof systems}
+An interactive proof system is an efficient theorem proving system, where the verifier is a probabilistic polynomial time machine that exchanges the messages with the prover. The notion of probability makes the proof more relaxed allowing a verifier to be incorrectly convinced of a proof with a very small probability of error $n^{-k}$ for any positive constant $k$ and sufficiently large inputs of size $n$.
+
+GMR \cite{10.1145/22145.22178} formalised interactive proof systems as an interactive protocol between two interactive Turing machines where the prover with unbounded processing power produces an efficient proof which the computationally bound verifier computes on in polynomial time.
+
+Conditions for an interactive proof system:
+\begin{itemize}
+  \item Completeness - For each $k$ and a sufficiently large $x$ in $L$, a prover accepts with probability at least $1 - |x|^{-k}$ 
+  \item Soundness - For each $k$ and a sufficiently large $x$ not in $L$, a prover accepts with   probability at most $|x|^{-k}$
+\end{itemize}
+Generally we can say that for any language L in NP there exists a proof system in which a verifier can in polynomial time verify whether a word x is in a language L.
+
+\section{Zero-Knowledge proofs}
+These ideas were originally defined in a paper published in 1985 by Goldwasser, Micali and Rackoff \cite{10.1145/22145.22178}. 
+
+In an interactive proof system proper formalisations exist to express a notion of "knowledge" transmitted from the prover to the verifier. A "Zero-Knowledge proof" is a system where no additional knowledge is transmitted besides the proof.
+
+For example in a Zero-Knowledge proof system a prover can prove to a verifier that the number $221$ is not a prime without revealing the factorisation $11 \cdot 13 = 221$ 
+
+\subsection{Proof system}
+In their paper \cite{10.1145/22145.22178} Goldwasser, Micali and Rackoff defined an "interactive proof system" as a system in which a prover can on input $x$ create a string $\alpha$, with which the "verifier" can compute on $x$ and $\alpha$ to check whether $x$ is in $L$.
+
+The main purpose of the paper was how much information in transmitted to the verifier in the interactive proof system for $L$.
+An example provided by the authors:
+\begin{quotation}
+Consider SAT, the NP-complete language. In the obvious proof system, to prove $F \in SAT$, the prover gives a satisfying assignment $I$ for the formula $F$, which the verifier then checks in polynomial time. This assignment give the verifier much more knowledge than merely the fact that $F \in SAT$; it also gives a satisfying assignment.
+\end{quotation}
+
+\subsection{Definition}
+\subsection{Definiton of Zero-Knowledge}
+\section{Interactive Zero-Knowlege proofs}
+\subsection{Interactive proof systems}
+\subsection{Common NP-Complete problems}
+\subsubsection{Quadratic residue}
+\subsubsection{Graph isomorphism}
+\subsubsection{Discrete logarithm}
+\section{Non-Interactive Zero knowledge proofs}
+\subsection{zk-SNARK} 
+\subsubsection{Shamir-Fiat heuristic}
+\subsection{Bulletproofs}
+\subsection{zk-STARK}
+
+\printbibliography
+
+\end{document}
