@@ -45,12 +45,21 @@ Conditions for an interactive proof system:
 \end{itemize}
 Generally we can say that for any language L in NP there exists a proof system in which a verifier can in polynomial time verify whether a word x is in a language L.
 
+\newpage
 \section{Zero-Knowledge proofs}
 These ideas were originally defined in a paper published in 1985 by Goldwasser, Micali and Rackoff \cite{10.1145/22145.22178}. 
 
 In an interactive proof system proper formalisations exist to express a notion of "knowledge" transmitted from the prover to the verifier. A "Zero-Knowledge proof" is a system where no additional knowledge is transmitted besides the proof.
 
 For example in a Zero-Knowledge proof system a prover can prove to a verifier that the number $221$ is not a prime without revealing the factorisation $11 \cdot 13 = 221$
+
+\paragraph{Notion of a simulator}
+The main idea behind the concept of Zero-Knowledge is that whatever the verifier could learn from data transmitted by the prover he could have leaned by himself.
+
+This idea is technically formalised by defining the "view" of a verifier as a random variable $U$. A view is bits the verifier sees on tapes during the execution of the interactive protocol.
+
+We can say that an interactive protocol is "Zero-Knowledge" if there exists a probabilistic Turing machine M or later labeled as a "simulator" whose output is statistically indistinguishable from the random variable $U$ that the verifier "sees" in an interaction with an honest prover.
+
 
 \section{Zero-Knowledge}
 Interactive proof system formalisation defined by Goldwasser, Micali and Rackoff \cite{10.1145/22145.22178}.
