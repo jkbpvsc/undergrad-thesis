@@ -1,14 +1,20 @@
 \documentclass[12pt,a4paper]{article}
 
-\title{Horizons of Zero-Knowledge}
+\title{Securing the Zero-Knowledge Proof of Quadratic Residuosity agains rainbow attacks in a HTTP authentication system}
 \author{Jakob Povsic}
 \date{2020}
 
+\usepackage{listings}
+\usepackage{amsmath}
 \usepackage{tgschola}
+\usepackage{amsfonts}
+
 \fontfamily{qcs}
 
 \usepackage[backend=bibtex]{biblatex}
 \bibliography{ref}
+
+\newcommand{\Mod}[1]{\ (\mathrm{mod}\ #1)}
 
 \begin{document}
 \pagenumbering{Roman}
@@ -46,55 +52,81 @@ Conditions for an interactive proof system:
 Generally we can say that for any language L in NP there exists a proof system in which a verifier can in polynomial time verify whether a word x is in a language L.
 
 \newpage
-\section{Zero-Knowledge proofs}
-These ideas were originally defined in a paper published in 1985 by Goldwasser, Micali and Rackoff \cite{10.1145/22145.22178}. 
+\section{Zero-Knowledge}
+These ideas were originally defined in a paper published in 1985 by Goldwasser, Micali and Rackoff \cite{GMR}. 
 
 In an interactive proof system proper formalisations exist to express a notion of "knowledge" transmitted from the prover to the verifier. A "Zero-Knowledge proof" is a system where no additional knowledge is transmitted besides the proof.
 
-For example in a Zero-Knowledge proof system a prover can prove to a verifier that the number $221$ is not a prime without revealing the factorisation $11 \cdot 13 = 221$
+For example in a Zero-Knowledge proof system a prover can prove to a verifier that the number $221$ is not a prime without revealing the factorisation $11 \cdot 13 = 221$\\
 
-\paragraph{Notion of a simulator}
-The main idea behind the concept of Zero-Knowledge is that whatever the verifier could learn from data transmitted by the prover he could have leaned by himself.
+The main idea behind the concept of Zero-Knowledge is that whatever the verifier could learn from data transmitted by the prover he could have leaned by himself.\\
 
-This idea is technically formalised by defining the "view" of a verifier as a random variable $U$. A view is bits the verifier sees on tapes during the execution of the interactive protocol.
+This idea is technically formalised by defining the "view" of a verifier as a random variable $U$.\\Considering the verifier is an "interactive Turing machine", a view are bits the verifier sees on tapes during the execution of the interactive protocol.\\
+We can say that an interactive protocol is "Zero-Knowledge" if there exists a probabilistic Turing machine M or subsequently labeled as a "simulator" whose output is computationally from the random variable $U$ that the verifier "sees" in an interaction with an honest prover.
 
-We can say that an interactive protocol is "Zero-Knowledge" if there exists a probabilistic Turing machine M or later labeled as a "simulator" whose output is statistically indistinguishable from the random variable $U$ that the verifier "sees" in an interaction with an honest prover.
-
-
-\section{Zero-Knowledge}
-Interactive proof system formalisation defined by Goldwasser, Micali and Rackoff \cite{10.1145/22145.22178}.
-
-The definition of Zero-Knowledge applies to any interactive protocol (A, B) not necessarily just interactive proof systems.
+\paragraph{Indistinguishability of random variables.}
+Random variables $U$ and $V$ are considered "replaceable" when our predictions of the origin of a random sample $x$ is uncorrelated to the distribution from which the sample came.\\
+By focusing on the sample size and the computation time we can by bounding the parameters focus on 3 notions of indistinguishability: equality, statistical indistinguishability and computational indistinguishability.
+Two distributions can be considered equal if we cannot correlate the distributions given an infinite sample size and infinite computing power.\\
+Two random variables are statistically indistinguishable if the remain uncorrelated give an polynomial sample size and infinite computing power, while they are computationally indistinguishable given polynomial time and polynomial computing power.
 
 
+\section{Languages with Zero-Knowledge interactive proof systems}
+\paragraph{Bounded-error probabilistic polynomial time languages.}
+Goldwasser, Micali and Rackoff \cite{GMR} have identified all BBP languages have zero-knowledge proof systems.
+\begin{quote}
+	Trivially, all languages in BPP have perfect zero-knowledge proof systems. (A language is in BPP if there is a probabilistic, polynomial time machine which on each input computes membership in the language with small probability of error.)
+\end{quote}
+\paragraph{Languages not known to be in BPP.}
+First languages to be recognised to have a zero-knowledge proof system was quadratic residuosity and quadratic non-residuosity languages.\\
+Graph isomorphism and non-isomorphism have been shown to have zero-knowledge proof system as well.
 
 
-We can say that an interaction is ZK when the random variable of a view the B has is computationally indistinguishable from a distribution that can be polynomially computed from the parameter x when interacting with A.
+\subsection{Examples of languages}
 
- 
+\paragraph{Discrete logarithm}
+In \cite{GMR} a zero-knowledge proof system has been proposed for quadratic residuosity, a specific variant of the discrete logarithm problem.\\
 
-\subsection{Proof system}
-In their paper \cite{10.1145/22145.22178} Goldwasser, Micali and Rackoff defined an "interactive proof system" as a system in which a prover can on input $x$ create a string $\alpha$, with which the "verifier" can compute on $x$ and $\alpha$ to check whether $x$ is in $L$.
+\paragraph{Protocol.} Quadratic residue\\
+Public input. $x, n$\\
+Provers private input. $w$, such that $x \equiv w^2 \Mod{n}$\\
+P $\rightarrow$ V: Prover chooses random  $u \leftarrow \Bbb{Z}_{n}^{*}$ and sends $y = u^2$ to the verifier.\\
+P $\leftarrow$ V: Verifier chooses $b \leftarrow_R \{0, 1\} $\\
+P $\rightarrow$ V: If $b = 0$ Peggy sends $u$ to the Victor, if $b = 1$ Peggy sends $w \cdot u \Mod{n}$.\\
 
-The main purpose of the paper was how much information in transmitted to the verifier in the interactive proof system for $L$.
-An example provided by the authors:
-\begin{quotation}
-Consider SAT, the NP-complete language. In the obvious proof system, to prove $F \in SAT$, the prover gives a satisfying assignment $I$ for the formula $F$, which the verifier then checks in polynomial time. This assignment give the verifier much more knowledge than merely the fact that $F \in SAT$; it also gives a satisfying assignment.
-\end{quotation}
+\paragraph{Verification}
+Let $z$ be the value sent by Peggy. Victor accepts the proof in case $b = 0, z^2 \equiv y \Mod{n}$ or $b = 1, z^2 \equiv xy \Mod{n}$
 
-\subsection{Definition}
-\subsection{Definiton of Zero-Knowledge}
-\section{Interactive Zero-Knowlege proofs}
-\subsection{Interactive proof systems}
-\subsection{Common NP-Complete problems}
-\subsubsection{Quadratic residue}
-\subsubsection{Graph isomorphism}
-\subsubsection{Discrete logarithm}
+\subsection{NP languages}
+In their paper \cite{GMW} Goldreich, Micali and Wigderson proposed a zero-knowledge proof system for Graph 3-Colorability problem.
+By reducing Graph 3-Colorability to any $L \in NP$, they have proved that any language $L \in NP$ has a zero-knowledge proof system.
+
+\subsubsection{Zero-Knowledge proofs for Graph 3-Colorability}
+The protocol assumes an arbitrarily secure encryption scheme.
+
+At the beginning of each iteration the prover sends $R_1, R_2, ..., R_n$, an encrypted permutation of the 3-colouring of the common input graph $G(V,E)$ to the verifier.
+
+The verifier sends a random edge $e \in_R E$ to the prover.
+
+The prover sends a permuted colouring of $v$ and $u$, ($e = (v, u) \in E$) and the encryption secret for $R_v$, $R_u$.
+
+The verifier checks the proof by encrypting the permutations and comparing them with the encrypted permutations submitted at the beginning, by checking that the permuted colourings for $v$ and $u$ are not equal, and by checking that permuted colourings are in the $\{1, 2, 3\}$ set.
+
+After successfully repeating for $m^2$ iterations, $m = | E |$ for a graph $G(V,E)$, the verifier accepts.
+
+\subsubsection{Zero-Knowledge proofs for Languages in NP}
+Cook-Levin theorem states that any problem in $L \in NP$ can be reduced to the Boolean-Satisfiability problem in polynomial time by a deterministic Turing machine.
+There also exists a reduction from Graph 3-Colorability problem to SAT (Boolean-Satisfiability problem), meaning that there exists an efficient fixed reduction of every language $L \in NP$ to Graph 3-Colorability, parties can compute a 3-col instance from a common input and follow the zero-knowledge protocol.
+
+
+
+\subsection{Graph isomorphism}
 \section{Non-Interactive Zero knowledge proofs}
-\subsection{zk-SNARK} 
-\subsubsection{Shamir-Fiat heuristic}
-\subsection{Bulletproofs}
-\subsection{zk-STARK}
+Non-interactive zero-knowledge proof are zero-knowledge proofs that require no interaction between the prover and the verifier
+
+\subsection{Shamir-Fiat heuristic}
+
+\section{Application of Zero-Knowledge protocol as a password based authenticaton method over HTTP}
 
 \printbibliography
 
