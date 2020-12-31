@@ -1,0 +1,68 @@
+\section{Languages with Zero-Knowledge Interactive Proof Systems}
+
+One of the main components that make Zero-Knowledge proofs work is the encoding of the proof in the \textit{solution} of another "problem". The choice of the "problem" heavily relies on the specific application of the ZKP protocol.
+
+A theoretical term from the computational complexity theory for a "problem" is \textit{language}. And the "problem" is the task of proving the membership of $x$ in language $L$
+\\
+\\
+\\
+Alongside specific languages with ZKPs, they have been also studies related to classes of languages defined by their computational complexity.
+
+In this thesis we are focusing on the zero-knowledge proof of quadratic residuosity, but generally ZKP protocols exists for any language in NP \cite{GMW}, assuming one way-functions exist in IP\footnote{Class of problems solved by an \textit{interactive proof system}}
+
+\subsection{Quadratic residuosity problem}
+
+The first language with a ZKP protocol described in \cite{GMR}, was for quadratic residuosity with a \textit{perfect} zero-knowledge protocol and for quadratic non-residuosity with a \textit{statistically} zero-knowledge protocol.
+
+\bigskip
+
+The problem of quadratic residuosity is much older however and was first described by Gauss in 1801. 	
+Quadratic residues come from modular arithmetic a branch of number theory.
+
+
+\paragraph{Quadratic Residues}
+
+For $a, n \in \mathbb{Z}$, $n > 0$, $a$ and $n$ are co-prime.
+$a$ is a \textit{quadratic residue} if  $\exists x:x^2 \equiv a \Mod{n}$, otherwise $a$ is a \textit{quadratic non-residue}
+
+\paragraph{Problem}
+
+Given numbers $a$ and $n = pq$, where $p$ and $q$ are unknown different primes, and $(\frac{a}{n}) = 1$\footnote{Jacobi symbol}, determine wether $a$ is a quadratic residue modulo $n$ or not.
+
+\bigskip
+
+The problem of quadratic residuosity is considered difficult, because prime factorisation is hard.
+
+\subsubsection*{Protocol}
+
+Public inputs $n,x: (\frac{x}{n}) = 1$ and\\
+Provers private input $w: x \equiv w^2 \Mod{n}$\\
+
+\begin{itemize}
+	\item P $\rightarrow$ V: Prover chooses random  $u \leftarrow \Bbb{Z}_{n}^{*}$ and sends $y = u^2$ to the verifier.
+	\item P $\leftarrow$ V: Verifier chooses $b \leftarrow_R \{0, 1\} $
+	\item P $\rightarrow$ V: If $b = 0$ Prover sends $u$ to the Verifier, if $b = 1$ Prover sends $z = w \cdot u \Mod{n}$.
+	\item Verifier accepts if, $[b = 0], z^2 \equiv y \Mod{n}$ or $[b = 1], z^2 \equiv xy \Mod{n}$ or rejects and halts otherwise.
+\end{itemize}
+
+This protocol is repeated $m$ times.
+
+
+\subsection{Computational Complexity Classes}
+\subsubsection{Bounded-Error Probabilistic Polynomial Time Languages 
+}
+Or \textbf{BBP} in short, is in computational complexity theory a class of problems solvable by a probabilistic Turing machine in polynomial time with a bounded error to at most $1/3$ or $2^{-ck}; c>0$ for $k$ iterations.
+
+\subsubsection{Non-deterministic Polynomial Time}
+
+Or \textbf{NP} is a class of problems solvable by a non-deterministic Turing machine in polynomial time. Or rather proof of any language in NP can be verified by a deterministic polynomial time Turing machine.
+
+\bigskip
+
+In \cite{GMW} proved that every problem in NP has a zero-knowledge proof system, by describing a ZKP protocol for the Graph 3-Colouring problem (3-COL)
+
+\textit{Minimum colouring problem} is problem in graph theory, of what is the minimal $k$ \textit{proper} colouring of a graph, so that no adjacent vertices are the same colour.
+
+An instance of 3-COL is proven to be \textit{NP-Hard} because a polynomial reduction exists from \textit{Boolean-Satisfiability problem} (3-SAT) to 3-COL \cite{mouatadid2014introduction}.
+
+According to Cook's theorem \cite{cook1971complexity} 3-SAT is NP-Complete, and any language in $L \in NP$ can be reduced by a polynomial deterministic Turing machine to 3-SAT. Furthermore because polynomial reductions are \textit{transient}, any language $L \in NP$ can be reduced to an instance of 3-COL.
