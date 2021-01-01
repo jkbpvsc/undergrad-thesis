@@ -1,0 +1,80 @@
+\section{Authentication}
+
+As defined by the RFC-4949 \cite{shirey2007internet}, authentication is "The process of verifying a claim that a system entity or system resource has a certain attribute value."
+This is a generic definition, and it most frequently applies to the verification of user identity (e.g at login), however assertions can be made and verified about any subject or object.
+\\
+\\
+The authentication process consists of two steps.
+\paragraph{Identification} Presenting an identifier to the authentication system, that establishes the entity being authenticated.
+In common user authentication systems this is a username or an email verified in the registration process. The identifier needs to be unique for the entity it identifies.
+
+\paragraph{Verification} Presenting or generating authentication information that can be used to verify the claim.
+Commonly used authentication information are passwords, one-time tokens, digital signatures.
+
+\subsection{The NITS Model for Digital Identity}
+
+Digital Identity Guidelines \cite{grassi2017} published by the National Institute of Standards and Technology (NIST) describes a simple digital identity model, that provides a generic authentication framework.
+
+The process has distinct steps of \textit{Enrolment and Identity Proofing} and \textit{Authentication}.
+
+\paragraph{Enrolment and Identity Proofing}
+
+The enrolment process describes process where an applicant becomes a subscriber after being successfully proofed by a CSP.
+The subscriber is issued a credential and one or more authenticators.
+
+\paragraph{Authentication}
+
+The claimant begins authentication with the verifier by sharing the credential and the authenticators. The verifier validates binding between the credential and authenticators with the CSP.
+An authenticated connection is established between the subscriber and the RP after and assertion is provided by the CSP or the verifier to the RP.
+
+%\paragraph{Glossary}
+%
+%\begin{itemize}
+%	\item Credential Service Provider (CSP) - Service responsible for Enrolment and Identity Proofing
+%	\item Applicant - Party applying to become a subscriber through the process of Enrolment and Identity Proofing
+%	\item 
+%\end{itemize}
+%
+%\paragraph{}
+%
+%\paragraph{Credential }
+%
+%\paragraph{Enrolment and Identity Proofing} In this process an \textit{applicant} is proofed by a \textit{Credential Service Provider} (CSP).
+%Identity proofing is a process of verifying the association between the digital identity and the real-world identity of an \textit{applicant}. 
+%The strength of identity proofing is of 3 different magnitudes. The first level requires no verification, where all information provided by the applicant is self-asserted. The second and third level require that the provided data is verified with external authorisers.
+%
+%After successful proofing the applicant becomes a \textit{subscriber} and \textit{authenticators} are shared with the \textit{Verifier}.
+%
+%\paragraph{Authentication}
+%In the process of authentication a subj
+
+\subsection{Authentication Factors}
+
+As described in \cite{council2005authentication} authentication systems can rely on three distinct "factors".
+
+\begin{itemize}
+	\item \textbf{Knowledge factors} - Something the user \textbf{knows} (e.g, password, security question, PIN)
+	\item \textbf{Ownership factors} - Something the user \textbf{owns} (e.g, ID card, security tokens, mobile devices)
+	\item \textbf{Inherence factors} - Something the user \textbf{is} or \textbf{does} (e.g, static biometrics - fingerprints, retina, face. dynamic biometrics - voice patterns, typing rhythm)
+\end{itemize}
+
+\textit{Strong authentication} as defined by government and financial institutions is, an authentication procedure based two or more authentication factors. Authentication using two or more factors is also referred to as \textit{multi-factor authentication}.
+
+\subsection{Remote User-Authentication}
+
+\section{Authentication based on ZKPs}
+
+
+%\subsection{Modern password based authentication systems}
+%Modern password based authentication systems usually have two functions.
+%
+%\paragraph{Setup}
+%The user first creates a unique identifier in the system and then picks a password. 
+%Both values are submitted to the protected system. The identifier is stored in plain text, while the password is "extended" by a key derivation function and stored.
+%
+%\subparagraph{Key Derivation}
+%Key derivation is a process of "extending" a weak key, by using an additional high entropy value called "salt".
+%
+%\paragraph{Authentication}
+%When the user wants to authenticate with the system, he submits the identifier and the password in plain text.
+%The system uses the identifier to locate 
