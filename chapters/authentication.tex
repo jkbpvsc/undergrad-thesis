@@ -19,34 +19,31 @@ The process has distinct steps of \textit{Enrolment and Identity Proofing} and \
 
 \paragraph{Enrolment and Identity Proofing}
 
-The enrolment process describes process where an applicant becomes a subscriber after being successfully proofed by a CSP.
-The subscriber is issued a credential and one or more authenticators.
+The enrolment describes a process where an \textit{applicant} becomes a \textit{subscriber} after being successfully \textit{proofed} by a \textit{CSP}.
+The subscriber is issued a \textit{credential} and one or more \textit{authenticators}.
+
+A common application of this process is user registration on websites.
 
 \paragraph{Authentication}
 
 The claimant begins authentication with the verifier by sharing the credential and the authenticators. The verifier validates binding between the credential and authenticators with the CSP.
 An authenticated connection is established between the subscriber and the RP after and assertion is provided by the CSP or the verifier to the RP.
 
-%\paragraph{Glossary}
-%
-%\begin{itemize}
-%	\item Credential Service Provider (CSP) - Service responsible for Enrolment and Identity Proofing
-%	\item Applicant - Party applying to become a subscriber through the process of Enrolment and Identity Proofing
-%	\item 
-%\end{itemize}
-%
-%\paragraph{}
-%
-%\paragraph{Credential }
-%
-%\paragraph{Enrolment and Identity Proofing} In this process an \textit{applicant} is proofed by a \textit{Credential Service Provider} (CSP).
-%Identity proofing is a process of verifying the association between the digital identity and the real-world identity of an \textit{applicant}. 
-%The strength of identity proofing is of 3 different magnitudes. The first level requires no verification, where all information provided by the applicant is self-asserted. The second and third level require that the provided data is verified with external authorisers.
-%
-%After successful proofing the applicant becomes a \textit{subscriber} and \textit{authenticators} are shared with the \textit{Verifier}.
-%
-%\paragraph{Authentication}
-%In the process of authentication a subj
+A common application of this is user \textit{login} on websites.
+
+
+\begin{figure*}[h!]
+	\centering
+	\includegraphics[width=13cm]{images/NIST_digital_identity_model}
+	\caption{NITS Digital Identity Model}
+	\label{fig:NIST-digital-identity-model}
+\end{figure*}
+
+\paragraph{Note on delegation of roles}
+In the digital identity model \ref{fig:NIST-digital-identity-model} roles of CSP, verifier and RP are distinct in their responsibility. 
+In practice however all these roles can be performed by a single party (e.g any website with native registration and login).
+
+In OAuth2's \cite{hardt2012oauth} authentication layer, the resource owner has the roles of applicant, claimant and subscriber. The authorisation server has the roles of CSP and verifier. The OAuth2 client has the role of the RP.
 
 \subsection{Authentication Factors}
 
@@ -58,23 +55,49 @@ As described in \cite{council2005authentication} authentication systems can rely
 	\item \textbf{Inherence factors} - Something the user \textbf{is} or \textbf{does} (e.g, static biometrics - fingerprints, retina, face. dynamic biometrics - voice patterns, typing rhythm)
 \end{itemize}
 
-\textit{Strong authentication} as defined by government and financial institutions is, an authentication procedure based two or more authentication factors. Authentication using two or more factors is also referred to as \textit{multi-factor authentication}.
+\paragraph{Strong authentication} as defined by government and financial institutions is, an authentication procedure based two or more authentication factors. Authentication using two or more factors is also referred to as \textit{multi-factor authentication}.
 
-\subsection{Remote User-Authentication}
+\subsection{Password based Authentication}
 
-\section{Authentication based on ZKPs}
+Passwords are one of the oldest forms of authentication, dating back to ancient times when it was used in the Roman military. It was first used in computers at MIT in the mid-60s \cite{mcmillan2012password}.
+
+% High level arch
+Password based authentication is a simple authentication model, based on a shared secret between a user and a system. The secret (password) is used in a combination with a user ID. Most common passwords are a set of characters and are memorised by the user.
+
+Using NIST Digital Identity Guidelines terminology \cite{grassi2017}, the password and the user ID are issued as a credential and an authenticator to the applicant after successful enrolment by the CSP.
+A claimant then uses the credentials to authenticate with the verifier, as to establish an authenticated session with the RP.
 
 
-%\subsection{Modern password based authentication systems}
-%Modern password based authentication systems usually have two functions.
-%
-%\paragraph{Setup}
-%The user first creates a unique identifier in the system and then picks a password. 
-%Both values are submitted to the protected system. The identifier is stored in plain text, while the password is "extended" by a key derivation function and stored.
-%
-%\subparagraph{Key Derivation}
-%Key derivation is a process of "extending" a weak key, by using an additional high entropy value called "salt".
-%
-%\paragraph{Authentication}
-%When the user wants to authenticate with the system, he submits the identifier and the password in plain text.
-%The system uses the identifier to locate 
+% Security considerations
+\subsubsection{Security}
+
+The simplicity of password-based authentication is also its downside, and the IT community has actively been working to move away from password based authentication and its downsides.
+While there are many general attack vectors in any authentication system such as network conditions (man-in-the-middle) and the integrity of the system (viruses, key-loggers). The biggest risk specific to a password-based authentication system is choosing, handling and storing the passwords.
+
+Passwords need to be memorised by the user, which creates an incentive for users to pick passwords that are shorter in length and contain less variance \cite{conklin2004password}.
+
+Ways in which adversaries can attack a PBS can be generally categories based on attackers access to "authenticator data", NIST \cite{grassi2017} classifies \textit{online} and \textit{offline} attacks as.
+
+\paragraph{Online attack} An attack where the attacker assumes the role of the claimant with a genuine verifier.
+A common type of attack is a \textit{guessing attack}, where and adversary repeatedly attempts to authenticate with the verifier by guessing possible passwords, this makes the attack very noisy and easy to detect and mitigate.
+
+
+\paragraph{Offline attack} An attack where an attacker is able to analyse data in a system he controls. Data was obtained by the attacker by either theft of file, eavesdropping an authentication protocol or a system penetration.
+
+Protecting against an offline attack means making it very expensive for an attacker to guess the password or "crack the password".
+What influences the cost of guessing a password is the expected password entropy and the time to guess a single password.
+
+
+
+
+
+\paragraph{Password storage}
+A very important aspect of PBS is storage of passwords, where the primary concern is mitigating damage if a system is compromised.
+
+
+
+
+
+
+
+
