@@ -1,0 +1,38 @@
+\section{Password-based Authentication using Zero-Knowledge Proof of Quadratic Residues}
+
+The original paper on zero-knowledge proofs outlined a zero-knowledge proof protocol based on the problem of quadratic residues.
+
+\subsection{Protocol}
+
+Public inputs $n,x: (\frac{x}{n}) = 1$ and\\
+Provers private input $w: x \equiv w^2 \Mod{n}$\\
+
+\begin{itemize}
+	\item P $\rightarrow$ V: Prover chooses random  $u \leftarrow \Bbb{Z}_{n}^{*}$ and sends $y = u^2$ to the verifier.
+	\item P $\leftarrow$ V: Verifier chooses $b \leftarrow_R \{0, 1\} $
+	\item P $\rightarrow$ V: If $b = 0$ Prover sends $u$ to the Verifier, if $b = 1$ Prover sends $z = w \cdot u \Mod{n}$.
+	\item Verifier accepts if, $[b = 0], z^2 \equiv y \Mod{n}$ or $[b = 1], z^2 \equiv xy \Mod{n}$ or rejects and halts otherwise.
+\end{itemize}
+
+This protocol is repeated $m$ times, for a confidence of $1 - 2^{-m}$.
+
+% Security
+\subsection{Security}
+
+\subsubsection{Offline Attacks}
+The input $x$ is used by the Verifier to verify the proof, it is computed from the private input $w$ as $x = w^2 \Mod n$.
+The $w$ is the Provers private input and represents the users password in a password-based authentication system.
+
+The problem in an application of this protocols in the storage of $w$.
+In modern password-based authentication system, the password is processed by a resource expensive password key derivation function, and the authentication is verified by comparing the derived values.
+Our protocol prevents us from using key derivation in this way, because without the original or "plaintext" value $x$ we cannot verify the proofs provided by the Prover.
+
+However storing the "plaintext" values of $x$, enables an attacker to easily pre-compute a table of possible $x$ values.
+
+% Key derivation function
+\subsubsection{Client side key derivation}
+
+
+% Enrolment
+
+% Authentication
