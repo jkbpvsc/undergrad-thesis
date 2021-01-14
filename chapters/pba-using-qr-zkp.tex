@@ -112,16 +112,21 @@ This part is same as the ZKPQR protocol described in the \cite{GMR}.
 \bigskip
 
 \begin{center}
-\begin{tabular}{rl}
-	C $\rightarrow$ Au: & Choose $u \leftarrow_R \Bbb{Z}_{n}^{*}$; Send $y = u^2$\\
-	Au $\rightarrow$ C: & Choose $b \leftarrow_R \{0, 1\} $; Send $b$\\
-	P $\rightarrow$ V [$b = 0$]: & Send $u$\\
-	P $\rightarrow$ V [$b = 1$]: & Send $z = w \cdot u \Mod{n}$\\
-	V [$b = 0$]: & Check $z^2 \equiv y \Mod{n}$\\
-	V [$b = 1$]: & Check $z^2 \equiv xy \Mod{n}$\\
+\begin{tabular}{lrl}
+	& C $\rightarrow$ Au: & Choose $u \leftarrow_R \Bbb{Z}_{n}^{*}$; Send $y = u^2$\\
+	& Au $\rightarrow$ C: & Choose $b \leftarrow_R \{0, 1\} $; Send $b$\\
+	& P $\rightarrow$ V [$b = 0$]: & Send $u$\\
+	& P $\rightarrow$ V [$b = 1$]: & Send $z = w \cdot u \Mod{n}$\\
+	& V [$b = 0$]: & Check $z^2 \equiv y \Mod{n}$\\
+	& V [$b = 1$]: & Check $z^2 \equiv xy \Mod{n}$\\
 \end{tabular}
 \end{center}
 
+\bigskip
+
+The second part is repeated $m$ times, for confidence of $1 - 2^{-m}$.
+
+\subsubsection{Security}
 % Enrolment
 
 % Authentication
