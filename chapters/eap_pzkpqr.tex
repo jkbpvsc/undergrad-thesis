@@ -1,0 +1,95 @@
+\section{PBA Using ZKPQR Implemented as an EAP Method}
+
+\subsection{EAP Packet Format}
+An EAP packet is $n$ octets long.
+
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|}
+	\hline
+	1 & 1 & 2 & 1 & 1 & $n - 6$\\
+	\hline
+	Code & Identifier & Length & Type & Sub-Type & Sub-Type Data\\
+	\hline 
+\end{tabular}
+\end{center}
+
+\paragraph{Code}
+The code field is one octet
+
+\bigskip
+
+\begin{tabular}{ll}
+	1 & Request \\
+	2 & Response\\
+\end{tabular}
+
+\paragraph{Identifier} The identifier field is one octet, and is being used to match request and response packets.
+
+\paragraph{Lenght} Two octets long, used to indicate the length of the EAP packet.
+
+\paragraph{Type} One octet long.
+
+\bigskip
+
+\begin{tabular}{ll} %TODO: Change the sex joke
+	69 & EAP PB-ZKP-QR \\
+\end{tabular}
+
+\paragraph{Sub-Type} One octet long
+
+\bigskip 
+
+\begin{tabular}{ll}
+	1 & Salt / Modulo\\ %TODO: Better names
+	2 & Send Y \\
+	3 & Send Z \\
+\end{tabular}
+
+\subsection{Salt / Modulus Sub-Type Request Data Format}
+
+EAP Sub-Type 1 request must be sent after obtaining the peers identity. The identity can be acquired with the EAP-Identity (Type 1) packet, or determined somehow otherwise.
+
+The peers identity is used to look up the password salt $s$ and modulus $n$.
+
+\bigskip
+
+\begin{center}
+\begin{tabular}{|c|c|c|}
+	\hline
+	1 & $4 \le n \le 255 $ & $64 \le m$\\
+	\hline
+	Salt Length & Salt & Modulus\\
+	\hline
+\end{tabular}
+\end{center}
+
+\paragraph{Salt Length}
+A single octet for the length of the Salt field in octets. %TODO: Maybe reword copied from EAP-SRP-RFC
+
+\paragraph{Salt}
+A random salt value, should be from 4 octets to 255 octets long.
+The max length is determined by the max number able to be encoded in the Salt Length field.
+
+\paragraph{Modulus}
+Fills the rest of the message to the length specified by the Length field in the EAP header. %TODO: Maybe reword copied from EAP-SRP-RFC
+Should be at least 64 octets (512 bits).
+
+This is the $n$ value in the ZKR-QR protocol, a product of two primes $n = qp$.
+
+\subsection{Salt / Modulus Sub-Type Response Data Format}
+After the response is sent the first part of the protocol is successfully finished, and can move to the second part.
+The second part of the protocol is repeated for multiple times compared to the first part which only happens once. 
+
+A new $y$ value is required at the start of each iteration, for this reason it is always required in the subtype 2 response \ref{subtype-2-response}. The response \textbf{can} contain the value of $y$, required in the second part of the protocol, according to the data format defined in \ref{subtype-2-response}. However the response can also be empty and serve only as an acknowledgment. %TODO: Badly worded
+
+\subsection{Send Y Sub-Type Request Data Format}
+The 
+
+\subsection{Send Y Sub-Type Response Data Format}
+\label{subtype-2-response}
+
+\subsection{Send Z Sub-Type Data Format}
+
+\subsection{Send Z Sub-Type Data Format}
+
