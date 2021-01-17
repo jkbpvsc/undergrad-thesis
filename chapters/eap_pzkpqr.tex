@@ -1,4 +1,5 @@
-\section{PBA Using ZKPQR Implemented as an EAP Method}
+\section{PBA Using ZKPQR Implemented as an EAP Method} %TODO: Reword every Sub-Type to Subtype
+%TODO: Introduction, explain name
 
 \subsection{EAP Packet Format}
 An EAP packet is $n$ octets long.
@@ -26,7 +27,7 @@ The code field is one octet
 
 \paragraph{Identifier} The identifier field is one octet, and is being used to match request and response packets.
 
-\paragraph{Lenght} Two octets long, used to indicate the length of the EAP packet.
+\paragraph{Length} Two octets long, used to indicate the length of the EAP packet.
 
 \paragraph{Type} One octet long.
 
@@ -36,17 +37,16 @@ The code field is one octet
 	69 & EAP PB-ZKP-QR \\
 \end{tabular}
 
-\paragraph{Sub-Type} One octet long
+\paragraph{Subtype} One octet long
 
 \bigskip 
 
 \begin{tabular}{ll}
-	1 & Salt / Modulo\\ %TODO: Better names
-	2 & Send Y \\
-	3 & Send Z \\
+	1 & SETUP \\ %TODO: Better names
+	2 & ZKP-QR \\
 \end{tabular}
 
-\subsection{Salt / Modulus Sub-Type Request Data Format}
+\subsubsection{Subtype 1 Request}
 
 EAP Sub-Type 1 request must be sent after obtaining the peers identity. The identity can be acquired with the EAP-Identity (Type 1) packet, or determined somehow otherwise.
 
@@ -77,19 +77,180 @@ Should be at least 64 octets (512 bits).
 
 This is the $n$ value in the ZKR-QR protocol, a product of two primes $n = qp$.
 
-\subsection{Salt / Modulus Sub-Type Response Data Format}
-After the response is sent the first part of the protocol is successfully finished, and can move to the second part.
-The second part of the protocol is repeated for multiple times compared to the first part which only happens once. 
 
-A new $y$ value is required at the start of each iteration, for this reason it is always required in the subtype 2 response \ref{subtype-2-response}. The response \textbf{can} contain the value of $y$, required in the second part of the protocol, according to the data format defined in \ref{subtype-2-response}. However the response can also be empty and serve only as an acknowledgment. %TODO: Badly worded
+\subsubsection{Subtype 1 Response}
+The request of this subtype serves to complete the setup phase of the protocol, while the response already provides the $y$ value required at the start of each cycle of the second part of the protocol.
 
-\subsection{Send Y Sub-Type Request Data Format}
-The 
+\begin{center}
+\begin{tabular}{|c|}
+	\hline
+	$n$ \\
+	\hline
+	Square $y$\\
+	\hline
+\end{tabular}
+\end{center}
 
-\subsection{Send Y Sub-Type Response Data Format}
-\label{subtype-2-response}
+\bigskip
 
-\subsection{Send Z Sub-Type Data Format}
+\paragraph{Square $y$} Computed by the peer, as $y = u^2$, where $u \leftarrow_R \Bbb{Z}_{n}^{*}$. Fills the remainder of the message in $n$ octets.
 
-\subsection{Send Z Sub-Type Data Format}
+\subsubsection{Subtype 2 Request}
+
+\begin{center}
+\begin{tabular}{|c|}
+	\hline
+	$1$ \\
+	\hline
+	Random Bit $b$\\
+	\hline
+\end{tabular}
+\end{center}
+
+\paragraph{Random Bit $b$} A single-bit, at the right-most place. The bit value is randomly chosen by the authenticator. 1 octet long.
+
+\subsubsection{Subtype 2 Response}
+
+\begin{center}
+\begin{tabular}{|c|c|c|}
+	\hline
+	$1$ & $n \le 255 $ & $m$\\
+	\hline
+	Witness Length & Witness $z$ & Square $y$\\ %TODO: Witness, check if this is the correct term?
+	\hline
+\end{tabular}
+\end{center}
+
+\paragraph{Witness Length} A field one octet in length. Determines the length of the Witness field in octets.
+
+\paragraph{Witness} Fields length is limited by the max value of the Witness Length field at 255 octets.
+The witness $z$ is computed by the peer, the computation depends on the value of the random bit $b$ in the request.
+If $b=0$, then $z = u$, where $u$ was generated for the subtype 1 response.
+If $b=1$, then $z = w \cdot u$,  where $u$ was generated for the subtype 1 response, and $w$ is the provers private input.
+
+\paragraph{Square $y$} Field fills up the remainder of the message. 
+Square $y$ is the same value as in the subtype 1 response.
+It is generated and sent in the $n$-th cycle, to help verify the witness in the $(n+1)$-th cycle.
+Same rules apply as when generating the $y$ value if the response to subtype 1 request.
+
+\subsection{Optimisations}
+EAP is a lock-step protocol of request response pairs, each packet is first sent by the authenticator as a request, and the peer returns the message as a response. % TODO: Reword this
+
+A naive mapping of ZKP-SQ messages to EAP packets yields 3 new Request/Response pairs. 
+We can reduce the amount of new pairs to 2 instead of 3, by interlacing data shared in each pair.
+
+This way we can obtain faster performance by reducing the number of packet needed needed to be exchanged.
+
+\paragraph{Naive Map}
+
+\begin{center}
+	\begin{tabular}{c|rcl}
+	Pair & Peer  & $\leftrightarrow$ & Authenticator \\
+	\hline
+	1 & & $\xleftarrow{\text{s, n}}$ &\\
+	&& $\xrightarrow{\textvisiblespace}$&\\
+	\hline
+	2 & & $\xleftarrow{\textvisiblespace}$&\\
+	&& $\xrightarrow{y}$&\\
+	\hline
+	3 & & $\xleftarrow{b}$&\\
+	&& $\xrightarrow{z}$&\\
+	\hline
+	\end{tabular}
+\end{center}
+
+\subparagraph{Pair 1} Exchanged once after the authenticator obtaining the peers identity. The authenticator communicates the salt $s$ and modulus $n$ to the peer, in order for the peer to compute the private input $w$. 
+Peers response serves as an acknowledgement of a successful setup.
+
+This pair corresponds to the \textit{setup} part of the protocol.
+
+\subparagraph{Pair 2} The authenticator requests the peer to generate the \textit{square} value $y$ and share it in the response.
+
+This pair corresponds to the \textit{interactive zero-knowledge proof} part of the protocol and is repeated for $m$ times. 
+
+\subparagraph{Pair 3} The authenticator requests the peer to compute the \textit{witness} value $z$, according to the procedure determined by the random bit $b$ in the request data.
+
+This pair corresponds to the \textit{interactive zero-knowledge proof} part of the protocol and is repeated for $m$ times.
+
+\subparagraph{Performance}
+With this mapping a successful protocol run of $m$ iterations with a confidence of $1 - 2^{-m}$, would require a minimum of $4m + 3$ packet exchanges.
+
+\bigskip
+
+\begin{tabular}{r|l}
+	Packets exchanged & Type\\
+	\hline
+	2 & Pair 1\\
+	$2m$ & Pair 2\\
+	$2m$ & Pair 3\\
+	1 & Type 2 (Success)\\
+\end{tabular}
+
+\paragraph{Interlaced Data Mapping}
+
+\begin{center}
+	\begin{tabular}{c|rcl}
+	Pair & Peer  & $\leftrightarrow$ & Authenticator \\
+	\hline
+	1 & & $\xleftarrow{\text{s, n}}$ &\\
+	&& $\xrightarrow{y_1}$&\\
+	\hline
+	2 & & $\xleftarrow{b}$&\\
+	&& $\xrightarrow{z, y_{n+1}}$&\\
+	\hline
+	\end{tabular}
+\end{center}
+
+\subparagraph{Pair 1} Exchanged once after the authenticator obtaining the peers identity. The authenticator communicates the salt $s$ and modulus $n$ to the peer, in order for the peer to compute the private input $w$. 
+Peers computes the square value $y$ and sends it in the response.
+
+The main difference with the naive mapping is that the peer responds prematurely with $y$, instead of in the response to naive pair 2. %TODO: Reword, weird sentence
+Trivially we see, that it is possible and valid, because the modulus value $n$ is provided in the pair 1 request.
+
+\subparagraph{Pair 2}
+The authenticator already receiving the square value $y$ can send a request with a random bit $b$. The peer responds by computing the \textit{witness} $z$ according to $b$.
+The peer also computes the square value $y_{n+1}$, which is used in the next iteration of the protocol.
+
+This is possible because the computation of square value $y$ is only dependent on the modulus $n$, which is established in the request pair 1.
+
+\subparagraph{Performance}
+With this mapping a successful protocol run of $m$ rounds with an error rate $2^{-m}$, would require a minimum of $2m + 3$ packet exchanges.
+
+Comparing the performance of both mappings, the interlaced mapping requires half as many exchanges for the same $m$ rounds of protocol.
+
+$$\lim_{1 \rightarrow \infty} \frac{2x + 3}{4x + 3} = \frac{1}{2}$$
+
+\bigskip
+
+\begin{tabular}{r|l}
+	Packets exchanged & Type\\
+	\hline
+	2 & Pair 1\\
+	$2m$ & Pair 2\\
+	1 & Type 2 (Success)\\
+\end{tabular}
+
+\subsection{Security}
+
+
+%\subsection{Salt / Modulus Sub-Type Response Data Format}
+%After the response is sent the first part of the protocol is successfully finished, and can move to the second part.
+%The second part of the protocol is repeated for multiple times compared to the first part which only happens once. 
+%
+%A new $y$ value is required at the start of each iteration, for this reason it is always required in the subtype 2 response \ref{subtype-2-response}. The response \textbf{can} contain the value of $y$, required in the second part of the protocol, according to the data format defined in \ref{subtype-2-response}. 
+%However the response can also be empty and serve only as an acknowledgment. %TODO: Badly worded
+%
+%\subsection{Send Y Sub-Type Request Data Format}
+%This is initial request of an iteration of the second part of the protocol.
+%The request is empty
+%
+%\subsection{Send Y Sub-Type Response Data Format}
+%\label{subtype-2-response}
+%
+%\subsection{Send Z Sub-Type Data Format}
+%
+%\subsection{Send Z Sub-Type Data Format}
+
+
+
 

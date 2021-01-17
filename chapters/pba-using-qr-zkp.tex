@@ -4,17 +4,18 @@ The original paper on zero-knowledge proofs outlined a zero-knowledge proof prot
 
 \subsection{Protocol} %TODO: Restructure to focus soley on ZKPQR as PBA
 
-Public inputs $n,x: (\frac{x}{n}) = 1$ and\\
+Public inputs $n,x: (\frac{x}{n}) = 1$\\
 Provers private input $w: x \equiv w^2 \Mod{n}$\\
+
 \begin{center}
-\begin{tabular}{rl}
-	P $\rightarrow$ V: & Choose $u \leftarrow_R \Bbb{Z}_{n}^{*}$; Send $y = u^2$\\
-	V $\rightarrow$ P: & Choose $b \leftarrow_R \{0, 1\} $; Send $b$\\
-	P $\rightarrow$ V [$b = 0$]: & Send $u$\\
-	P $\rightarrow$ V [$b = 1$]: & Send $z = w \cdot u \Mod{n}$\\
-	V [$b = 0$]: & Check $z^2 \equiv y \Mod{n}$\\
-	V [$b = 1$]: & Check $z^2 \equiv xy \Mod{n}$\\
-\end{tabular}
+	\begin{tabular}{rrcl}
+		Condition & Prover & & Verifier\\
+		\hline
+		& $u \leftarrow_R \Bbb{Z}_{n}^{*}; \quad y = u^2$ & $\xrightarrow{\text{y}}$ \\
+		&& $\xleftarrow{\text{b}}$ & $b \leftarrow_R \{0, 1\} $ \\
+		$b = 0$ & $ z = u$ & $ \xrightarrow{\text{z}}$ & (verify $z^2 \equiv y \Mod{n}$)\\
+		$b = 1$ & $ z = wu \Mod{n}$ & $ \xrightarrow{\text{z}}$ & (verify $z^2 \equiv xy \Mod{n}$)\\ %TODO: Check calculations in this protocol
+	\end{tabular}
 \end{center}
 
 This protocol is repeated $m$ times, for a confidence of $1 - 2^{-m}$.
@@ -69,13 +70,12 @@ Applicant next computes $x = w^2 \Mod{n}$ and submits the identifier $I$ and $x$
 \bigskip
 
 \begin{center}
-\begin{tabular}{rl}
-	CSP $\rightarrow$ Ap: & Send $n$\\
-	Ap: & Generate $s$\\
-	Ap: & Compute $w = H(P, s)$\\
-	Ap: & Compute $x = x^2 \Mod{n}$\\
-	Ap $\rightarrow$ CSP: & Send $I, x, s$
-\end{tabular}
+	\begin{tabular}{rrcl}
+		& Applicant & & CSP\\
+		\hline
+		1 & & $\xleftarrow{n}$ \\
+		2 & $s \leftarrow_R \Bbb{Z}$ & $\xrightarrow{I, x, s}$ \\ & $w = H(P, s)$ \\ &$x = w^2 \Mod{n}$
+	\end{tabular}
 \end{center}
 
 \bigskip
@@ -98,7 +98,7 @@ The Claimant sends an identifier $I$ to the Authenticator, which responds with m
 
 \bigskip
 
-\begin{center}
+\begin{center} %TODO Fix protocol to clearer table
 	\begin{tabular}{rl}
 	C $\rightarrow$ Au: & Send $I$\\
 	Au $\rightarrow$ C: & Send $n, s$\\
@@ -112,7 +112,7 @@ This part is same as the ZKPQR protocol described in the \cite{GMR}.
 \bigskip
 
 \begin{center}
-\begin{tabular}{lrl}
+\begin{tabular}{lrl} %TODO Fix protocol to clearer table
 	& C $\rightarrow$ Au: & Choose $u \leftarrow_R \Bbb{Z}_{n}^{*}$; Send $y = u^2$\\
 	& Au $\rightarrow$ C: & Choose $b \leftarrow_R \{0, 1\} $; Send $b$\\
 	& P $\rightarrow$ V [$b = 0$]: & Send $u$\\
@@ -130,3 +130,15 @@ The second part is repeated $m$ times, for confidence of $1 - 2^{-m}$.
 % Enrolment
 
 % Authentication
+
+%Unlike PAP, the pass-
+%   word never appears on the wire.  Unlike CHAP (and variants MS-CHAPv1
+%   [RFC2433] and MS-CHAPv2 [RFC2759]), access to a cleartext password is
+%   not required for the authenticator.  Unlike all of these authentica-
+%   tion protocols, SRP is resistant to dictionary attacks against the
+%   over-the-wire information.  SRP is also resistant to eavesdropping
+%   and active attacks.  As a side-effect, SRP also creates a session key
+%   that is resistant to man-in-the-middle attacks and can be used for
+%   data encryption.
+
+% TODO: Similar solutions like SRP
