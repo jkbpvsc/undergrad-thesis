@@ -34,7 +34,7 @@ The code field is one octet
 \bigskip
 
 \begin{tabular}{ll} %TODO: Change the sex joke
-	69 & EAP PB-ZKP-QR \\
+	69 & EAP PB-ZKP-QRP \\
 \end{tabular}
 
 \paragraph{Subtype} One octet long
@@ -231,7 +231,10 @@ $$\lim_{1 \rightarrow \infty} \frac{2x + 3}{4x + 3} = \frac{1}{2}$$
 \end{tabular}
 
 \subsection{Security}
+EAP PB-ZKP-QRP is resistant to passive attacks, as a ZKP protocol by nature reveals no information, except the validity of the proof to the verifier.
+It is also resistant to replay attacks.
 
+The protocol does not enable mutual authentication, nor helps in deriving a session key that can be used for data encryption.
 
 %\subsection{Salt / Modulus Sub-Type Response Data Format}
 %After the response is sent the first part of the protocol is successfully finished, and can move to the second part.

@@ -1,20 +1,12 @@
-\section{Zero-Knowledge proofs}
+\section{Zero-Knowledge Proofs}
 
 Traditional theorem proofs are logical arguments that establish truth through inference rules of a deductive system based on axioms and other proven theorems.
-
-\bigskip
-
-Zero-knowledge proofs in contrast are probabilistic in nature and can \textit{"convince"} the verifier of the truth of a theorem with an arbitrarily small probability of error.
-
-\bigskip
+Zero-knowledge proofs in contrast are probabilistic in nature and can \textit{"convince"} the verifier of the truth of a theorem with an arbitrarily small probability of error. %TODO: Reword, make it simpler
 
 First defined by Goldwasser, Micali and Rackoff in \cite{GMR} as an interactive two-party protocol between a prover and a verifier.
-
 The protocol uses the the quadratic residuosity problem to embed its proof.
 
-\bigskip
-
-There are three main ingredients that make interactive zero-knowledge proofs work.
+There are three main ingredients that make interactive zero-knowledge proofs work. %TODO: Move this part to the end of the section
 
 \begin{enumerate}
 	\item Interaction - The prover and the verifier exchange messages back and forth.
@@ -25,54 +17,46 @@ There are three main ingredients that make interactive zero-knowledge proofs wor
 \subsection{Interactive Proof Systems}
 \textbf{Interactive proof systems} are proof systems between a prover and a verifier.
 The prover is a computationally unbounded polynomial time Turing machine and the verifier is a probabilistic polynomial time Turing machine.
-\textit{Completeness} and \textit{soundness} are enough to define an interactive proof system. The \textbf{IP} complexity class 
+\textit{Completeness} and \textit{soundness} are enough to define an interactive proof system. 
+%The \textbf{IP} complexity class 
 
-\subsubsection{Completeness}
+\paragraph{Completeness}
 
-Any honest prover can convince the verifier with overwhelming probability.
-
-\bigskip
-
+Any honest prover can convince the verifier with overwhelming probability.\\
 For each $k \in \mathbb{N}$ and sufficiently large $n$;
 
-\bigskip
-$Pr(x \in L; P(x) = y; V(y) = 1) \ge 1 - \frac{1}{n^k}$
+$$Pr(x \in L; P(x) = y; V(y) = 1) \ge 1 - \frac{1}{n^k}$$
 
-\subsubsection{Soundness}
+\paragraph{Soundness}
 
-Any verifier following the protocol will reject a cheating prover with overwhelming probability.
-
-\bigskip
-
+Any verifier following the protocol will reject a cheating prover with overwhelming probability.\\
 For each $k \in \mathbb{N}$ and sufficiently large $n$;
 
-\bigskip
+$$Pr(x \notin L; P(x) = y; V(y) = 0) \ge 1 - \frac{1}{n^k}$$
 
-$Pr(x \notin L; P(x) = y; V(y) = 0) \ge 1 - \frac{1}{n^k}$
 
-\subsubsection{ Interactive Polynomial Time Complexity}
+\subsubsection{Other Variants of Interactive Proof Systems}
+
+\paragraph{ Interactive Polynomial Time Complexity}
 Any problem solvable by an interactive proof systems is in the class of \textbf{IP}.
 
-\subsubsection{Other Variants of Interactive Proof Sytems}
 \paragraph{Arthur-Merlin protocol} Problems in the class AM, the Arthur-Merlin protocol is similar to IP, with the difference in that its a \textit{public-coin protocol}. Meaning that verifiers internal state is visible to the prover, while in IP the state is hidden.
 I has been proven that AM is equally powerful as IP and that AM's public internal state gives the prover no advantage.
 
 \paragraph{Multi Prover Interactive Proofs}
 
+%TODO: Add paragraph
 
-\subsection{Interactive Zero-Knowledge Proofs}
+\subsection{Knowledge Complexity}
 
-\textbf{Interactive zero-knowledge proof systems} are  \textit{interactive proof systems} that conveys in zero-knowledge the proof of $x$ membership in language $L$. All together an interactive zero-knowledge proof system is define b by three properties.
+The term \textit{knowledge complexity} quantifies the knowledge that is "extractable" in a proof. It is mainly used for measuring the degree of \textit{zero-knowledge} in different constructions of ZKPs.
+\textit{Interactive zero-knowledge proof systems} are interactive proof systems that present only the proof of $x$ membership in language $L$, without revealing any additional knowledge (e.g why is $x \in L$).
 
-\bigskip
+In a ZKP system for $L$, a verifier can in polynomial time extract only the proof of membership in $L$ when interacting with a prover. 
+The essence of such a system is the idea that the verifiers "view" of an interaction with a prover, can be "simulated" in polynomial time.
+Any interactive protocol is \textit{zero-knowledge} if the probability distribution of observed messages is indistinguishable from a distribution that can be simulated on public inputs.
 
-In a zero-knowledge proof system for $L$, a verifier can in polynomial time extract only the proof of membership in $L$ when interacting with a prover. The essence of such a system is the idea that the verifiers "view" of an interaction with a prover, can be "simulated" in polynomial time.
-
-%Any interactive protocol $(A, B)$ is zero-knowledge if $View_{A,B}$
-
-Any interactive protocol is zero-knowledge if the probability distribution of observed messages is indistinguishable from a distribution that can be simulated on public inputs.
-
-\subsubsection{Indistinguishability of Random Variables}
+\subsubsection{Indistinguishability of Random Variables} %TODO: Simplify this
 
 Let $U = \{U(x)\}$ and $V = \{V(x)\}$ be two families of random variables, where $x$ is from a language $L$, a particular subset of $\{0, 1\}^*$.
 
@@ -94,7 +78,7 @@ $$\sum_{\alpha \in \{0,1\}^*} |prob(U(x) = \alpha) - prob(V(x) = \alpha) | < |x|
 
 for $\forall c > 0$, and sufficiently long $x \in L$. 
 
-\subparagraph{Computational Indistinguishability}
+\subparagraph{Computational Indistinguishability}%TODO: Simplify this
 
 Two random variables are computationally indistinguishable, if judges verdict remains meaningless given a polynomial sized sample and polynomial amount of time.
 
@@ -106,7 +90,7 @@ $$|P(U, C, x) - P(V, C, x)| < |x|^{-c}$$
 
 Any two families that are \textit{computationally indistinguishable} are considered  \textit{indistinguishable} in general.
 
-\subsubsection{Approximability of Random Variables}
+\subsubsection{Approximability of Random Variables}%TODO: Simplify this
 
 The notion of approximability described the degree to which a random variable $U(x)$ can be "generated" by a probabilistic Turing machine.
 

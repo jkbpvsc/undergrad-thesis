@@ -1,26 +1,31 @@
-\section{Languages with Zero-Knowledge Interactive Proof Systems}
+\section{Languages with Zero-Knowledge Proof Systems}
 
-One of the main components that make Zero-Knowledge proofs work is the encoding of the proof in the \textit{solution} of another "problem". The choice of the "problem" heavily relies on the specific application of the ZKP protocol.
+One of the main components that make Zero-Knowledge proofs work is the encoding of the proof in the \textit{solution} of another "problem". The choice of the "problem" heavily relies on the specific application of the ZKP protocol. %TODO: Bullshit remove
 
-A theoretical term from the computational complexity theory for a "problem" is \textit{language}. And the "problem" is the task of proving the membership of $x$ in language $L$
+A theoretical term from the computational complexity theory for a "problem" is \textit{language}. And the "problem" is the task of proving the membership of $x$ in language $L$ %TODO: Bullshit remove
+%TODO: should be an introduction in the section
 \\
 \\
 \\
-Alongside specific languages with ZKPs, they have been also studies related to classes of languages defined by their computational complexity.
+Alongside specific languages with ZKPs, they have been also studies related to classes of languages defined by their computational complexity. %TODO: Also as a tool to study complexity, find sources.
 
 In this thesis we are focusing on the zero-knowledge proof of quadratic residuosity, but generally ZKP protocols exists for any language in NP \cite{GMW}, assuming one way-functions exist in IP\footnote{Class of problems solved by an \textit{interactive proof system}}
 
+%TODO: Mention other languages: GISO, DLOG
+
 \subsection{Quadratic residuosity problem}
 
-The first language with a ZKP protocol described in \cite{GMR}, was for quadratic residuosity with a \textit{perfect} zero-knowledge protocol and for quadratic non-residuosity with a \textit{statistically} zero-knowledge protocol.
+The original ZKP protocol described in \cite{GMR} was based on the \textit{quadratic residuosity problem}.
+The paper provided a perfect ZKP protocol for QRP and a statistical ZKP protocol for \textit{quadratic non-residuosity problem}.
 
 \bigskip
 
-The problem of quadratic residuosity is much older however and was first described by Gauss in 1801. 	
+Quadratic residuosity problem (QRP) is much older than the \cite{GMR} paper.
+It was first described by Gauss in 1801 \cite{gauss1801disquisitiones}.
 Quadratic residues come from modular arithmetic a branch of number theory.
 
 
-\paragraph{Quadratic Residues}
+\paragraph{Quadratic Residues}% TODO: Give more math background
 
 For $a, n \in \mathbb{Z}$, $n > 0$, $a$ and $n$ are co-prime.
 $a$ is a \textit{quadratic residue} if  $\exists x:x^2 \equiv a \Mod{n}$, otherwise $a$ is a \textit{quadratic non-residue}
@@ -33,7 +38,7 @@ Given numbers $a$ and $n = pq$, where $p$ and $q$ are unknown different primes, 
 
 The problem of quadratic residuosity is considered difficult, because prime factorisation is hard.
 
-\subsubsection*{Protocol}
+\subsubsection*{Protocol} %TODO: Rewrite, simplify
 
 Public inputs $n,x: (\frac{x}{n}) = 1$ and\\
 Provers private input $w: x \equiv w^2 \Mod{n}$\\
@@ -66,3 +71,6 @@ In \cite{GMW} proved that every problem in NP has a zero-knowledge proof system,
 An instance of 3-COL is proven to be \textit{NP-Hard} because a polynomial reduction exists from \textit{Boolean-Satisfiability problem} (3-SAT) to 3-COL \cite{mouatadid2014introduction}.
 
 According to Cook's theorem \cite{cook1971complexity} 3-SAT is NP-Complete, and any language in $L \in NP$ can be reduced by a polynomial deterministic Turing machine to 3-SAT. Furthermore because polynomial reductions are \textit{transient}, any language $L \in NP$ can be reduced to an instance of 3-COL.
+
+\subsection{Alternative Constructions of Zero-Knowledge Proofs}
+% TODO: Add section

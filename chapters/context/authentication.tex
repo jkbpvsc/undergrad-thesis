@@ -4,9 +4,10 @@ As defined by the RFC-4949 \cite{shirey2007internet}, authentication is "The pro
 This is a generic definition, and it most frequently applies to the verification of user identity (e.g at login), however assertions can be made and verified about any subject or object.
 \\
 \\
-The authentication process consists of two steps.
+Two components defined an authentication process. %TODO: Expand this section, feels un-completed.
 \paragraph{Identification} Presenting an identifier to the authentication system, that establishes the entity being authenticated.
-In common user authentication systems this is a username or an email verified in the registration process. The identifier needs to be unique for the entity it identifies.
+In common user authentication systems this is a username or an email verified in the registration process. 
+The identifier needs to be unique for the entity it identifies.
 
 \paragraph{Verification} Presenting or generating authentication information that can be used to verify the claim.
 Commonly used authentication information are passwords, one-time tokens, digital signatures.
@@ -15,21 +16,21 @@ Commonly used authentication information are passwords, one-time tokens, digital
 
 Digital Identity Guidelines \cite{grassi2017} published by the National Institute of Standards and Technology (NIST) describes a simple digital identity model, that provides a generic authentication framework.
 
-The process has distinct steps of \textit{Enrolment and Identity Proofing} and \textit{Authentication}.
+The process has distinct steps of \textit{Enrolment} and \textit{Authentication}.
 
-\paragraph{Enrolment and Identity Proofing}
+\paragraph{Enrolment (and Identity Proofing)}
 
 The enrolment describes a process where an \textit{applicant} becomes a \textit{subscriber} after being successfully \textit{proofed} by a \textit{CSP}.
 The subscriber is issued a \textit{credential} and one or more \textit{authenticators}.
 
-A common application of this process is user registration on websites.
+A common application of this process is \textit{user registration} on websites.
 
-\paragraph{Authentication}
+\paragraph{Authentication} %TODO: Add italic text
 
 The claimant begins authentication with the verifier by sharing the credential and the authenticators. The verifier validates binding between the credential and authenticators with the CSP.
 An authenticated connection is established between the subscriber and the RP after and assertion is provided by the CSP or the verifier to the RP.
 
-A common application of this is user \textit{login} on websites.
+A common application of this is \textit{user login} on websites.
 
 
 \begin{figure*}[h!]
@@ -39,11 +40,11 @@ A common application of this is user \textit{login} on websites.
 	\label{fig:NIST-digital-identity-model}
 \end{figure*}
 
-\paragraph{Note on delegation of roles}
+\paragraph{Note on delegation of roles} %TODO: Italics
 In the digital identity model \ref{fig:NIST-digital-identity-model} roles of CSP, verifier and RP are distinct in their responsibility. 
 In practice however all these roles can be performed by a single party (e.g any website with native registration and login).
 
-In OAuth2's \cite{hardt2012oauth} authentication layer, the resource owner has the roles of applicant, claimant and subscriber. The authorisation server has the roles of CSP and verifier. The OAuth2 client has the role of the RP.
+In OAuth2's \cite{hardt2012oauth} authentication layer, the resource owner has the roles of applicant, claimant and subscriber. The authorisation server has the roles of CSP and verifier. The OAuth2 client has the role of the RP. %TODO: Italics
 
 \subsection{Authentication Factors}
 
@@ -55,9 +56,9 @@ As described in \cite{council2005authentication} authentication systems can rely
 	\item \textbf{Inherence factors} - Something the user \textbf{is} or \textbf{does} (e.g, static biometrics - fingerprints, retina, face. dynamic biometrics - voice patterns, typing rhythm)
 \end{itemize}
 
-\paragraph{Strong authentication} as defined by government and financial institutions is, an authentication procedure based two or more authentication factors. Authentication using two or more factors is also referred to as \textit{multi-factor authentication}.
+\paragraph{Strong authentication} as defined by government and financial institutions is, an authentication procedure based two or more authentication factors. Authentication using two or more factors is also referred to as \textit{multi-factor authentication}. %TODO: Add source
 
-\subsection{Password based Authentication}
+\subsection{Password Based Authentication}
 
 Passwords are one of the oldest forms of authentication, dating back to ancient times when it was used in the Roman military. It was first used in computers at MIT in the mid-60s \cite{mcmillan2012password}.
 
@@ -72,9 +73,9 @@ A claimant then uses the credentials to authenticate with the verifier, as to es
 \subsubsection{Security}
 
 The simplicity of password-based authentication is also its downside, and the IT community has actively been working to move away from password based authentication and its downsides.
-While there are many general attack vectors in any authentication system such as network conditions (man-in-the-middle) and the integrity of the system (viruses, key-loggers). The biggest risk specific to a password-based authentication system is choosing, handling and storing the passwords.
+While there are many general attack vectors in any authentication system such as network conditions (man-in-the-middle) and the integrity of the system (viruses, key-loggers). The biggest risk specific to a password-based authentication system is choosing, handling and storing the passwords. %TODO: Review, expand, add sources
 
-Passwords need to be memorised by the user, which creates an incentive for users to pick passwords that are shorter in length and contain less variance \cite{conklin2004password}.
+Passwords need to be memorised by the user, which creates an incentive for users to pick passwords that are shorter in length and contain less variance \cite{conklin2004password}. %TODO: Review
 
 Ways in which adversaries can attack a PBS can be generally categories based on attackers access to "authenticator data", NIST \cite{grassi2017} classifies \textit{online} and \textit{offline} attacks as.
 
