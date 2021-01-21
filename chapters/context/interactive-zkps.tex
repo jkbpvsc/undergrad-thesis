@@ -1,24 +1,26 @@
 \section{Zero-Knowledge Proofs}
 
 Traditional theorem proofs are logical arguments that establish truth through inference rules of a deductive system based on axioms and other proven theorems.
-Zero-knowledge proofs in contrast are probabilistic in nature and can \textit{"convince"} the verifier of the truth of a theorem with an arbitrarily small probability of error. %TODO: Reword, make it simpler
+\textit{Zero-Knowledge Proofs} (ZKPs) are compared to traditional proofs probabilistic meaning they \textit{"convince"} the verifier with a small margin of error.
 
-First defined by Goldwasser, Micali and Rackoff in \cite{GMR} as an interactive two-party protocol between a prover and a verifier.
-The protocol uses the the quadratic residuosity problem to embed its proof.
+They were first defined by Goldwasser, Micali and Rackoff in \cite{GMR} in a paper published in 1985. 
+They proposed a proof system as a two-party protocol between a \textit{prover} and a \textit{verifier}. 
+It relies on the computational difficulty of the quadratic residuosity problem (QRP).
 
-There are three main ingredients that make interactive zero-knowledge proofs work. %TODO: Move this part to the end of the section
-
-\begin{enumerate}
-	\item Interaction - The prover and the verifier exchange messages back and forth.
-	\item Hidden Randomization - The verifier relies on randomness that is hidden from the prover, and thus unpredictable from him.
-	\item Computational Difficulty - The prover embeds his proof in computational difficulty of some other problem.
-\end{enumerate}
+%There are three main ingredients that make interactive zero-knowledge proofs work. %TODO: Move this part to the end of the section
+%
+%\begin{enumerate}
+%	\item Interaction - The prover and the verifier exchange messages back and forth.
+%	\item Hidden Randomisation - The verifier relies on randomness that is hidden from the prover, and thus unpredictable from him.
+%	\item Computational Difficulty - The prover embeds his proof in computational difficulty of some other problem.
+%\end{enumerate}
 
 \subsection{Interactive Proof Systems}
-\textbf{Interactive proof systems} are proof systems between a prover and a verifier.
+\textbf{Interactive proof systems} are proof systems between a prover and a verifier, which exchange messages to decide on the validness of the proof.
 The prover is a computationally unbounded polynomial time Turing machine and the verifier is a probabilistic polynomial time Turing machine.
-\textit{Completeness} and \textit{soundness} are enough to define an interactive proof system. 
-%The \textbf{IP} complexity class 
+
+
+The properties of \textit{completeness} and \textit{soundness} define an interactive proof system.
 
 \paragraph{Completeness}
 
@@ -35,48 +37,79 @@ For each $k \in \mathbb{N}$ and sufficiently large $n$;
 $$Pr(x \notin L; P(x) = y; V(y) = 0) \ge 1 - \frac{1}{n^k}$$
 
 
-\subsubsection{Other Variants of Interactive Proof Systems}
-
-\paragraph{ Interactive Polynomial Time Complexity}
+\subsubsection{Interactive Polynomial Time Complexity}
 Any problem solvable by an interactive proof systems is in the class of \textbf{IP}.
 
-\paragraph{Arthur-Merlin protocol} Problems in the class AM, the Arthur-Merlin protocol is similar to IP, with the difference in that its a \textit{public-coin protocol}. Meaning that verifiers internal state is visible to the prover, while in IP the state is hidden.
-I has been proven that AM is equally powerful as IP and that AM's public internal state gives the prover no advantage.
+\subsubsection{Other Variants of Interactive Proof Systems}
+
+\paragraph{Arthur-Merlin protocol} Problems in the class \textbf{AM}, an Arthur-Merlin protocol \cite{babai1985trading} is an interactive protocol similar to IP, with the difference in that its a \textit{public-coin protocol}. 
+Meaning that verifiers internal state is visible to the prover, while in IP the state is hidden.
+%I has been proven that AM is equally powerful as IP and that AM's public internal state gives the prover no advantage. %TODO: Add citation
 
 \paragraph{Multi Prover Interactive Proofs}
-
-%TODO: Add paragraph
+\textbf{MIP} \cite{ben2019multi} is a more powerful model, utilising two provers that communicate with a single verifier.
+This models has been build to address the shortcomings of IP.
+MIP proved that every problem has a ZKP system, without the assumption that one-way functions exist.
 
 \subsection{Knowledge Complexity}
 
-The term \textit{knowledge complexity} quantifies the knowledge that is "extractable" in a proof. It is mainly used for measuring the degree of \textit{zero-knowledge} in different constructions of ZKPs.
-\textit{Interactive zero-knowledge proof systems} are interactive proof systems that present only the proof of $x$ membership in language $L$, without revealing any additional knowledge (e.g why is $x \in L$).
+\textit{Zero-knowledge proof systems} prove the  membership of $x$ in language $L$, without revealing any additional knowledge (e.g why is $x \in L$).
 
-In a ZKP system for $L$, a verifier can in polynomial time extract only the proof of membership in $L$ when interacting with a prover. 
-The essence of such a system is the idea that the verifiers "view" of an interaction with a prover, can be "simulated" in polynomial time.
-Any interactive protocol is \textit{zero-knowledge} if the probability distribution of observed messages is indistinguishable from a distribution that can be simulated on public inputs.
+The essence of zero-knowledge is the idea that what the verifier \textit{sees} is indistinguishable from what can be easily \textit{simulated} on public inputs.
+The term \textit{knowledge complexity} quantifies the degrees of indistinguishability of different languages and proof constructions. 
 
-\subsubsection{Indistinguishability of Random Variables} %TODO: Simplify this
+\subsubsection{Indistinguishability}
+Indistinguishability describes degrees of an ability to distinguish between two random variables $U, V$.
+\bigskip
+\newline
+Let $U = \{U(x)\}$ and $V = \{V(x)\}$ be two families of random variables, where $x$ is from a language $L$, a subset of $\{0, 1\}^*$.
+\newline
+An algorithm $A(x)$ is given a random sample $x$ from either distribution and will output either $1$ or $0$, depending which distribution it determines the sample originated from.
+Distributions become "indistinguishable" as the outputs of the algorithm become uncorrelated to the origin of the sample.
 
-Let $U = \{U(x)\}$ and $V = \{V(x)\}$ be two families of random variables, where $x$ is from a language $L$, a particular subset of $\{0, 1\}^*$.
+By bounding the \textit{size} of the sample and the \textit{time} given to the algorithm we can obtain different notions of indistinguishability.
 
-In the framework for distinguishing between random variables, a "judge" is given a sample selected randomly from either $V(x)$ or $U(x)$.
-A judge studies the sample and outputs either a $0$ or a $1$, depending on which distribution he thinks the sample came from.
+%\subsubsection{Indistinguishability of Random Variables} %TODO: Simplify this
+%
+%Let $U = \{U(x)\}$ and $V = \{V(x)\}$ be two families of random variables, where $x$ is from a language $L$, a particular subset of $\{0, 1\}^*$.
+%
+%In the framework for distinguishing between random variables, a "judge" is given a sample selected randomly from either $V(x)$ or $U(x)$.
+%A judge studies the sample and outputs either a $0$ or a $1$, depending on which distribution he thinks the sample came from.
+%
+%$U(x)$ essentially becomes "replaceable" by $V(x)$, when $x$ increases and any judges prediction becomes uncorrelated with the origin distribution.
 
-$U(x)$ essentially becomes "replaceable" by $V(x)$, when $x$ increases and any judges prediction becomes uncorrelated with the origin distribution.
-By bounding the \textit{size} of the sample and the \textit{time} given to the judge we can obtain different notions of indistinguishability.
 
-\subparagraph{Equality} Given that $U(x)$ and $V(x)$ are equal, they will remain indistinguishable, even if the samples are of arbitrary size and can be studied for an arbitrary amount of time.
+\paragraph{Equality} 
+%Given that $U(x)$ and $V(x)$ are equal, they will remain indistinguishable, even if the samples are of arbitrary size and can be studied for an arbitrary amount of time.
 
-\subparagraph{Statistical Indistinguishability} Two random variables are statistically indistinguishable, when given a polynomial sized sample and an arbitrary amount of time, the judges verdict remains meaningless.
+If $U(x)$ and $V(x)$ are equal, outputs of a computationally unbounded algorithm will remain uncorrelated with the origin of the sample.
 
+\paragraph{Statistical Indistinguishability} Two random variables are statistically indistinguishable, when the algorithms outputs remain uncorrelated with the origin, given an arbitrary amount of time and a poly-bounded sample size.
+\bigskip
+\newline
+Let $L \subset \{0,1\}^*$ be a language, $U(x)$ and $V(x)$ are statistically indistinguishable on $L$ if,
+\bigskip
+$$|\Pr [A(x, U) = 1] - \Pr [A(x, V) = 1]| < |x|^{-c}$$ %TODO: This isnt right.
+\bigskip
+\newline
+for $\forall c > 0$, and sufficiently long $x \in L$. 
+
+%\subparagraph{Statistical Indistinguishability} Two random variables are statistically indistinguishable, when given a polynomial sized sample and an arbitrary amount of time, the judges verdict remains meaningless.
+%
+%\bigskip
+%
+%Let $L \subset \{0,1\}^*$ be a language, $U(x)$ and $V(x)$ are statistically indistinguishable on $L$ if,
+%
+%$$\sum_{\alpha \in \{0,1\}^*} |prob(U(x) = \alpha) - prob(V(x) = \alpha) | < |x|^{-c}$$
+%
+%
+%
+%for $\forall c > 0$, and sufficiently long $x \in L$. 
+
+\paragraph{Computational Indistinguishability} 
+Two random variables are computationally indistinguishable, when the polynomial time algorithms outputs remain uncorrelated with the origin, given a poly-bounded sample size.
 \bigskip
 
-Let $L \subset \{0,1\}^*$ be a language, $U(x)$ and $V(x)$ are statistically indistinguishable on $L$ if,
-
-$$\sum_{\alpha \in \{0,1\}^*} |prob(U(x) = \alpha) - prob(V(x) = \alpha) | < |x|^{-c}$$
-
-for $\forall c > 0$, and sufficiently long $x \in L$. 
 
 \subparagraph{Computational Indistinguishability}%TODO: Simplify this
 

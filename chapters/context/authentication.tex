@@ -77,7 +77,7 @@ While there are many general attack vectors in any authentication system such as
 
 Passwords need to be memorised by the user, which creates an incentive for users to pick passwords that are shorter in length and contain less variance \cite{conklin2004password}. %TODO: Review
 
-Ways in which adversaries can attack a PBS can be generally categories based on attackers access to "authenticator data", NIST \cite{grassi2017} classifies \textit{online} and \textit{offline} attacks as.
+Ways in which adversaries can attack a PBS can be generally categories based on attackers access to "authenticator data", NIST \cite{grassi2017} classifies \textit{online} and \textit{offline} attacks as. %TODO: Rewrite according to passive/active attacks term + unauthorised access to database.
 
 \paragraph{Online attack} An attack where the attacker assumes the role of the claimant with a genuine verifier.
 A common type of attack is a \textit{guessing attack}, where and adversary repeatedly attempts to authenticate with the verifier by guessing possible passwords, this makes the attack very noisy and easy to detect and mitigate.
@@ -94,7 +94,7 @@ Trivially passwords stored in plaintext or hashed passwords are easy for an atta
 
 Modern password based security relies on methods of key-derivation that make password cracking both time-consuming and memory-hard \cite{percival2016scrypt, biryukov2016argon2, boneh2016balloon} and using \textit{salt} \cite{hornby2016salted} to make pre-computation attacks infeasible.
 Key-derivation functions transform the plain text passwords into password hashes for storage.
-When the system wants to verify a password it repeats the process of key-derivation and compares the output hash with the one in storage.
+When the system wants to verify a password it repeats the process of key-derivation and compares the output hash with the one in storage. %TODO: Expand more on available kdf functions.
 
 \subparagraph{Password strength}
 \textit{The strength} of a password directly relates to its entropy. The overall cost password cracking can be reduced by orders of magnitude by a week password, because the attacker has a smaller pool of passwords to try.

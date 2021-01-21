@@ -2,12 +2,12 @@
 
 The original paper on zero-knowledge proofs outlined a zero-knowledge proof protocol based on the problem of quadratic residues.
 
-\subsection{Protocol} %TODO: Restructure to focus soley on ZKPQR as PBA
+\subsection{Protocol} %TODO: Restructure to focus soley on ZKP-QRP as PBA
 
 Public inputs $n,x: (\frac{x}{n}) = 1$\\
 Provers private input $w: x \equiv w^2 \Mod{n}$\\
 
-\begin{center}
+\begin{center} %TODO: Rewrite without the conditions
 	\begin{tabular}{rrcl}
 		Condition & Prover & & Verifier\\
 		\hline
@@ -28,16 +28,16 @@ This protocol is repeated $m$ times, for a confidence of $1 - 2^{-m}$.
 The input $x$ is used by the Verifier to verify the proof, it is computed from the private input $w$ as $x = w^2 \Mod n$.
 The $w$ is the Provers private input and represents the users password in a password-based authentication system.
 
-The problem in an application of this protocols in the storage of $w$.
+The problem in an application of this protocols in the storage of $w$. %TODO: Simplify
 In modern password-based authentication system, the password is processed by a resource expensive password key derivation function, and the authentication is verified by comparing the derived values.
 Our protocol prevents us from using key derivation in this way, because without the original or "plaintext" value $x$ we cannot verify the proofs provided by the Prover.
 
 However storing the "plaintext" values of $x$, enables an attacker to easily pre-compute a table of possible $x$ values.
 
 % Key derivation function
-%TODO Pick a different title
+% TODO Pick a different title
 \subsubsection{?? Client-Side Key Derivation}
-Our wish is to use a hashing function with salt on the password and use the original value of $x$ for verification.
+Our wish is to use a hashing function with salt on the password and use the original value of $x$ for verification. %TODO: salt on the passwor?
 To achieve both requirements, the password is hashed before used to calculate the $x$ used for verification in the authentication process.
 This approach is similar to the one used in \cite{wu1998secure} the Secure Remote Password protocol.
 Using a hashing function $H$, a random salt $s$ and users password $P$, we can derive $w$ and $x$.
@@ -45,14 +45,15 @@ Using a hashing function $H$, a random salt $s$ and users password $P$, we can d
 $$w = H(P, s)$$
 $$x = w^2 \Mod n$$
 
-\subsection{Protocol}
-Using the NIST Digital Identity Guidelines \cite{grassi2017}.
+\subsection{Protocol} %TODO: Pick better title
+Using the terminology in NIST Digital Identity Guidelines \cite{grassi2017}. %TODO: Make a mapping between ZKP terminology and NIST DIG
+To draw parallels between this terminology and the terminology used in the ZKP-QRP \cite{GMR}. The Prover is the Claimant, and the Verifier is the Authenticator.
 
 \paragraph{Values}
 \begin{center}
-	\begin{tabular}{rl}
+	\begin{tabular}{rl} %TODO: USE DIG Terminology
 		$q, p$ & Primes, where $q \ne p$\\
-		$n$ & Modulo number, where $n = qp$\\ %TODO check the correct term for this 
+		$n$ & Modulus, where $n = qp$\\
 		$P$ & Provers password \\
 		$I$ & Provers identifier \\
 		$H$ & Hashing function \\
@@ -86,15 +87,15 @@ CSP binds $x$ and $s$ as the authenticator to the credential $I$.
 \paragraph{Authentication}
 
 Authentication happens in two part, in the first part minimal data is exchanged between the Claimant and the Authenticator. The Claimant identifies himself and the Authenticator provides the $n$ and the salt $s$. %TODO Give $n$ a name
-In the second part the protocol for ZKP of Quadratic Residuosity is executed between the Claimant and the Authenticator. %TODO Check spelling
+In the second part the protocol for ZKP-QRP is executed between the Claimant and the Authenticator. %TODO Check spelling
 
-To draw parallels between the terminology used in the ZKP of Quadratic Residuosity \cite{GMR} and the NIST Digital Identity Guidelines \cite{grassi2017}. The Prover is the Claimant, and the Verifier is the Authenticator.
+
 
 \bigskip
 
 \paragraph{First Part (Setup)}
 
-The Claimant sends an identifier $I$ to the Authenticator, which responds with modulo $n$ and the salt $s$. The Claimant uses both values to compute the private input $w$ of the ZKPQR protocol.
+The Claimant sends an identifier $I$ to the Authenticator, which responds with modulo $n$ and the salt $s$. The Claimant uses both values to compute the private input $w$ of the ZKP-QRP protocol.
 
 \bigskip
 
@@ -106,8 +107,8 @@ The Claimant sends an identifier $I$ to the Authenticator, which responds with m
 \end{tabular}
 \end{center}
 
-\paragraph{Second Part (ZKPQR)}
-This part is same as the ZKPQR protocol described in the \cite{GMR}.
+\paragraph{Second Part (Verification)}
+This part is same as the ZKP-QRP protocol described in the \cite{GMR}.
 
 \bigskip
 
@@ -130,6 +131,7 @@ The second part is repeated $m$ times, for confidence of $1 - 2^{-m}$.
 % Enrolment
 
 % Authentication
+%TODO: Add security segment
 
 %Unlike PAP, the pass-
 %   word never appears on the wire.  Unlike CHAP (and variants MS-CHAPv1

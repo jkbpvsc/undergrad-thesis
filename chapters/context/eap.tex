@@ -1,11 +1,9 @@
 \section{Extensible Authentication Protocol}
 
-%TODO: EAP Packet with table
-
 Extensible Authentication Protocol \cite{aboba2004extensible} (EAP) is a general purpose authentication framework, designed for network access authentication, where IP might not be available. 
 It runs directly over the data link layer such as PPP  \cite{simpson1994rfc1661} and IEEE 802.
 
-EAP defines a set of messages that support negotiation and execution of a variety authentication protocols.
+EAP defines a set of messages that support negotiation and execution of a variety of authentication protocols.
 
 %EAP - PROTOCOL IN DETAIL
 
@@ -17,14 +15,16 @@ The success of the authentication is signalled  with a terminal \textit{Success}
 
 \subsection{Messages}
 
-\paragraph{Request and Response}
+%TODO: EAP Packet with table
+
+\paragraph{Request and Response} %TODO: Change Type to lowecase
 
 Request messages are send from the authenticator to the peer.
 Request packets have a Type field that indicates what is requested.
 The peer processes the packet according to the Type field and send a Response of the same Type.
 The Type of the Request determines the data in the packet.
 
-\paragraph{Success and Failure}
+\paragraph{Success and Failure} %TODO: Display field
 
 After a successful completion of an authentication method an authenticator sends a Success packet to peer. A Failure packet is sent if the peer cannot be authenticated with the authenticator.
 
@@ -42,7 +42,7 @@ The Type field of a Request packet indicates what information is being requested
 The peer includes desired authentication methods, indicated by their type number.
 This type is also referred to as Legacy Nak, when compared to Expanded Nak (sub-type of the Expanded Type).
 
-\subsubsection{Expanded Type} \textbf{Type 254}. The Type field in the EAP packet is 1 octet long, and can represent 256 distinct values.
+\subsubsection{Expanded Type} \textbf{Type 254}. The Type field in the EAP packet is 1 octet long, and can represent 256 distinct values.% TODO: Add table representation
 Expanded Types expand the space for available method types by adding a \textit{Vendor-ID} field (3 octets) and a \textit{Vendor-Type} (4 octets).
 
 When a peer does not support the authentication method requested in an Expanded Type request it needs to respond with an Expanded Nak response. 
@@ -60,7 +60,7 @@ The original RFC \cite{aboba2004extensible} already assigned 3 authentication pr
 	\item \textbf{Type 6} - Generic Token Card
 \end{itemize}
 
-Some notable examples are EAP-TLS \cite{simon2008eap}, EAP-PSK \cite{bersani2007eap}, EAP SRP-SHA1 \cite{carlson135eap}.
+Some notable examples are EAP-TLS \cite{simon2008eap}, EAP-PSK \cite{bersani2007eap}, EAP SRP-SHA1 \cite{carlson135eap}. % TODO: Mention that EAP SRP is interesting as it is ZKP
 The IANA list is not accounting for any authentication methods supported with the Expanded Type.
 
 %EAP - USAGES
