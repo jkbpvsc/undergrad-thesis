@@ -10,74 +10,123 @@ EAP defines a set of messages that support negotiation and execution of a variet
 \subsection{Overview}
 EAP is a two-party protocol between a \textit{peer} and an \textit{authenticator} at the each end of a link. In the protocol the peer is authenticating with the authenticator.
 
-The protocol is initiated by the authenticator, by sending a \textit{Request} message to the peer, and the peer responds with a \textit{Response} message in a lock-step fashion. 
-The success of the authentication is signalled  with a terminal \textit{Success} or \textit{Failure} message.
+The protocols is initiated by the authenticator sending a message to the peer, they exchange messages until the authenticator can authenticate the user or not.
 
 \subsection{Messages}
 
+\begin{center}
+	\begin{tabular}{|c|c|c|c|c|}
+		\hline
+		1  & 1 & 2 & 1 & $n \le 2^{16}$\\
+		\hline
+		Code & Identifier & Length & Type & Type-Data\\
+		\hline
+	\end{tabular}
+\end{center}
+
 %TODO: EAP Packet with table
 
-\paragraph{Request and Response} %TODO: Change Type to lowecase
+\subsubsection{Code Field}
+The code field determines who the packet is intended for and how or even should the recipient respond.
+\bigskip
+\newline
+%\qquad
+\begin{tabular}{rl}
+	Code & Name\\
+	\hline
+	1 & Request\\
+	2 & Response\\
+	3 & Success\\
+	4 & Failure\\
+\end{tabular}
 
-Request messages are send from the authenticator to the peer.
-Request packets have a Type field that indicates what is requested.
-The peer processes the packet according to the Type field and send a Response of the same Type.
-The Type of the Request determines the data in the packet.
+\paragraph{Request and Response Packets} 
+\textit{Request} packets are sent from by the authenticator to the peer. The peer processes the packet and sends back a \textit{response} packet to the authenticator. 
+The response packet needs to have the same identifier as the request packet.
 
-\paragraph{Success and Failure} %TODO: Display field
+The authenticator will discard response packets that don't have a \textit{matching} identifier with the request packet.
+The peer does not re-transmit response packets, but relies on the authenticator to re-transmit a request packet after some time if the matching response is lost.
 
-After a successful completion of an authentication method an authenticator sends a Success packet to peer. A Failure packet is sent if the peer cannot be authenticated with the authenticator.
+\paragraph{Success and Failure Packets}
+
+After the authenticator authenticates the peer he sends a \textit{success} packet to the peer. 
+If the peer cannot be authenticated, the authenticator will send a \textit{failure} packet.
+Both packets signal the end of the authentication process and the peer doesn't need to respond to them.
 
 %EAP - METHODS
 
-\subsection{Request Types}
+\subsubsection{Request Types}
+The \textit type field of a packet indicates the format of the type-data field and the methods used to process the data. 
+First three types are special purpose types.
+\bigskip
+\newline
+\begin{tabular}{rl}
+	Type & Name\\
+	\hline
+	1 & Identity\\
+	2 & Notification\\
+	3 & Nak\\
+	254 & Expanded Type\\
+\end{tabular}
+\bigskip
+\newline
 
-The Type field of a Request packet indicates what information is being requested. First three types are special purpose types.
+\paragraph{Identity} Used to query the identity of the peer. The type is often used as an initial message from the authenticator the peer.
 
-\subsubsection{Identity} \textbf{Type 1}. Used to query the identity of the peer.
+\paragraph{Notification} Used to convey an informative message to the peer, by the authenticator. Usage of this type is entirely optional.
 
-\subsubsection{Notification} \textbf{Type 2}. Used to convey a message from the authenticator to the peer.
-
-\subsubsection{Nak} \textbf{Type 3}. Used only as a response to a request, where the desired authentication type is not available.
+\paragraph{Nak} Used only as a response to a request, where the desired authentication type is not available.
 The peer includes desired authentication methods, indicated by their type number.
-This type is also referred to as Legacy Nak, when compared to Expanded Nak (sub-type of the Expanded Type).
+This type is also referred to as Legacy Nak, when compared to \textit{Expanded Nak} (sub-type of the Expanded Type).
 
-\subsubsection{Expanded Type} \textbf{Type 254}. The Type field in the EAP packet is 1 octet long, and can represent 256 distinct values.% TODO: Add table representation
-Expanded Types expand the space for available method types by adding a \textit{Vendor-ID} field (3 octets) and a \textit{Vendor-Type} (4 octets).
-
+\paragraph{Expanded Type} The type field in the EAP packet is 1 octet long, and can represent 256 distinct values.
+\textit{Expanded types} expand the space for available method types by adding a \textit{Vendor-ID} field and a \textit{Vendor-Type}.
+\bigskip
+\begin{center}
+	\begin{tabular}{|c|c|c|c|c|c|c|}
+		\hline
+		1 & 1 & 2 & 1 & 3 & 4 & $n$\\
+		\hline
+		Code & Identifier & Length & Type & Vendor-ID & Vendor-Type & Data\\
+		\hline
+	\end{tabular}
+\end{center}
+\bigskip
 When a peer does not support the authentication method requested in an Expanded Type request it needs to respond with an Expanded Nak response. 
-If the peer lack support for Expanded Types, it needs to respond with a Legacy Nak.
+If the peer lack support for expanded types, it needs to respond with a legacy nak.
 
-\subsubsection{Authentication Methods}
+\paragraph{Authentication Methods}
 The remaining types correspond to different authentication methods.
-According to IANA 49 authentication methods have been assigned Type numbers \cite{joseph2004eap}.
-
+According to IANA \cite{joseph2004eap} 49 authentication methods have been assigned type numbers.
 The original RFC \cite{aboba2004extensible} already assigned 3 authentication protocols.
-
-\begin{itemize}
-	\item \textbf{Type 4} - MD5-Challenge
-	\item \textbf{Type 5} - One-Time Password
-	\item \textbf{Type 6} - Generic Token Card
-\end{itemize}
-
-Some notable examples are EAP-TLS \cite{simon2008eap}, EAP-PSK \cite{bersani2007eap}, EAP SRP-SHA1 \cite{carlson135eap}. % TODO: Mention that EAP SRP is interesting as it is ZKP
-The IANA list is not accounting for any authentication methods supported with the Expanded Type.
-
-%EAP - USAGES
+\bigskip
+\newline
+\begin{tabular}{rl}
+	Type & Name\\
+	\hline
+	4 & MD5-Challenge\\
+	5 & One-Time Password\\
+	6 & Generic Token Card\\
+\end{tabular}
+\bigskip
+\newline
+Some notable examples are EAP-TLS \cite{simon2008eap}, EAP-PSK \cite{bersani2007eap}.
+EAP SRP-SHA1 \cite{carlson135eap} is especially interesting as the peer uses a ZKP to authenticate itself.
 
 \subsection{Pass-Through Behaviour}
-An authenticator can acts as a "Pass-Through Authenticator", relying on authentication services of a \textit{backend authentication server}. 
-In this mode of operation the authenticator is relaying the EAP packets between the peer and the backend authentication server.
-
+An authenticator can acts as a \textit{Pass-Through Authenticator}, by using the authentication services of a \textit{backend authentication server}.
+In this mode of operation the authenticator is relaying the EAP messages between the peer and the backend authentication server.
 In IEEE 802.1x the authenticator communicates with a RADIUS server \cite{congdon2003ieee}.
 
 \subsection{IEEE 802.1x}
 
-IEEE 802.1x is standard for port based network access control for LAN and WLAN. It is part of the IEEE 802.11 group of network protocols.
+IEEE 802.1x is a port based network access control standard for LAN and WLAN.
+It is part of the IEEE 802.11 group of network protocols.
 
 IEEE 802.1x defines an encapsulation of EAP for use over IEEE 802 as EAPOL or "EAP over LANs".
-%NOT clear if EAP used in WPA2-PSK
-EAPOL is used in widely adopted wireless network security standards WPA2. In both WPA2-Personal and WPA2-Enterprise, EAPOL is used for communication between the supplicant (wireless station) and the authenticator (access point).
+%TODO: NOT clear if EAP used in WPA2-PSK
+EAPOL is used in widely adopted wireless network security standards WPA2. 
+In both WPA2-Personal and WPA2-Enterprise, EAPOL is used for communication between the supplicant and the authenticator.
 
-With WPA2-Enterprise, the authenticator (Access Point) functions in a pass-through mode as uses a RADIUS server for authentication services. 
+With WPA2-Enterprise, the authenticator functions in a pass-through mode and uses a RADIUS server to authenticate the supplicant.
 EAP packets between the authenticator and the authentications server (RADIUS) are encapsulated as RADIUS messages \cite{aboba2003radius, chen2005extensible, congdon2003ieee}

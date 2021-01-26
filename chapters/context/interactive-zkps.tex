@@ -27,14 +27,14 @@ The properties of \textit{completeness} and \textit{soundness} define an interac
 Any honest prover can convince the verifier with overwhelming probability.\\
 For each $k \in \mathbb{N}$ and sufficiently large $n$;
 
-$$Pr(x \in L; P(x) = y; V(y) = 1) \ge 1 - \frac{1}{n^k}$$
+$$\Pr[x \in L; P(x) = y; V(y) = 1] \ge 1 - \frac{1}{n^k}$$
 
 \paragraph{Soundness}
 
 Any verifier following the protocol will reject a cheating prover with overwhelming probability.\\
 For each $k \in \mathbb{N}$ and sufficiently large $n$;
 
-$$Pr(x \notin L; P(x) = y; V(y) = 0) \ge 1 - \frac{1}{n^k}$$
+$$\Pr[x \notin L; P(x) = y; V(y) = 0] \ge 1 - \frac{1}{n^k}$$
 
 
 \subsubsection{Interactive Polynomial Time Complexity}
@@ -89,7 +89,7 @@ If $U(x)$ and $V(x)$ are equal, outputs of a computationally unbounded algorithm
 \newline
 Let $L \subset \{0,1\}^*$ be a language, $U(x)$ and $V(x)$ are statistically indistinguishable on $L$ if,
 \bigskip
-$$|\Pr [A(x, U) = 1] - \Pr [A(x, V) = 1]| < |x|^{-c}$$ %TODO: This isnt right.
+$$|\Pr [A(x, U) = 1] - \Pr [A(x, V) = 1]| < |x|^{-c}$$ %TODO: Probably not right, check later.
 \bigskip
 \newline
 for $\forall c > 0$, and sufficiently long $x \in L$. 
@@ -106,31 +106,34 @@ for $\forall c > 0$, and sufficiently long $x \in L$.
 %
 %for $\forall c > 0$, and sufficiently long $x \in L$. 
 
-\paragraph{Computational Indistinguishability} 
-Two random variables are computationally indistinguishable, when the polynomial time algorithms outputs remain uncorrelated with the origin, given a poly-bounded sample size.
+\paragraph{Computational Indistinguishability} %TODO: Probably need to clarify the link between poly-time algorithm and poly-sized family of circuits.
+Two random variables are computationally indistinguishable, when the poly-time bounded algorithms outputs remain uncorrelated with the origin, given a poly-bounded sample size.
 \bigskip
-
-
-\subparagraph{Computational Indistinguishability}%TODO: Simplify this
-
-Two random variables are computationally indistinguishable, if judges verdict remains meaningless given a polynomial sized sample and polynomial amount of time.
-
-\bigskip
-
+\newline
 Let $L \subset \{0,1\}^*$ be a language, poly-bounded families of random variables $U(x)$ and $V(x)$ are computationally indistinguishable on $L$ if for all poly-sized family of circuits $C$, $\forall c > 0$, and a sufficiently long $x \in L$
 
-$$|P(U, C, x) - P(V, C, x)| < |x|^{-c}$$
+$$|\Pr[C(U, x) = 1] - \Pr[C(V, x) = 1]|  < |x|^{-c}$$
 
-Any two families that are \textit{computationally indistinguishable} are considered  \textit{indistinguishable} in general.
+
+%\subparagraph{Computational Indistinguishability}%TODO: Simplify this
+%
+%Two random variables are computationally indistinguishable, if judges verdict remains meaningless given a polynomial sized sample and polynomial amount of time.
+%
+%\bigskip
+%
+%Let $L \subset \{0,1\}^*$ be a language, poly-bounded families of random variables $U(x)$ and $V(x)$ are computationally indistinguishable on $L$ if for all poly-sized family of circuits $C$, $\forall c > 0$, and a sufficiently long $x \in L$
+%
+%$$|P(U, C, x) - P(V, C, x)| < |x|^{-c}$$
+%
+%Any two families that are \textit{computationally indistinguishable} are considered  \textit{indistinguishable} in general.
 
 \subsubsection{Approximability of Random Variables}%TODO: Simplify this
 
-The notion of approximability described the degree to which a random variable $U(x)$ can be "generated" by a probabilistic Turing machine.
-
+The notion of approximability described the degree to which a random variable $U(x)$ can be "generated" by a probabilistic Turing machine $M$, generating a probability distribution $M(x)$.
 \bigskip
-
-A random variable $U(x)$ is \textit{perfectly approximable} if there exists a probabilistic Turing machine $M$, such that for $x \in L$ $M(x)$ is \textit{equal} to $U(x)$.
-
+\newline
+A random variable $U(x)$ is \textit{perfectly approximable} if there exists a probabilistic Turing machine $M$, such that for $x \in L$, $M(x)$ is \textit{equal} to $U(x)$.
+\newline
 $U(x)$ is statistically or computationally approximable if $M(x)$ is statistically or computationally indistinguishable from $U(x)$.
 
 \bigskip
@@ -139,11 +142,11 @@ Generally speaking when saying a family of random variables $U(x)$ is \textit{ap
 
 \subsubsection{Definition of Zero-Knowledge}
 
-The zero-knowledge property is addressing the absence of meaningful information that can be extracted from the protocol by an honest or an cheating verifier.
-
-
-The verifiers \textit{view} is all data he sees in the interaction with the prover as well data already possessed by the verifier, for example previous interactions with the prover.
-
+Zero-knowledge is a degree of protocols knowledge complexity at which no meaningful information can be extracted by the verifier or any third party observer.
 \bigskip
+\newline
+A protocol is zero-knowledge if the verifiers "view" is approximable by a simulator $S$.
+A verifiers view is all data that was exchanged with the prover, a cheating verifier's view might have extra information (e.g a history of previous interactions).
 
-An interactive protocol is \textit{perfectly} zero-knowledge if the verifiers view is \textit{perfectly approximable} for all verifiers. Generally we say an interactive protocol is zero-knowledge when its \textit{computationally} zero-knowledge.
+A protocols is perfectly zero-knowledge if the view is perfectly approximable for all verifiers.
+Statistical or computational zero-knowledge is obtained by statistical or computational approximability.
