@@ -1,11 +1,50 @@
 \section{Zero-Knowledge Proofs}
 
+\subsection{Introduction}
+
 Traditional theorem proofs are logical arguments that establish truth through inference rules of a deductive system based on axioms and other proven theorems.
 \textit{Zero-Knowledge Proofs} (ZKPs) are compared to traditional proofs probabilistic meaning they \textit{"convince"} the verifier with a small margin of error.
 
 They were first defined by Goldwasser, Micali and Rackoff in \cite{GMR} in a paper published in 1985. 
 They proposed a proof system as a two-party protocol between a \textit{prover} and a \textit{verifier}. 
 It relies on the computational difficulty of the quadratic residuosity problem (QRP).
+
+\subsubsection{The Strange Cave of Ali Baba}
+A famous example of a zero-knowledge proof protocol made by \cite{QJM} is The Strange Cave of Ali Baba.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[height=6cm]{images/zkp}
+	\caption{The Strange Cave of Ali Baba}
+	\label{fig:strange-cave-of-alibaba}
+\end{figure}
+
+\bigskip
+
+Ali Baba's cave has a single entrance, that splits into two tunnels that meet in the middle where there is a door that can only be opened with a secret passphrase.
+
+\bigskip
+
+Peggy (or Prover) wants to prove to Victor (or Verifier) that she knows the secret passphrase, but she doesn't want to revel the secret nor does she want to reveal her knowledge of the secret to anyone else besides Victor.
+
+\bigskip
+
+To do this they come up with a scheme.
+Victor turns away from the entrance of the cave, so he cannot see Peggy, as she enters the cave and goes into one of the tunnels at random. 
+Victor then turns around and tells Peggy which tunnel to come out of.
+Peggy knowing the secret can pass through the door in the middle and emerge from the tunnel requested.
+
+\bigskip
+
+If Peggy didn't know the secret she could still convince Victor, by entering the correct tunnel by luck.
+But since Victor is choosing the tunnel at random, Peggy's chance of picking the correct tunnel is 50\%. If Victor were to repeat the process $n$ time, her chances of fooling him become arbitrarily small ($2^{-n}$).
+
+With this process Victor can be convinced that Peggy really knows the secret with a very chance ($1 - 2^{-n}$).
+
+\bigskip
+
+Further more any third party observing the interaction cannot be convinced of the validity of the proof because it cannot be assured that the interaction was truly random. 
+For example, Victor could have told Peggy his questions in advance, so Peggy would produce a convincing looking proof.
 
 %There are three main ingredients that make interactive zero-knowledge proofs work. %TODO: Move this part to the end of the section
 %
@@ -14,6 +53,17 @@ It relies on the computational difficulty of the quadratic residuosity problem (
 %	\item Hidden Randomisation - The verifier relies on randomness that is hidden from the prover, and thus unpredictable from him.
 %	\item Computational Difficulty - The prover embeds his proof in computational difficulty of some other problem.
 %\end{enumerate}
+
+\subsection{Applications}
+Most commonly ZKPs were used in authentication and identification systems, as a way to prove knowledge of a secret. 
+Recently however there have been a number of new applications in the cryptocurrency and digital identity spaces.
+
+The cryptocurrency Zcash uses a \textit{non-interactive zero-knowledge protocol} zk-SNARK \cite{bowe2018multi} to prove the validity of transactions, without revealing anything about the recipients nor the amount sent.
+
+The cryptocurrency Monero uses a ZKP protocol Bulletproofs \cite{bunz2018bulletproofs}, to achieve anonymous transactions.
+
+\textit{Idemix} \cite{camenisch2002design} an anonymous credential system for interaction between digital identities relies on CL-signatures \cite{camenisch2001efficient} to prove ownership of a credential offline, without the issuing organisation.
+Idemix has been implemented in the open-source Hyperledger Indy project.
 
 \subsection{Interactive Proof Systems}
 \textbf{Interactive proof systems} are proof systems between a prover and a verifier, which exchange messages to decide on the validness of the proof.

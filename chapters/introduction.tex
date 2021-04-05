@@ -1,50 +1,81 @@
-\section{Abstract}
-In this thesis I will introduce the notion of zero-knowledge proofs, their variants and formal definitions.
-In the second part of the thesis I will present a protocol for password based authentication based on the zero-knowledge proof of quadratic residuosity.
-In the last part of the thesis I will document the implementation of the protocol as an EAP authentication method. %TODO: Rewrite Abstract
+\section*{Abstract}
+We design an authentication protocol that can be used to authenticate users over a network with a username and password.
+The protocol uses the zero-knowledge proof (ZKP) of quadratic residuosity protocol as a verification mechanism.
+It is designed on top of the Extensible Authentication Protocol (EAP) framework as an EAP method.
+The ZKP verification protocol yields interesting security properties that make the protocol favourable to be used over insecure networks.
 
 \newpage
 
 \section{Introduction}
-Something about how privacy and security are becoming ever more important as our world is becoming ever more digitalised and connected. %TODO: Rewrite Abstract
+Authentication is a core component of computer security and an indispensable part of our modern digital lives.
+In this thesis we design an authentication protocol using Zero-Knowledge Proofs (ZKPs), an interesting cryptographic phenomenon that reveal nothing more than their validity of its proofs.
+Our protocol enables network authentication using a username and password.
+To create a secure password authentication protocol we have to be aware of the common pitfalls  and how modern security systems handle them.
+We use the Extensible Authentication Protocol (EAP) as the framework on top of which we design our authentication protocol.
 
-\subsection{Applications}
-Most commonly ZKPs were used in authentication and identification systems, as a way to prove knowledge of a secret. 
-Recently however there have been a number of new applications in the cryptocurrency and digital identity spaces.
+%
+%In computer systems authentication is a process where a system user asserts their identity via an authentication method.
+%There are many authentication systems appropriate for different use cases,
+%one of the most common systems for end user authentication is a combination of username and password.
+%
+%
+%Our authentication protocol is using zero-knowledge proofs (ZKP) to verify the users password. 
+%ZKPs are proofs that prove noting more than that they are true, this allows us to verify the users password without ever revealing or sending the password or password equivalents over the network.
+%
+%Conceptually passwords are secrets memorised by the user, and it is often the case that weaker passwords are easier to memorise, additionally many users reuse passwords between different systems.
+%When designing a password authentication system, we must keep adopt strategies that mitigate the vulnerabilities of passwords.
+%
+%
+%Password authentication is based on a shared secret between the user and the system. Passwords however require special handling because 
+%
+%
+%
+%
+%
+%In computer systems authentication is a process where a system user asserts their identity.
+%
+%Extensible Authentication Protocol (EAP) is a general purpose authentication protocol framework, designed for network authentication.
+%It defines a set of messages and communication patterns to support the negotiation and execution of authentication protocols.
+%EAP is authentication method agnostic and is designed to be extended with new authentication methods.
+%
+%There are many types of authentication methods appropriate for different use cases and contexts, one of the most common authentication methods is a combination of username and password.
+%
+%In a secure implementation of a password authentication, the system needs protect itself from shortcomings for passwords.
 
-The cryptocurrency Zcash uses a \textit{non-interactive zero-knowledge protocol} zk-SNARK \cite{bowe2018multi} to prove the validity of transactions, without revealing anything about the recipients nor the amount sent.
 
-The cryptocurrency Monero uses a ZKP protocol Bulletproofs \cite{bunz2018bulletproofs}, to achieve anonymous transactions.
 
-\textit{Idemix} \cite{camenisch2002design} an anonymous credential system for interaction between digital identities relies on CL-signatures \cite{camenisch2001efficient} to prove ownership of a credential offline, without the issuing organisation.
-Idemix has been implemented in the open-source Hyperledger Indy project.
+%%Passwords
+%One of the most common authentication use cases is end-user authentication with a username and password.
+%
+%To securely use password authentication, we have to adapt our system to work around short comings of passwords.
+%
+%%NIST
+%Authentication protocols focus on execution in a context where all necessary data exists. 
+%NIST Digital Identity Guidelines outline the complete lifecycle of an authentication system.
+%
+%%ZKP
+%Zero-Knowledge Proofs are proofs that reveal only that something is true, without revealing why it is true.
+%A simple ZKP protocol is for the problem of quadratic residuosity, which can be used as a basis for a password authentication protocol within the EAP framework.
+%
+%The protocol has to be extended to overcome the short comings of passwords.
+%
+%
+%
+%
+%* Authentication
+%* Password authentication
+%* EAP
+%* ZKP
 
-\subsection{Example} %TODO: Add picture
-A famous example of a zero-knowledge proof protocol made by \cite{QJM} is The Strange Cave of Ali Baba.
 
-\bigskip
 
-Ali Baba's cave has a single entrance, that splits into two tunnels that meet in the middle where there is a door that can only be opened with a secret passphrase.
 
-\bigskip
 
-Peggy (or Prover) wants to prove to Victor (or Verifier) that she knows the secret passphrase, but she doesn't want to revel the secret nor does she want to reveal her knowledge of the secret to anyone else besides Victor.
 
-\bigskip
 
-To do this they come up with a scheme.
-Victor turns away from the entrance of the cave, so he cannot see Peggy, as she enters the cave and goes into one of the tunnels at random. 
-Victor then turns around and tells Peggy which tunnel to come out of.
-Peggy knowing the secret can pass through the door in the middle and emerge from the tunnel requested.
+%TODO: Move to ZKP section
 
-\bigskip
 
-If Peggy didn't know the secret she could still convince Victor, by entering the correct tunnel by luck.
-But since Victor is choosing the tunnel at random, Peggy's chance of picking the correct tunnel is 50\%. If Victor were to repeat the process $n$ time, her chances of fooling him become arbitrarily small ($2^{-n}$).
+%TODO: Add VC in-range/in-set ZKPs
 
-With this process Victor can be convinced that Peggy really knows the secret with a very chance ($1 - 2^{-n}$).
-
-\bigskip
-
-Further more any third party observing the interaction cannot be convinced of the validity of the proof because it cannot be assured that the interaction was truly random. 
-For example, Victor could have told Peggy his questions in advance, so Peggy would produce a convincing looking proof.
+\newpage
