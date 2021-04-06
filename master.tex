@@ -1,4 +1,7 @@
-\documentclass[12pt]{article}
+\documentclass[12pt]{report}
+%\documentclass[12pt]{article}
+%\documentclass[12pt]{article}
+
 
 \title{Password-Based Authentication with Zero-Knowledge Proof of Quadratic Residuosity}
 \author{Jakob Povsic}
@@ -36,13 +39,21 @@
 
 \pagenumbering{arabic}
 
-\include{chapters/introduction}
-\include{chapters/context/authentication}
-\include{chapters/context/eap}
-\include{chapters/context/interactive-zkps}
-\include{chapters/context/languages-with-zkps}
-\include{chapters/pba-using-qr-zkp}
-\include{chapters/eap_pzkpqr}
+\include{abstract}
+
+\chapter{Introduction}
+\include{chapters/introduction/introduction}
+
+\chapter{Methodologies and Tools}
+\include{chapters/methodologies/authentication}
+\include{chapters/methodologies/password-authentication}
+\include{chapters/methodologies/eap}
+\include{chapters/methodologies/interactive-zkps}
+\include{chapters/methodologies/languages-with-zkps}
+
+\chapter{Results}
+\include{chapters/results/pba-using-qr-zkp}
+\include{chapters/results/eap_pzkpqr}
 
 %\bibliographystyle{alpha}
 \bibliographystyle{plain}
