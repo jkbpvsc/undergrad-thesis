@@ -1,0 +1,75 @@
+
+
+\section{Introduction} %TODO: Extend somehow
+Authentication is a core component of computer security and an indispensable part of our modern digital lives.
+In this thesis we design an authentication protocol using Zero-Knowledge Proofs (ZKPs), an interesting cryptographic phenomenon that reveal nothing more than their validity of its proofs.
+Our protocol enables network authentication using a username and password.
+To create a secure password authentication protocol we have to be aware of the common pitfalls  and how modern security systems handle them.
+We use the Extensible Authentication Protocol (EAP) as the framework on top of which we design our authentication protocol.
+
+%
+%In computer systems authentication is a process where a system user asserts their identity via an authentication method.
+%There are many authentication systems appropriate for different use cases,
+%one of the most common systems for end user authentication is a combination of username and password.
+%
+%
+%Our authentication protocol is using zero-knowledge proofs (ZKP) to verify the users password. 
+%ZKPs are proofs that prove noting more than that they are true, this allows us to verify the users password without ever revealing or sending the password or password equivalents over the network.
+%
+%Conceptually passwords are secrets memorised by the user, and it is often the case that weaker passwords are easier to memorise, additionally many users reuse passwords between different systems.
+%When designing a password authentication system, we must keep adopt strategies that mitigate the vulnerabilities of passwords.
+%
+%
+%Password authentication is based on a shared secret between the user and the system. Passwords however require special handling because 
+%
+%
+%
+%
+%
+%In computer systems authentication is a process where a system user asserts their identity.
+%
+%Extensible Authentication Protocol (EAP) is a general purpose authentication protocol framework, designed for network authentication.
+%It defines a set of messages and communication patterns to support the negotiation and execution of authentication protocols.
+%EAP is authentication method agnostic and is designed to be extended with new authentication methods.
+%
+%There are many types of authentication methods appropriate for different use cases and contexts, one of the most common authentication methods is a combination of username and password.
+%
+%In a secure implementation of a password authentication, the system needs protect itself from shortcomings for passwords.
+
+
+
+%%Passwords
+%One of the most common authentication use cases is end-user authentication with a username and password.
+%
+%To securely use password authentication, we have to adapt our system to work around short comings of passwords.
+%
+%%NIST
+%Authentication protocols focus on execution in a context where all necessary data exists. 
+%NIST Digital Identity Guidelines outline the complete lifecycle of an authentication system.
+%
+%%ZKP
+%Zero-Knowledge Proofs are proofs that reveal only that something is true, without revealing why it is true.
+%A simple ZKP protocol is for the problem of quadratic residuosity, which can be used as a basis for a password authentication protocol within the EAP framework.
+%
+%The protocol has to be extended to overcome the short comings of passwords.
+%
+%
+%
+%
+%* Authentication
+%* Password authentication
+%* EAP
+%* ZKP
+
+
+
+
+
+
+
+%TODO: Move to ZKP section
+
+
+%TODO: Add VC in-range/in-set ZKPs
+
+\newpage

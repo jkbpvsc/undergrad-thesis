@@ -1,0 +1,202 @@
+\section{Zero-Knowledge Proofs}
+
+\subsection{Introduction}
+
+Traditional theorem proofs are logical arguments that establish truth through inference rules of a deductive system based on axioms and other proven theorems.
+\textit{Zero-Knowledge Proofs} (ZKPs) are compared to traditional proofs probabilistic meaning they \textit{"convince"} the verifier with a small margin of error.
+
+They were first defined by Goldwasser, Micali and Rackoff in \cite{GMR} in a paper published in 1985. 
+They proposed a proof system as a two-party protocol between a \textit{prover} and a \textit{verifier}. 
+It relies on the computational difficulty of the quadratic residuosity problem (QRP).
+
+\subsubsection{The Strange Cave of Ali Baba}
+A famous example of a zero-knowledge proof protocol made by \cite{QJM} is The Strange Cave of Ali Baba.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[height=6cm]{images/zkp}
+	\caption{The Strange Cave of Ali Baba}
+	\label{fig:strange-cave-of-alibaba}
+\end{figure}
+
+\bigskip
+
+Ali Baba's cave has a single entrance, that splits into two tunnels that meet in the middle where there is a door that can only be opened with a secret passphrase.
+
+\bigskip
+
+Peggy (or Prover) wants to prove to Victor (or Verifier) that she knows the secret passphrase, but she doesn't want to revel the secret nor does she want to reveal her knowledge of the secret to anyone else besides Victor.
+
+\bigskip
+
+To do this they come up with a scheme.
+Victor turns away from the entrance of the cave, so he cannot see Peggy, as she enters the cave and goes into one of the tunnels at random. 
+Victor then turns around and tells Peggy which tunnel to come out of.
+Peggy knowing the secret can pass through the door in the middle and emerge from the tunnel requested.
+
+\bigskip
+
+If Peggy didn't know the secret she could still convince Victor, by entering the correct tunnel by luck.
+But since Victor is choosing the tunnel at random, Peggy's chance of picking the correct tunnel is 50\%. If Victor were to repeat the process $n$ time, her chances of fooling him become arbitrarily small ($2^{-n}$).
+
+With this process Victor can be convinced that Peggy really knows the secret with a very chance ($1 - 2^{-n}$).
+
+\bigskip
+
+Further more any third party observing the interaction cannot be convinced of the validity of the proof because it cannot be assured that the interaction was truly random. 
+For example, Victor could have told Peggy his questions in advance, so Peggy would produce a convincing looking proof.
+
+%There are three main ingredients that make interactive zero-knowledge proofs work. %TODO: Move this part to the end of the section
+%
+%\begin{enumerate}
+%	\item Interaction - The prover and the verifier exchange messages back and forth.
+%	\item Hidden Randomisation - The verifier relies on randomness that is hidden from the prover, and thus unpredictable from him.
+%	\item Computational Difficulty - The prover embeds his proof in computational difficulty of some other problem.
+%\end{enumerate}
+
+\subsection{Applications}
+Most commonly ZKPs were used in authentication and identification systems, as a way to prove knowledge of a secret. 
+Recently however there have been a number of new applications in the cryptocurrency and digital identity spaces.
+
+The cryptocurrency Zcash uses a \textit{non-interactive zero-knowledge protocol} zk-SNARK \cite{bowe2018multi} to prove the validity of transactions, without revealing anything about the recipients nor the amount sent.
+
+The cryptocurrency Monero uses a ZKP protocol Bulletproofs \cite{bunz2018bulletproofs}, to achieve anonymous transactions.
+
+\textit{Idemix} \cite{camenisch2002design} an anonymous credential system for interaction between digital identities relies on CL-signatures \cite{camenisch2001efficient} to prove ownership of a credential offline, without the issuing organisation.
+Idemix has been implemented in the open-source Hyperledger Indy project.
+
+\subsection{Interactive Proof Systems}
+\textbf{Interactive proof systems} are proof systems between a prover and a verifier, which exchange messages to decide on the validness of the proof.
+The prover is a computationally unbounded polynomial time Turing machine and the verifier is a probabilistic polynomial time Turing machine.
+
+
+The properties of \textit{completeness} and \textit{soundness} define an interactive proof system.
+
+\paragraph{Completeness}
+
+Any honest prover can convince the verifier with overwhelming probability.\\
+For each $k \in \mathbb{N}$ and sufficiently large $n$;
+
+$$\Pr[x \in L; P(x) = y; V(y) = 1] \ge 1 - \frac{1}{n^k}$$
+
+\paragraph{Soundness}
+
+Any verifier following the protocol will reject a cheating prover with overwhelming probability.\\
+For each $k \in \mathbb{N}$ and sufficiently large $n$;
+
+$$\Pr[x \notin L; P(x) = y; V(y) = 0] \ge 1 - \frac{1}{n^k}$$
+
+
+\subsubsection{Interactive Polynomial Time Complexity}
+Any problem solvable by an interactive proof systems is in the class of \textbf{IP}.
+
+\subsubsection{Other Variants of Interactive Proof Systems}
+
+\paragraph{Arthur-Merlin protocol} Problems in the class \textbf{AM}, an Arthur-Merlin protocol \cite{babai1985trading} is an interactive protocol similar to IP, with the difference in that its a \textit{public-coin protocol}. 
+Meaning that verifiers internal state is visible to the prover, while in IP the state is hidden.
+%I has been proven that AM is equally powerful as IP and that AM's public internal state gives the prover no advantage. %TODO: Add citation
+
+\paragraph{Multi Prover Interactive Proofs}
+\textbf{MIP} \cite{ben2019multi} is a more powerful model, utilising two provers that communicate with a single verifier.
+This models has been build to address the shortcomings of IP.
+MIP proved that every problem has a ZKP system, without the assumption that one-way functions exist.
+
+\subsection{Knowledge Complexity}
+
+\textit{Zero-knowledge proof systems} prove the  membership of $x$ in language $L$, without revealing any additional knowledge (e.g why is $x \in L$).
+
+The essence of zero-knowledge is the idea that what the verifier \textit{sees} is indistinguishable from what can be easily \textit{simulated} on public inputs.
+The term \textit{knowledge complexity} quantifies the degrees of indistinguishability of different languages and proof constructions. 
+
+\subsubsection{Indistinguishability}
+Indistinguishability describes degrees of an ability to distinguish between two random variables $U, V$.
+\bigskip
+\newline
+Let $U = \{U(x)\}$ and $V = \{V(x)\}$ be two families of random variables, where $x$ is from a language $L$, a subset of $\{0, 1\}^*$.
+\newline
+An algorithm $A(x)$ is given a random sample $x$ from either distribution and will output either $1$ or $0$, depending which distribution it determines the sample originated from.
+Distributions become "indistinguishable" as the outputs of the algorithm become uncorrelated to the origin of the sample.
+
+By bounding the \textit{size} of the sample and the \textit{time} given to the algorithm we can obtain different notions of indistinguishability.
+
+%\subsubsection{Indistinguishability of Random Variables} %TODO: Simplify this
+%
+%Let $U = \{U(x)\}$ and $V = \{V(x)\}$ be two families of random variables, where $x$ is from a language $L$, a particular subset of $\{0, 1\}^*$.
+%
+%In the framework for distinguishing between random variables, a "judge" is given a sample selected randomly from either $V(x)$ or $U(x)$.
+%A judge studies the sample and outputs either a $0$ or a $1$, depending on which distribution he thinks the sample came from.
+%
+%$U(x)$ essentially becomes "replaceable" by $V(x)$, when $x$ increases and any judges prediction becomes uncorrelated with the origin distribution.
+
+
+\paragraph{Equality} 
+%Given that $U(x)$ and $V(x)$ are equal, they will remain indistinguishable, even if the samples are of arbitrary size and can be studied for an arbitrary amount of time.
+
+If $U(x)$ and $V(x)$ are equal, outputs of a computationally unbounded algorithm will remain uncorrelated with the origin of the sample.
+
+\paragraph{Statistical Indistinguishability} Two random variables are statistically indistinguishable, when the algorithms outputs remain uncorrelated with the origin, given an arbitrary amount of time and a poly-bounded sample size.
+\bigskip
+\newline
+Let $L \subset \{0,1\}^*$ be a language, $U(x)$ and $V(x)$ are statistically indistinguishable on $L$ if,
+\bigskip
+$$|\Pr [A(x, U) = 1] - \Pr [A(x, V) = 1]| < |x|^{-c}$$ %TODO: Probably not right, check later.
+\bigskip
+\newline
+for $\forall c > 0$, and sufficiently long $x \in L$. 
+
+%\subparagraph{Statistical Indistinguishability} Two random variables are statistically indistinguishable, when given a polynomial sized sample and an arbitrary amount of time, the judges verdict remains meaningless.
+%
+%\bigskip
+%
+%Let $L \subset \{0,1\}^*$ be a language, $U(x)$ and $V(x)$ are statistically indistinguishable on $L$ if,
+%
+%$$\sum_{\alpha \in \{0,1\}^*} |prob(U(x) = \alpha) - prob(V(x) = \alpha) | < |x|^{-c}$$
+%
+%
+%
+%for $\forall c > 0$, and sufficiently long $x \in L$. 
+
+\paragraph{Computational Indistinguishability} %TODO: Probably need to clarify the link between poly-time algorithm and poly-sized family of circuits.
+Two random variables are computationally indistinguishable, when the poly-time bounded algorithms outputs remain uncorrelated with the origin, given a poly-bounded sample size.
+\bigskip
+\newline
+Let $L \subset \{0,1\}^*$ be a language, poly-bounded families of random variables $U(x)$ and $V(x)$ are computationally indistinguishable on $L$ if for all poly-sized family of circuits $C$, $\forall c > 0$, and a sufficiently long $x \in L$
+
+$$|\Pr[C(U, x) = 1] - \Pr[C(V, x) = 1]|  < |x|^{-c}$$
+
+
+%\subparagraph{Computational Indistinguishability}%TODO: Simplify this
+%
+%Two random variables are computationally indistinguishable, if judges verdict remains meaningless given a polynomial sized sample and polynomial amount of time.
+%
+%\bigskip
+%
+%Let $L \subset \{0,1\}^*$ be a language, poly-bounded families of random variables $U(x)$ and $V(x)$ are computationally indistinguishable on $L$ if for all poly-sized family of circuits $C$, $\forall c > 0$, and a sufficiently long $x \in L$
+%
+%$$|P(U, C, x) - P(V, C, x)| < |x|^{-c}$$
+%
+%Any two families that are \textit{computationally indistinguishable} are considered  \textit{indistinguishable} in general.
+
+\subsubsection{Approximability of Random Variables}%TODO: Simplify this
+
+The notion of approximability described the degree to which a random variable $U(x)$ can be "generated" by a probabilistic Turing machine $M$, generating a probability distribution $M(x)$.
+\bigskip
+\newline
+A random variable $U(x)$ is \textit{perfectly approximable} if there exists a probabilistic Turing machine $M$, such that for $x \in L$, $M(x)$ is \textit{equal} to $U(x)$.
+\newline
+$U(x)$ is statistically or computationally approximable if $M(x)$ is statistically or computationally indistinguishable from $U(x)$.
+
+\bigskip
+
+Generally speaking when saying a family of random variables $U(x)$ is \textit{approximable} we mean that it is \textit{computationally} approximable.
+
+\subsubsection{Definition of Zero-Knowledge}
+
+Zero-knowledge is a degree of protocols knowledge complexity at which no meaningful information can be extracted by the verifier or any third party observer.
+\bigskip
+\newline
+A protocol is zero-knowledge if the verifiers "view" is approximable by a simulator $S$.
+A verifiers view is all data that was exchanged with the prover, a cheating verifier's view might have extra information (e.g a history of previous interactions).
+
+A protocols is perfectly zero-knowledge if the view is perfectly approximable for all verifiers.
+Statistical or computational zero-knowledge is obtained by statistical or computational approximability.
