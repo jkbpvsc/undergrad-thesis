@@ -1,14 +1,15 @@
 \section{Zero-Knowledge Proofs}
+In our protocol we wish to use zero-knowledge proofs as a core tool to verify users password. We look at what ZKPs are and how they work.
 
 \subsection{Introduction}
+\textit{Zero-Knowledge Proofs} (ZKPs) are a concept in the field of cryptography, and can be used to prove the validity of mathematical statements. What makes ZKPs particularly interesting is that it can achieve that without revealing any information about why a statement is true.
 
-Traditional theorem proofs are logical arguments that establish truth through inference rules of a deductive system based on axioms and other proven theorems.
-\textit{Zero-Knowledge Proofs} (ZKPs) are compared to traditional proofs probabilistic meaning they \textit{"convince"} the verifier with a small margin of error.
+In mathematics, traditional theorem proofs are logical arguments that establish truth through inference rules of a deductive system based on axioms and other proven theorems.
+ ZKPs are probabilistic, meaning they \textit{"convince"} the verifier of the validity with a small margin of error.
 
-They were first defined by Goldwasser, Micali and Rackoff in \cite{GMR} in a paper published in 1985. 
-They proposed a proof system as a two-party protocol between a \textit{prover} and a \textit{verifier}. 
-It relies on the computational difficulty of the quadratic residuosity problem (QRP).
-
+They were first defined by Goldwasser, Micali and Rackoff in \cite{GMR} in 1985. 
+They proposed a proof system as a two-party protocol between a \textit{prover} and a \textit{verifier}. It relies on the computational difficulty of the quadratic residuosity problem.
+\newpage
 \subsubsection{The Strange Cave of Ali Baba}
 A famous example of a zero-knowledge proof protocol made by \cite{QJM} is The Strange Cave of Ali Baba.
 
@@ -36,7 +37,7 @@ Peggy knowing the secret can pass through the door in the middle and emerge from
 
 \bigskip
 
-If Peggy didn't know the secret she could still convince Victor, by entering the correct tunnel by luck.
+If Peggy didn't know the secret she could fool Victor, by entering the correct tunnel by chance.
 But since Victor is choosing the tunnel at random, Peggy's chance of picking the correct tunnel is 50\%. If Victor were to repeat the process $n$ time, her chances of fooling him become arbitrarily small ($2^{-n}$).
 
 With this process Victor can be convinced that Peggy really knows the secret with a very chance ($1 - 2^{-n}$).
@@ -45,14 +46,6 @@ With this process Victor can be convinced that Peggy really knows the secret wit
 
 Further more any third party observing the interaction cannot be convinced of the validity of the proof because it cannot be assured that the interaction was truly random. 
 For example, Victor could have told Peggy his questions in advance, so Peggy would produce a convincing looking proof.
-
-%There are three main ingredients that make interactive zero-knowledge proofs work. %TODO: Move this part to the end of the section
-%
-%\begin{enumerate}
-%	\item Interaction - The prover and the verifier exchange messages back and forth.
-%	\item Hidden Randomisation - The verifier relies on randomness that is hidden from the prover, and thus unpredictable from him.
-%	\item Computational Difficulty - The prover embeds his proof in computational difficulty of some other problem.
-%\end{enumerate}
 
 \subsection{Applications}
 Most commonly ZKPs were used in authentication and identification systems, as a way to prove knowledge of a secret. 
@@ -66,40 +59,39 @@ The cryptocurrency Monero uses a ZKP protocol Bulletproofs \cite{bunz2018bulletp
 Idemix has been implemented in the open-source Hyperledger Indy project.
 
 \subsection{Interactive Proof Systems}
-\textbf{Interactive proof systems} are proof systems between a prover and a verifier, which exchange messages to decide on the validness of the proof.
+\textbf{Interactive proof systems} are proof systems between a prover and a verifier, who exchange messages to decide on the validness of the proof.
 The prover is a computationally unbounded polynomial time Turing machine and the verifier is a probabilistic polynomial time Turing machine.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=8cm]{images/interactive-proof-system}
+	\caption{Interactive Proof System}
+	\label{fig:interactive-proof-system}
+\end{figure}
 
 
 The properties of \textit{completeness} and \textit{soundness} define an interactive proof system.
 
+\paragraph{Notation}
+\begin{description}
+	\item $\Pr[A]$: probability of event $A$ happening.
+	\item $P(x) = y$: prover $P$, outputs a witness $y$ for statement $x$.
+	\item $V(y) = 1$: verifier $V$, analyses witness $y$ and outputs $1$ for valid witness or $0$.
+\end{description}
+
 \paragraph{Completeness}
 
 Any honest prover can convince the verifier with overwhelming probability.\\
-For each $k \in \mathbb{N}$ and sufficiently large $n$;
+For $x \in L$ and each $k \in \mathbb{N}$ and sufficiently large $n$;
 
 $$\Pr[x \in L; P(x) = y; V(y) = 1] \ge 1 - \frac{1}{n^k}$$
 
 \paragraph{Soundness}
 
 Any verifier following the protocol will reject a cheating prover with overwhelming probability.\\
-For each $k \in \mathbb{N}$ and sufficiently large $n$;
+For $x \notin L$ and each $k \in \mathbb{N}$ and sufficiently large $n$;
 
 $$\Pr[x \notin L; P(x) = y; V(y) = 0] \ge 1 - \frac{1}{n^k}$$
-
-
-\subsubsection{Interactive Polynomial Time Complexity}
-Any problem solvable by an interactive proof systems is in the class of \textbf{IP}.
-
-\subsubsection{Other Variants of Interactive Proof Systems}
-
-\paragraph{Arthur-Merlin protocol} Problems in the class \textbf{AM}, an Arthur-Merlin protocol \cite{babai1985trading} is an interactive protocol similar to IP, with the difference in that its a \textit{public-coin protocol}. 
-Meaning that verifiers internal state is visible to the prover, while in IP the state is hidden.
-%I has been proven that AM is equally powerful as IP and that AM's public internal state gives the prover no advantage. %TODO: Add citation
-
-\paragraph{Multi Prover Interactive Proofs}
-\textbf{MIP} \cite{ben2019multi} is a more powerful model, utilising two provers that communicate with a single verifier.
-This models has been build to address the shortcomings of IP.
-MIP proved that every problem has a ZKP system, without the assumption that one-way functions exist.
 
 \subsection{Knowledge Complexity}
 
