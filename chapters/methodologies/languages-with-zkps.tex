@@ -1,22 +1,33 @@
-\section{Languages with Zero-Knowledge Proof Systems}
-The zero-knowledge property of interactive proofs is determined by the language the proof exists for.
-The choice of language also determines the ZKPs practical applicability.
-\bigskip
-\newline
-The original ZKP protocols \cite{GMR} were proposed for the languages of Quadratic Residuosity problem (QRP) and Quadratic Non-Residuosity Problem (QNRP).
-Other simpler protocols are also based on the Discrete Logarithm problem \cite{wu1998secure} and Graph Isomorphism Problem \cite{goldreich2019proofs}.
+\section{Languages with Zero-Knowledge Interactive Proof Systems}
+We have explored in abstract terms what defines interactive proof systems and their knowledge complexity.
+But what are concrete examples of zero-knowledge proof systems and what can have a zero-knowledge proof system.
+The determining factor of wether a zero-knowledge proof system exists or not is the \textit{problem} or \textit{language} the proof is for.
+The underlying language also defines the applicability of the protocol, simpler ZKPs are used to prove knowledge of a secret, while advanced ZKPs are used to prove signatures over hidden values \cite{bunz2018bulletproofs, camenisch2001efficient, bowe2018multi}, set membership or range proofs \cite{camenisch2008efficient}.
 
-It has been proven in \cite{GMW} that every language in \textbf{NP} has a ZKP system.
 
-ZKP and interactive protocols have also been used as a tool for studying language complexity \cite{shamir1992ip}.
-\bigskip
-\newline
-In this thesis we are focusing the language QRP.
+The core of our protocol is based on the ZKP of quadratic residuosity as presented in \cite{goldwasser1989knowledge}.
+We dive deep into how and why the protocol works, by exploring the mathematical foundation of quadratic residues, what is the quadratic residuosity problem and its cryptographic applications.
 
-\subsection{Zero-Knowledge Proof of Quadratic Residuosity Problem}
-\textit{Quadratic Residuosity Problem} was used in the original ZKP protocol in the founding paper \cite{GMR}. QRP has a \textit{perfect} zero-knowledge proof system.
+We also look at examples other languages with zero-knowledge proof systems and more broadly at complexity classes of languages with zero-knowledge proof systems.
+%\bigskip
+%\newline
+%The original ZKP protocols \cite{GMR} were proposed for the languages of Quadratic Residuosity problem (QRP) and Quadratic Non-Residuosity Problem (QNRP).
+%Other simpler protocols are also based on the Discrete Logarithm problem \cite{wu1998secure} and Graph Isomorphism Problem \cite{goldreich2019proofs}.
+%
+%It has been proven in \cite{GMW} that every language in \textbf{NP} has a ZKP system.
+%
+%ZKP and interactive protocols have also been used as a tool for studying language complexity \cite{shamir1992ip}.
+%\bigskip
+%\newline
+%In this thesis we are focusing the language QRP.
 
-QRP is much older than the \cite{GMR} paper, it was first described by Gauss in 1801 \cite{gauss1801disquisitiones}.
+\subsection{ZKP of Quadratic Residuosity Problem}
+\label{zkp-qrp}
+The original paper \cite{goldwasser1989knowledge} on ZKPs, presented a zero-knowledge proof protocol for the  \textit{Quadratic Residuosity Problem}.
+Quadratic residuosity problem has a \textit{perfect} zero-knowledge proof system.
+Let's explore the mathematical fundamentals, used them to describe the quadratic residuosity problem and finally see how this is used to create a ZKP system.
+The quadratic residuosity problem is much older than ZKPs, it was first described by Gauss in 1801 \cite{gauss1801disquisitiones}.
+
 
 \subsubsection{Quadratic Residues} \cite{andrews1994number}
 Quadratic residues come from modular arithmetic, a branch of number theory.
@@ -26,91 +37,146 @@ For $a, n \in \mathbb{Z}$, $n > 0$, $\gcd(a, n) = 1 $.
 $a$ is a \textit{quadratic residue} if  $\exists x:x^2 \equiv a \Mod{n}$, otherwise $a$ is a \textit{quadratic non-residue}.
 \bigskip
 \newline
-When $n$ is an odd prime, $a$ is a quadratic residue modulo $n$, if and only if.
+For example, $3$ is a quadratic residue mod 11, because $6^2 = 36 \equiv 3 \Mod{11}$
+\bigskip
+\newline
+Generally, when $n$ is an odd prime, $a$ is a quadratic residue mod $n$, if and only if.
 
 $$a^{\frac{n-1}{2}} \equiv 1 \Mod{n}$$
 
-\paragraph{Legendre Symbol}
-$\dlegendre{a}{p}$ simplifies computations with quadratic residues.
+\paragraph{Legendre Symbol} $\dlegendre{a}{p}$ is a convenient notation for computation of quadratic residues, and is defined as a function of $a$ and $p$,
 \bigskip
 \newline
 If $p$ is an odd prime then,
-
-\begin{center}
-	$\dlegendre{a}{p} =
+$$
+\dlegendre{a}{p} =
 		\begin{cases}
-			1 & \text{if $a$ is a quadratic residue modulo $p$}\\
-			0 & \text{if p $\arrowvert$ a}\\
-			-1 & \text{otherwise}
-		\end{cases}$
-\end{center}
+			1 & \text{$a$ is a quadratic residue modulo $p$}\\
+			-1 & \text{$a$ is a quadratic non-residue modulo $p$}\\
+			0 & \text{$gcd(a, p) \not = 1$}\\
+		\end{cases}
+$$
+\smallskip
+$$
+\dlegendre{a}{p} \equiv a^{\frac{p - 1}{2}} \Mod{n} \quad \text{and} \quad \dlegendre{a}{p} \in \{-1, 0, 1\}
+$$
+For example
+
+\begin{description}
+	\item 3 is a quadratic residue modulo 11
+	$$\dlegendre{3}{11}\equiv 3^{\frac{11-1}{2}} = 243 \equiv 1 \Mod{11}$$
+	\item 6 is a quadratic non-residue modulo 11
+	$$\dlegendre{6}{11}\equiv 6^{\frac{11-1}{2}} = 7776  \equiv -1 \Mod{11}$$
+
+\end{description}
 
 \paragraph{Jacobi Symbol}
 A generalised definition of the Legendre symbol $\dlegendre{a}{m}$, to allow the case where $m$ is any odd number.
 
 If $m = p_1p_2 \cdots p_n$, where $p_i$ are odd primes, then
 $$\dlegendre{n}{m} = \dlegendre{n}{p_1}\dlegendre{n}{p_2} \cdots\dlegendre{n}{p_n}$$
+\\
+Unlike the Legendre symbol, if $\legendre{a}{n} = 1$, $a$ is a quadratic residue only if $a$ is a quadratic residue of every prime factor of $n=p_1p_2 \cdots p_n$.
 
 \subsubsection{Prime Factorization}
 \cite{andrews1994number} The \textit{Fundamental Theorem of Arithmetic} states that for each integer \newline $n > 1$, exist primes $p_1 \le p_2 \le \cdots \le p_r$, such that $n = p_1 p_2 \cdots p_r$.
-\bigskip
-\newline
-The process of prime factorization is a decomposition of a number $n$ to its prime factors $p_1 p_2 \cdots p_r$.
-
-Currently no efficient algorithm exists for prime factorization. The problem is especially hard when factoring \textit{semiprimes}, a product of two prime numbers.
-This hardness of this problem is used as a core building block in modern asymmetric cryptography like RSA \cite{rivest1978method}.
-
-
-\subsubsection{Quadratic Residuosity Problem}
-Given $a$, semiprime $n = pq$, where $p$ and $q$ are unknown different primes, and Jacobi symbol $\dlegendre{a}{n} = 1$.
-\newline
-Determine wether $a$ is a quadratic residue modulo $n$ or not.
-\bigskip
-\newline
-The Jacobi Symbol can be efficiently computed using the \textit{Law of Quadratic Reciprocity}, but it does not always tell us if $a$ is quadratic residue modulo $n$ or not. 
-
-$$\dlegendre{a}{n} =\dlegendre{a}{p}\dlegendre{a}{q}$$
-If $\legendre{a}{n} = 1$ then $a$ is a quadratic residue both modulo $p$ and $q$, or $a$ is a quadratic non-residue both modulo $p$ and $q$.
-To know wether $a$ is a quadratic residue modulo $n$ or not, we would have to know the prime factorization $p, q$ of $n$.
-\newline
-If $\legendre{a}{n} = -1$ we know $a$ is a quadratic non-residue modulo $p$ or $q$.
-
-
-\subsubsection{ZKP Protocol for the Quadratic Residuosity Problem}
+%\bigskip
 
 \begin{center}
+	\begin{tabular}{|l|l|}
+		\hline
+		$1995 = 3 \cdot 5 \cdot 7 \cdot 19$ & 
+		$1996 = 2^2 \cdot 499$ \\
+		\hline
+		$1997 = 1997$ &
+		$1998 = 2 \cdot 3^3 * 37$\\
+		\hline
+	\end{tabular}
+\end{center}
+
+
+%\bigskip
+%\newline
+Prime factorization is the decomposition of an integer $n$ to its prime factors $p_1 p_2 \cdots p_r$.
+%%TODO: Citations
+The problem is considered "hard", because currently no polynomial time algorithm exists. It is in class \textit{NP}, but is not proven to be NP-complete.
+The hardest instance of this problem are when factoring the product of two prime numbers (\textit{semiprimes}).
+The difficulty of this problem is a core building block in modern asymmetric cryptography like RSA \cite{rivest1978method}.
+
+\subsubsection{Quadratic Residuosity Problem}
+Given an integer $a$, a semiprime $n = pq$, where $p$ and $q$ are \textit{unknown} different primes, and a Jacobi symbol value $\legendre{a}{n} = 1$.
+Determine if $a$ is a quadratic residue modulo $n$ or not.
+\bigskip\\
+The \textit{law of quadratic reciprocity} enables us to efficiently compute the Jacobi Symbol $\legendre{a}{n}$.\\
+However if the computed $\legendre{a}{n} = 1$, it does not necessarily tell if $a$ is a quadratic residue modulo $n$ or not, $a$ is only a quadratic residue if $a$ is a quadratic residue of both modulo $p$ and $q$.
+To calculate this we would have to know the primes $p$ and $q$ by factoring $n$. However since $n$ is a semiprime, we know this is an exceptionally  difficult task.
+
+\newpage
+\subsubsection{Zero-Knowledge Proof of Quadratic Residuosity}
+In the original paper \cite{goldwasser1989knowledge} on zero-knowledge proofs, the problem of quadratic residuosity was used to construct a zero-knowledge proof system.
+The protocol is an interactive proof system in which a \textit{prover} attempts to convince a \textit{verifier} that an integer $x$ is a quadratic residue modulo $n$. 
+The prover attempts to proving the knowledge $w$, where $w^2 \equiv x \Mod{n}$.
+
+
+\bigskip
+The bottom table demonstrates the steps in the protocol, 
+the number on the left side of each row determines the \textit{step}.
+The middle space displays what information is exchanged between two parties and the direction of the exchange.
+Space of individual parties display computations done by each party. 
+This notation is used in all further protocol examples.\\
+\begin{center}
 	\begin{tabular}{rl}
-		$n$ & Semiprime, where $\legendre{x}{n} = 1$\\
+		$n$ & Semiprime, where Jacobi $\legendre{x}{n} = 1$\\
  		$x$ & Public input, where $x = w^2 \Mod n$\\
  		$w$ & Provers private input\\
 	\end{tabular}
 \end{center}
-
-
 \begin{center}
-	\begin{tabular}{r|c|l}
-		Prover && Verifier\\
+	\begin{tabular}{r|r|c|l}
+		& Prover && Verifier\\
 		\hline
-		$u \leftarrow \Bbb{Z}_{n}^{*}; y = u^2 \Mod n$ & $\xrightarrow{y}$\\
-		& $\xleftarrow{b}$ & $b \leftarrow_R \{0, 1\} $\\
-		$z = uw^b\Mod n$ & $\xrightarrow z$ & verify $z^2 = yx^b \Mod n$\\
+		1&$u \leftarrow_R \Bbb{Z}_{n}^{*}; y = u^2 \Mod n$ & $\xrightarrow{y}$\\
+		2 & & $\xleftarrow{b}$ & $b \leftarrow_R \{0, 1\} $\\
+		3 &$z = uw^b\Mod n$ & $\xrightarrow z$ & verify $z^2 = yx^b \Mod n$\\
 	\end{tabular}
 \end{center}
-This protocol is repeated $m$ times, for a probability of error of $\frac{1}{2^m}$.
+\bigskip
+The prover begins by picking a random number $u$ from field $\Bbb{Z}_{n}$, computing $y = u^2 \Mod n$ and sending $y$ to the verifier.
+The verifier picks a random bit $b$ and sends it to the prover, this random bit functions as the "split in the tunnel" of our earlier cave analogy.
+The prover computes the value $z$ based on $b$ and sends it over.
+The verifier verifies the proof, by checking if $z^2 = yx^b \Mod{n}$, this is possible since,
+$$z^2 = yx^b \Mod{n}$$
+$$(uw^b)^2 = u^2(w^2)^b \Mod{n}$$
+$$u^2w^{2b} = u^2w^{2b} \Mod{n}$$
+
+In each round the prover has $\frac{1}{2}$ probability of cheating, by attempting to guess the value of random bit $b$, to improve the strength of the proof the verification is repeated $m$ times, for a confidence of $ 1-2^{-m}$.
+
+\paragraph{Parallel Composition}
+Zero-knowledge proof of quadratic residuosity, can be alternatively be composed in \textit{parallel} instead of sequentially.
+Parallel composition is very interesting because it reduces the number of interactions between the prover and the verifier, in practical applications this improves the speed of the protocol as we are less affected by communication inefficiencies.
+
+Only languages in \textit{BPP} have 3-round interactive zero-knowledge proofs \cite{goldreich1996composition}. 
+However the quadratic residuosity problem is not believed to be in BPP, so its parallel 3-round proof system, is assumed to have a weaker notion of zero-knowledge.
+Our protocol design uses a sequential proof
+
+The QRP is not believed to be in BPP, so a parallel composition of QRP has weaker notion of zero-knowledge.
+
 
 \subsection{Computational Complexity Classes}
+Alongside specific problems with zero-knowledge proof systems, existence of ZKPs can be related to computational complexity classes.
 
-\subsubsection{Non-deterministic Polynomial Time}
+This knowledge is not necessary for understanding our authentication protocol, but offers an interesting background of zero-knowledge proofs.
+
+\subsubsection{NP (Non-deterministic Polynomial Time)}
 
 \textbf{NP} is a class of problems solvable by a non-deterministic Turing machine in polynomial time. 
 Or rather proof of any language in NP can be verified by a deterministic Turing machine in polynomial time.
 \bigskip
 \newline
 Article \cite{GMW} proved that every language in NP has a zero-knowledge proof system, by creating a ZKP protocol for the Graph 3-Colouring problem (3-COL).
-
-\textit{Minimum Colouring Problem} is a problem in graph theory, of what is the minimal $k$ \textit{proper} colouring of a graph, where no adjacent vertices are the same colour.
+\textit{Minimum colouring problem} is a problem in graph theory, of what is the minimal $k$ \textit{proper} colouring of a graph, where no adjacent vertices are of the same colour.
 An instance of ($k=3$) colouring (3-COL) is proven to be \textit{NP-Hard} because a polynomial reduction exists from \textit{Boolean-Satisfiability problem} (3-SAT) to 3-COL \cite{mouatadid2014introduction}.
-According to Cook's theorem \cite{cook1971complexity} 3-SAT is \textit{NP-Complete}, and any language in $L \in NP$ can be reduced to and instance of 3-SAT. 
+According to Cook's theorem \cite{cook1971complexity} SAT or its 3 literal instance 3-SAT is \textit{NP-Complete}, and any language in $L \in NP$ can be reduced to and instance of 3-SAT. 
 Furthermore because polynomial reductions are \textit{transient}, any language $L \in NP$ can be reduced to an instance of 3-COL.
 
 \subsubsection{Bounded-Error Probabilistic Polynomial Time Languages}
@@ -118,14 +184,4 @@ Furthermore because polynomial reductions are \textit{transient}, any language $
 \textbf{BBP} is a class of problems that can be verified by a probabilistic Turing machine in polynomial time.
 
 Trivially every language in BPP has a ZKP system, where the prover sends nothing to the verifier, the verifier checks the proof of $x \in L$ and outputs a the verdict. %TODO: Reword?
-
-\subsection{Alternative Composition of Zero-Knowledge Proofs}
-Zero-Knowledge Proofs can alternatively be composed in parallel as compared to sequential composition in \cite{GMR}.
-Parallel composition is very interesting practically as it can help reduce the inefficiencies of communication between the prover and the verifier, especially over high latency networks.
-\bigskip
-\newline
-In \cite{goldreich1996composition} they proved that only languages in BPP have 3-round interactive proofs that are zero-knowledge.
-
-The QRP is not believed to be in BPP, so a parallel composition of QRP has weaker notion of zero-knowledge.
-
 

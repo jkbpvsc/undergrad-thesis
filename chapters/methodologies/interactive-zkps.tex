@@ -65,6 +65,7 @@ Idemix has been implemented in the open-source Hyperledger Indy project.
 
 \newpage
 \subsection{Interactive Proof Systems}
+\label{section:interactive-proof-systems}
 An interactive proof system is a proof system in which a \textit{prover} attempts to convince a \textit{verifier} that a statement is true.
 The prover and the verifier exchange messages until the verifier is convinced of the proof or not.
 
@@ -210,26 +211,29 @@ Because the verifier is formalised as a probabilistic Turing machine, the term \
 The verifiers view doesn't contain only data of the current interaction with the prover, but might contain data from past interactions with the prover (in the case of a cheating verifier).
 
 \subsubsection{Strengths of Zero-Knowledge}
-There are three levels of zero-knowledge, defined by the strength of indistinguishability. We will defined the levels of indistinguishability as the ability of a judges ability to distinguish between random variables $V(x)$ and $S(x)$, depending of the available time and sample size. $V(x)$ represents the verifiers view and $S(x)$ the generated data by the simulator $S$.
+There are three levels of zero-knowledge, defined by the strength of indistinguishability. 
+We will defined the levels of indistinguishability as the ability of a \textit{judge} to distinguish between random variables $V(x)$ and $S(x)$, by attempting to determine the origin of a sample $x$, taken randomly from either distribution.
+Two factors determine the strength of indistinguishability, the time available to the judge and the size of the sample available to study.
+$V(x)$ represents the verifiers view and $S(x)$ the generated data by the simulator $S$.
 
 \begin{description}
 	\item[Perfect Zero-Knowledge]
-	$V(x)$ and $S(x)$ are \textit{equal} when they remain indistinguishable to $A$ even when given arbitrary time and an unbounded sample size.
-	\item[Statistical Zero-Knowledge] Two random variables are \textit{statistically indistinguishable} when they remain indistinguishable to $A$ even when given arbitrary time and a polynomial sized sample.
+	$V(x)$ and $S(x)$ are \textit{equal} when they remain indistinguishable even when given arbitrary time and an unbounded sample size.
+	
+	\item[Statistical Zero-Knowledge] Two random variables are \textit{statistically indistinguishable} when they remain indistinguishable given arbitrary time and a polynomial sized sample.
 	\bigskip
 	\\
-	Let $L \subset \{0,1\}^*$ be a language. Two poly-bounded families of random variables $V$ and $S$ are \textit{statistically indistinguishable} when,
+	Let $L \subset \{0,1\}^*$ be a language. Two polynomial sized families of random variables $V$ and $S$ are \textit{statistically indistinguishable} when,
 	$$\sum_{\alpha \in \{0,1\}^*} |P[V(x) = \alpha] - P[S(x) = \alpha]| < |x|^{-c}$$
 	for all constants $c>0$ and all sufficiently long $x \in L$.
-	\item[Computational Zero-Knowledge] $V(x)$ and $S(x)$ are \textit{computationally indistinguishable} when they remain indistinguishable to $A$ given polynomial time and a polynomial sized sample.
+	
+	\item[Computational Zero-Knowledge] $V(x)$ and $S(x)$ are \textit{computationally indistinguishable} when they remain indistinguishable given polynomial time and a polynomial sized sample.
 	\bigskip
 	\\
-	Let $L \subset \{0,1\}^*$ be a language. Two poly-bounded families of random variables $V$ and $S$ are \textit{statistically indistinguishable} for all poly-sized families of circuits $C$ when,
+	Let $L \subset \{0,1\}^*$ be a language. Two polynomial sized families of random variables $V$ and $S$ are \textit{statistically indistinguishable} for all poly-sized families of circuits $C$ when,
 	$$|P[V, C, x] - P[S, C, x]| < |x|^{-c}$$
 	for all constants $c>0$ and all sufficiently long $x \in L$.
 
-	
-	
-	\end{description}
+\end{description}
 
 

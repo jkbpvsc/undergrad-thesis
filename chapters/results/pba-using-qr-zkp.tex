@@ -1,135 +1,205 @@
-\section{Authentication Protocol using Zero-Knowledge Proofs}
+\section{Protocol Design}
+\label{label:protocol-design}
+The main goal of our authentication protocol was to enable password authentication using zero-knowledge proof, based on the quadratic residuosity problem. 
+The computations used to assert the zero-knowledge proof present a vulnerability when used with passwords.
+We extend the protocol with password-hashing tools to secure the data derived from insecure passwords.
+The integration of password hashing is not as trivial as it might seem because of the underlying zero-knowledge protocol, we can overcome mathematical limitations imposed by the ZKP protocol by introducing a setup phase to derive the parameters used in the ZKP protocol.
 
-One of the original ZKP protocol proposed in \cite{GMR} was based on the quadratic residuosity problem.
+In this section we will refer to the \S\ref{zkp-qrp} ZKP protocol of quadratic residuosity as the \textit{original protocol}  and our new protocol as the \textit{extended protocol}.
 
-The protocol can be used as a password-based authentication protocol, where the proof proves the possession of a password.
-The protocol can further enhanced by similar protocols, to make it meet the security standards of modern password-based authentication systems.
+\subsection{Vulnerabilities}
+Our use case is for password authentication, which features unique vulnerabilities, resulting from properties of passwords themselves, we've explored this topic in \S \ref{label:password-vulnerabilities}.
+In particular the original protocol is vulnerable to offline attacks with pre-computed tables.
+This vulnerability is caused the equation used to derive the quadratic residue $x$, which we later prove as a quadratic residue with the knowledge of password $w$.
 
-\subsection{Original Protocol} %TODO: Restructure to focus soley on ZKP-QRP as PBA
-\bigskip
-\begin{center}
-	\begin{tabular}{rl}
-		$n$ & Semiprime, where $\legendre{x}{n} = 1$\\
- 		$x$ & Public input, where $x = w^2 \Mod n$\\
- 		$w$ & Password\\
-	\end{tabular}
-\end{center}
-\bigskip
-\begin{center}
-	\begin{tabular}{rr|c|l}
-		& Prover && Verifier\\
-		\hline
-		1 & $u \leftarrow \Bbb{Z}_{n}^{*}; y = u^2 \Mod n$ & $\xrightarrow{y}$\\
-		2 & & $\xleftarrow{b}$ & $b \leftarrow_R \{0, 1\} $\\
-		3 & $z = uw^b\Mod n$ & $\xrightarrow z$ & verify $z^2 = yx^b \Mod n$\\
-	\end{tabular}
-\end{center}
-This protocol is repeated $m$ times, for a probability of error of $\frac{1}{2^m}$.
-% Security
-\subsection{Security}
-The protocol is secure against active attacks like masquerading and replay-attacks. 
-Zero-knowledge also makes it secure against eavesdropping.
+$$x = w^2 \Mod{n}$$
 
-The main issue with the protocols as a password based authentication method is vulnerability to dictionary attacks and attacks pre-computed tables.
-
-%TODO Maybe use passive/active attack terminology
-\subsubsection{Password Cracking Vulnerability}
-
-The input $x$ is used by the verifier to verify the witness, it is computed from the private input $w$ as $x = w^2 \Mod n$.
-The provers private input $w$ is the password.
-
-The need of the verifier to access the raw value of $x$ prevents the authentication system from processing $x$ with modern password key-derivation methods.
-This creates a vulnerability for attacks with pre-computed tables.
-An attacker can pre-compute the values of $x$ and compare them with the stored $x$ data by the verifier.
-
-% Key derivation function
-% TODO Pick a different title
-\subsubsection{Prover Password Key-Derivation}
-To utilise PKDF, we need to apply it to derive the provers private input $w$.
-Instead of the password being used directly as $w$, the password is processed by a PKDF, and the derivation is used as $w$.
-
-This approach is similar to the one used in \cite{wu1998secure} the Secure Remote Password protocol.
-Using a KDF $H$, a random salt $s$ and password $P$, we can derive $w$ and $x$.
-
-$$w = H(P, s)$$
-$$x = w^2 \Mod n$$
-
-\subsection{Protocol} %TODO: Pick better title
-Using the terminology in NIST Digital Identity Guidelines \cite{grassi2017}. %TODO: Make a mapping between ZKP terminology and NIST DIG
-To draw parallels between this terminology and the terminology used in the ZKP-QRP \cite{GMR}. The Prover is the Claimant and Applicant, and the Verifier is the Authenticator ant the CSP.
-
-\paragraph{Values}
-\begin{center}
-	\begin{tabular}{rl} %TODO: USE DIG Terminology
-		$q, p$ & Primes, where $q \ne p$\\
-		$n$ & Semiprime modulus, where $n = qp$\\
-		$P$ & Credential password \\
-		$I$ & Credential identifier \\
-		$H$ & PKDF \\
-		$s$	& Salt\\
-		$w$ & Password hash, where $w = H(P, s)$\\ %TODO check the correct term for this
-		$x$ & Integer, where $x = w^2 \Mod{n}$ %TODO check the correct term for this
-	\end{tabular}
-\end{center}
+Additionally, intuitively the computation of this equation is relatively inexpensive when compared to special password-hashing function like \textit{Argon2} \cite{biryukov2016argon2} .
+\newpage
+\subsection{Limitations}
+The solution seems to be a password-hashing function, as we've described in \S\ref{paragraph:password-hashing}.
+However we cannot simply hash the data that would be otherwise held by the verifier. 
+Let's have a look at how the verifier verifies the proof.
+On the last step the verifier asserts that,
+$$ z^2 = yx^b$$
+if we were to hash the sensitive value $x$,
+$$H(x, s) = x_H$$
+to verify the proof, we would need an inverted function $H^{-1}$, where $H(H^{-1}(H(x))) = H(x)$,
+$$z^2 = yH^{-1}(x_H, s)^b$$
+but since we know that $H$ is a one-way function, the probability of a polynomial algorithm $H^{-1}$ to successfully compute a \textit{pseudo-inverse} is negligibly small, for all positive integers $c$.
+$$\Pr[H(H^{-1}(H(x))) = H(x)] < |x|^{-c}$$
+%TODO: Make sure the math checks out here
+Additionally, even if hypothetically the function $H^{-1}$ would succeed with probability of $1$, because the function $H$ is not injective, the \textit{pesudo-inverse} $x' = H^{-1}(H(x))$, might not be equal to $x$.
 
 
-\paragraph{Enrolment} In the enrolment process the CSP provides the $n$ modulo value to the Applicant.
-The Applicant generates a random salt $s$ and computes a private $w$ value from the password $P; w = H(P, s)$.
-Applicant next computes $x = w^2 \Mod{n}$ and submits the identifier $I, x, s$ to the CSP.
+\subsection{Solution}
+To overcome our limitation, we will use a two-phase approach. Our extended protocol is constructed from two phases, first the \textit{setup phase} and the \textit{verification phase}.
+The purpose of the setup phase is to derive the parameters used in the verification phase of the protocol.
+The users password $p$ is hashed to compute the provers private input $w$.
+$$w = H(p, s)$$
+$$x = w^2 \Mod{n}$$
+The protocol is no longer vulnerable to offline attack with a pre-computed table, since to calculate any value $x$ a unique salt $s$ is required.
 
-\bigskip
+We are assuming the prover knows the salt $s$, in practice this value can be passed to the user by the verifier.
+
+\subsection{Protocol}
+The setup phase runs exactly once in the protocols, while the verification phase is repeated $m$ times for a confidence of $1 - 2^{-m}$.
 
 \begin{center}
-	\begin{tabular}{rl|c|l}
-		& Applicant & & CSP\\
-		\hline
-		1 & & $\xleftarrow{n}$ \\
-		2 & $s \leftarrow_R \Bbb{Z}$ & $\xrightarrow{I, x, s}$ \\ & $w = H(P, s)$ & \\ & $x = w^2 \Mod{n}$ &
-	\end{tabular}
-\end{center}
-
-\bigskip
-
-%TODO Make sure this checks out.
-CSP binds $x$ and $s$ as the authenticator to the credential $I$.
-
-\paragraph{Authentication}
-
-Authentication happens in two part, in the first part required data is exchanged between the Claimant and the Authenticator. The Claimant identifies himself and the Authenticator provides the semiprime modulus $n$ and the salt $s$.
-The second part of the protocol is the ZKP-QRP \cite{GMR} protocol executed between the Claimant and the Authenticator.
-\bigskip
-
-\paragraph{First Part (Setup)}
-
-The Claimant sends an identifier $I$ to the Authenticator, which responds with modulo $n$ and the salt $s$. The Claimant uses both values to compute the private input $w$ of the ZKP-QRP protocol.
-
-\bigskip
-
-
-\begin{center}
-	\begin{tabular}{rl|c|l}
-  		& Claimant & & Authenticator\\
+	\begin{tabular}{rrl|c|l}
+  		& & Prover & & Verifier\\
   		\hline
-		1 & & $\xrightarrow{I}$ & \\
-		2 & $w = H(P, s)$ & $\xleftarrow{n, s}$ & \\
+		Setup Phase & 1 & $w = H(P, s)$ & & \\
+		\hline
+		Verification & 1 & $u \leftarrow_R \Bbb{Z}_{n}$ & $\xrightarrow{y}$ \\
+		Phase& & $y = u^2$ & \\
+		& 2 & & $\xleftarrow{b}$ & $b \leftarrow_R \{0, 1\} $ \\
+		& 3 & $z = uw^b \Mod n $ & $\xrightarrow{z}$ & assert $z^2 \equiv yx^b \Mod{n}$\\ 
 	\end{tabular}
 \end{center}
 
-\paragraph{Second Part (Verification)}
-This part is same as the ZKP-QRP protocol described in the \cite{GMR}.
-\bigskip
-\begin{center}
-	\begin{tabular}{rl|c|l}
-		& Claimant & & Authenticator \\
-		\hline
-		1 & $u \leftarrow_R \Bbb{Z}_{n}^{*}$ & $\xrightarrow{y}$ \\
-		& $y = u^2$ & \\
-		2 & & $\xleftarrow{b}$ & $b \leftarrow_R \{0, 1\} $ \\
-		3 & $z = uw^b \Mod n $ & $\xrightarrow{z}$ & verify $z^2 \equiv yx^b \Mod{n}$\\ 
-	\end{tabular}
-\end{center}
-\bigskip
-The second part is repeated $m$ times, for a probability of error of $\frac{1}{2^m}$
+%To overcome our limitation, we will use a "layered" approach, where we will apply password-hashing transformations (non-linear functions), before establishing the linear relationship between $w$ and $x$.
+%
+%The extended protocol has an additional step where the password $p$ is "hashed" with a salt $s$ and password hashing function $H$ to obtain the value $w$.
+%After this step we can use the protocol as described in \S\ref{zkp-qrp}.
+%$$w = H(p, s)$$
+%$$x = w^2 \Mod{n}$$
+%
+%
+%$$x,w \in \mathbb{Z}_n; x = w^2; x_H = H(x);$$
+%$$y, u \in  \mathbb{Z}_n; y = u^2$$
+%$$(uw)^2 = yx$$
+%$$(uw)^2 = yH^{-1}(x_H)$$
+
+
+
+
+
+%\subsection{Original Protocol} %TODO: Restructure to focus soley on ZKP-QRP as PBA
+%\bigskip
+%\begin{center}
+%	\begin{tabular}{rl}
+%		$n$ & Semiprime, where $\legendre{x}{n} = 1$\\
+% 		$x$ & Public input, where $x = w^2 \Mod n$\\
+% 		$w$ & Password\\
+%	\end{tabular}
+%\end{center}
+%\bigskip
+%\begin{center}
+%	\begin{tabular}{rr|c|l}
+%		& Prover && Verifier\\
+%		\hline
+%		1 & $u \leftarrow \Bbb{Z}_{n}^{*}; y = u^2 \Mod n$ & $\xrightarrow{y}$\\
+%		2 & & $\xleftarrow{b}$ & $b \leftarrow_R \{0, 1\} $\\
+%		3 & $z = uw^b\Mod n$ & $\xrightarrow z$ & verify $z^2 = yx^b \Mod n$\\
+%	\end{tabular}
+%\end{center}
+%This protocol is repeated $m$ times, for a probability of error of $\frac{1}{2^m}$.
+%% Security
+%\subsection{Security}
+%The protocol is secure against active attacks like masquerading and replay-attacks. 
+%Zero-knowledge also makes it secure against eavesdropping.
+%
+%The main issue with the protocols as a password based authentication method is vulnerability to dictionary attacks and attacks pre-computed tables.
+%
+%%TODO Maybe use passive/active attack terminology
+%\subsubsection{Password Cracking Vulnerability}
+%
+%The input $x$ is used by the verifier to verify the witness, it is computed from the private input $w$ as $x = w^2 \Mod n$.
+%The provers private input $w$ is the password.
+%
+%The need of the verifier to access the raw value of $x$ prevents the authentication system from processing $x$ with modern password key-derivation methods.
+%This creates a vulnerability for attacks with pre-computed tables.
+%An attacker can pre-compute the values of $x$ and compare them with the stored $x$ data by the verifier.
+%
+%% Key derivation function
+%% TODO Pick a different title
+%\subsubsection{Prover Password Key-Derivation}
+%To utilise PKDF, we need to apply it to derive the provers private input $w$.
+%Instead of the password being used directly as $w$, the password is processed by a PKDF, and the derivation is used as $w$.
+%
+%%This approach is similar to the one used in \cite{wu1998secure} the Secure Remote Password protocol.
+%%Using a KDF $H$, a random salt $s$ and password $P$, we can derive $w$ and $x$.
+%%
+%%$$w = H(P, s)$$
+%%$$x = w^2 \Mod n$$
+%%
+%%\subsection{Protocol} %TODO: Pick better title
+%%Using the terminology in NIST Digital Identity Guidelines \cite{grassi2017}. %TODO: Make a mapping between ZKP terminology and NIST DIG
+%%To draw parallels between this terminology and the terminology used in the ZKP-QRP \cite{GMR}. The Prover is the Claimant and Applicant, and the Verifier is the Authenticator ant the CSP.
+%%
+%%\paragraph{Values}
+%%\begin{center}
+%%	\begin{tabular}{rl} %TODO: USE DIG Terminology
+%%		$q, p$ & Primes, where $q \ne p$\\
+%%		$n$ & Semiprime modulus, where $n = qp$\\
+%%		$P$ & Credential password \\
+%%		$I$ & Credential identifier \\
+%%		$H$ & PKDF \\
+%%		$s$	& Salt\\
+%%		$w$ & Password hash, where $w = H(P, s)$\\ %TODO check the correct term for this
+%%		$x$ & Integer, where $x = w^2 \Mod{n}$ %TODO check the correct term for this
+%%	\end{tabular}
+%%\end{center}
+%%
+%%
+%%\paragraph{Enrolment} In the enrolment process the CSP provides the $n$ modulo value to the Applicant.
+%%The Applicant generates a random salt $s$ and computes a private $w$ value from the password $P; w = H(P, s)$.
+%%Applicant next computes $x = w^2 \Mod{n}$ and submits the identifier $I, x, s$ to the CSP.
+%%
+%%\bigskip
+%
+%\begin{center}
+%	\begin{tabular}{rl|c|l}
+%		& Applicant & & CSP\\
+%		\hline
+%		1 & & $\xleftarrow{n}$ \\
+%		2 & $s \leftarrow_R \Bbb{Z}$ & $\xrightarrow{I, x, s}$ \\ & $w = H(P, s)$ & \\ & $x = w^2 \Mod{n}$ &
+%	\end{tabular}
+%\end{center}
+%
+%\bigskip
+%
+%%TODO Make sure this checks out.
+%CSP binds $x$ and $s$ as the authenticator to the credential $I$.
+%
+%\paragraph{Authentication}
+%
+%Authentication happens in two part, in the first part required data is exchanged between the Claimant and the Authenticator. The Claimant identifies himself and the Authenticator provides the semiprime modulus $n$ and the salt $s$.
+%The second part of the protocol is the ZKP-QRP \cite{GMR} protocol executed between the Claimant and the Authenticator.
+%\bigskip
+%
+%\paragraph{First Part (Setup)}
+%
+%The Claimant sends an identifier $I$ to the Authenticator, which responds with modulo $n$ and the salt $s$. The Claimant uses both values to compute the private input $w$ of the ZKP-QRP protocol.
+%
+%\bigskip
+%
+%
+%\begin{center}
+%	\begin{tabular}{rl|c|l}
+%  		& Claimant & & Authenticator\\
+%  		\hline
+%		1 & & $\xrightarrow{I}$ & \\
+%		2 & $w = H(P, s)$ & $\xleftarrow{n, s}$ & \\
+%	\end{tabular}
+%\end{center}
+%
+%\paragraph{Second Part (Verification)}
+%This part is same as the ZKP-QRP protocol described in the \cite{GMR}.
+%\bigskip
+%\begin{center}
+%	\begin{tabular}{rl|c|l}
+%		& Claimant & & Authenticator \\
+%		\hline
+%		1 & $u \leftarrow_R \Bbb{Z}_{n}^{*}$ & $\xrightarrow{y}$ \\
+%		& $y = u^2$ & \\
+%		2 & & $\xleftarrow{b}$ & $b \leftarrow_R \{0, 1\} $ \\
+%		3 & $z = uw^b \Mod n $ & $\xrightarrow{z}$ & verify $z^2 \equiv yx^b \Mod{n}$\\ 
+%	\end{tabular}
+%\end{center}
+%\bigskip
+%The second part is repeated $m$ times, for a probability of error of $\frac{1}{2^m}$
 
 % \subsubsection{Security}
 % Enrolment
