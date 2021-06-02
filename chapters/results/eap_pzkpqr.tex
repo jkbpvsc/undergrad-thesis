@@ -56,11 +56,11 @@ The message pair of the EAP method is identified by the \textit{sub-type} field.
 \paragraph{Data Format}
 
 \begin{center}
-\begin{tabular}{|c|c|c|}
+\begin{tabular}{|c|c|c|c|c|}
 	\hline
-	1 & $4 \le k \le 255 $ & $64 \le j$\\ %TODO: Maybe change n to some other letter to avoid confusion with semiprime n
+	Length (Octets) & ... & 1 & $4 \le k \le 255 $ & $64 \le j$\\
 	\hline
-	Salt Length & Salt & Semiprime Modulus\\
+	Field Type & ... & Salt Length & Salt & Semiprime Modulus\\
 	\hline
 \end{tabular}
 \end{center}
@@ -90,11 +90,11 @@ In order to locate the unique salt in a system with multiple peer identities, th
 \paragraph{Data Format}
 
 \begin{center}
-\begin{tabular}{|c|}
+\begin{tabular}{|c|c|c|}
 	\hline
-	$k$ \\
+	Length (Octets) & ... & $k$ \\
 	\hline
-	Control Value $y$\\
+	Field Type & ... & Control Value $y$\\
 	\hline
 \end{tabular}
 \end{center}
@@ -121,11 +121,11 @@ The authenticator generates random bit $b$ stores it locally, and sends it to th
 \paragraph{Data Format}
 
 \begin{center}
-\begin{tabular}{|c|}
+\begin{tabular}{|c|c|c|}
 	\hline
-	$1$ \\
+	Length (Octets) & ... & $1$ \\
 	\hline
-	Random Bit $b$\\
+	Field Type & ... & Random Bit $b$\\
 	\hline
 \end{tabular}
 \end{center}
@@ -146,11 +146,11 @@ The control value $z$ and the witness value $y_{i+1}$ should be sent in the resp
 \paragraph{Data Format}
 
 \begin{center}
-\begin{tabular}{|c|c|c|}
+\begin{tabular}{|c|c|c|c|c|}
 	\hline
-	$1$ & $k $ & $j$\\
+	Length (Octets) & ... & $1$ & $k $ & $j$\\
 	\hline
-	Witness Length & Witness $z$ & Control Value $y_{i+1}$\\ %TODO: Witness, check if this is the correct term?
+	Field Type & ... & Witness Length & Witness $z$ & Control Value $y_{i+1}$\\ %TODO: Witness, check if this is the correct term?
 	\hline
 \end{tabular}
 \end{center}

@@ -1,11 +1,30 @@
 
 
 \section{Introduction} %TODO: Extend somehow
-Authentication is a core component of computer security and an indispensable part of our modern digital lives.
-In this thesis we design an authentication protocol using Zero-Knowledge Proofs (ZKPs), an interesting cryptographic phenomenon that reveal nothing more than their validity of its proofs.
-Our protocol enables network authentication using a username and password.
-To create a secure password authentication protocol we have to be aware of the common pitfalls  and how modern security systems handle them.
-We use the Extensible Authentication Protocol (EAP) as the framework on top of which we design our authentication protocol.
+%Authentication is a core component of computer security and an indispensable part of our modern digital lives.
+%In this thesis we design an authentication protocol using Zero-Knowledge Proofs (ZKPs), an interesting cryptographic phenomenon that can prove mathematical statements without revealing \textit{why} they are true.
+%Our protocol enables network authentication using a username and password.
+%To create a secure password authentication protocol we have to be aware of the common pitfalls  and how modern security systems handle them.
+%We use the Extensible Authentication Protocol (EAP) as the framework on top of which we design our authentication protocol.
+%
+%\newpage
+
+Our lives are becoming more digital everyday, and with big tech companies whose business models rely on user data, privacy is becoming an ever bigger issue.
+Individuals participating in a digital spaces and keeping control of their personal data seem mutually exclusive terms today, however technologies like zero-knowledge proofs can help us achieve the seemingly impossible task.
+Zero-knowledge proofs are a very interesting cryptographic phenomenon that can prove mathematical statements, without revealing \textit{why} they are true. This has incredibly interesting real world applications.
+
+Cryptocurrencies Monero and Zcash are using zero-knowledge proofs to validate transactions on their networks while keeping transaction senders, recipients anonymous and amounts opaque.
+
+The Self Sovereign Identity space is using zero-knowledge proofs and blockchain technologies to build a decentralised and privacy preserving digital identity infrastructure.
+Zero-knowledge proofs enable asking complex questions about sensitive user credentials in a completely privacy preserving manner.
+For example, proving you are over 18 without revealing your date of birth, or that you hold a certain amount of funds in your bank account without disclosing your financial statements.
+
+Advancements like this hint that we will look at this time and our attitude to personal data handling, as we today look at feudalism.
+\bigskip
+\\
+In this thesis we want to utilise zero-knowledge proofs in a password authentication protocols.
+When creating a password authentication system we have to protect ourselves from password vulnerabilities, however the integration of key stretching methods is not as straight forward as in regular password authentication systems, because of the underlying zero-knowledge proof.
+Our protocol is built on top of the extensible authentication protocol (EAP), an extensible authentication framework.
 
 %TODO: Interesting story
 

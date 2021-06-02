@@ -1,16 +1,13 @@
 \section{Extensible Authentication Protocol}
 \label{section:eap}
-Our protocol should be implemented using the EAP framework, lets overview how the protocol works and how we were to implemented a new EAP method.
-
+Our authentication protocol is designed as a method in the extensible authentication protocol (EAP) framework.
 
 %EAP - PROTOCOL IN DETAIL
 
 \subsection{Overview}
-Extensible Authentication Protocol \cite{aboba2004extensible} (EAP) is a general purpose authentication framework, designed for network access authentication, where IP might not be available. 
+Extensible Authentication Protocol \cite{aboba2004extensible} (EAP) is a general purpose authentication framework, designed for network access authentication. 
 It runs directly over the data link layer such as PPP  \cite{simpson1994rfc1661} and IEEE 802.
-
 EAP defines a set of messages that support negotiation and execution of a variety of authentication protocols.
-
 EAP is a two-party protocol between a \textit{peer} and an \textit{authenticator} at the each end of a link. The terms \textit{peer} and \textit{authenticator} are EAP terminology.
 In the protocol the peer is authenticating with the authenticator.
 
@@ -49,10 +46,10 @@ Each field type has a special purpose in EAP.
 The code field determines who the packet is intended for and how or even should the recipient respond.
 
 \begin{description}
-	\item[Request]\textit{Code 1}. Messages sent by the authenticator to the peer.
+	\item[Request]\textit{Code 1}. Messages sent by the authenticator to the peer. Response is always expected.
 	\item[Response]\textit{Code 2}. Messages sent by the peer to the authenticator as a reply to a \textit{request} message.
-	\item[Success]\textit{Code 3}. Sent by the authenticator, after the peer is successfully authenticated. The peer doesn't have to respond to the message.
-	\item[Failure]\textit{Code 4}. Sent by the authenticator, if the peer cannot be authenticated. The peer doesn't have to respond to the message.
+	\item[Success]\textit{Code 3}. Sent by the authenticator, after the peer is successfully authenticated. The peer doesn't respond to the message.
+	\item[Failure]\textit{Code 4}. Sent by the authenticator, if the peer cannot be authenticated. The peer doesn't respond to the message.
 \end{description}
 
 \subsubsection{Identifier Field}
@@ -89,7 +86,7 @@ The \textit{type} used is determined by the authenticator when sending the reque
 		\hline
 		Length (octets) & & 3 & 4 & n\\
 		\hline
-		Type Field & ... & Vendor-ID & Vendor-Type & Vendor-Type Data\\
+		Field Type & ... & Vendor-ID & Vendor-Type & Vendor-Type Data\\
 		\hline
 		\end{tabular}
 	\end{center}
@@ -100,7 +97,7 @@ The \textit{type} used is determined by the authenticator when sending the reque
 
 \subsubsection{Authentication Methods}
 The remaining types correspond to different authentication methods.
-In IANA \cite{joseph2004eap} 49 authentication methods have been assigned type numbers.
+IANA \cite{joseph2004eap} assigns type numbers to 49 different authentication methods.
 The original RFC \cite{aboba2004extensible} already assigned 3 authentication protocols.
 
 \begin{description}
@@ -110,7 +107,7 @@ The original RFC \cite{aboba2004extensible} already assigned 3 authentication pr
 \end{description}
 
 Some other notable examples are EAP-TLS \cite{simon2008eap}, EAP-PSK \cite{bersani2007eap}.
-EAP SRP-SHA1 \cite{carlson135eap} is especially interesting as it uses a zero-knowledge protocols to verify the peers secret.
+EAP SRP-SHA1 \cite{carlson135eap} is especially interesting as it uses a zero-knowledge protocols to verify the peers secret, similar to our own protocol.
 
 \subsection{Pass-Through Behaviour}
 An authenticator can act as a \textit{Pass-Through Authenticator}, by using the authentication services of a \textit{backend authentication server}.
@@ -121,7 +118,6 @@ For example, in IEEE 802.1x the authenticator communicates with a RADIUS server 
 
 Is a port based network access control standard for LAN and WLAN.
 It is part of the IEEE 802.11 group of network protocols.
-
 IEEE 802.1x defines an encapsulation of EAP for use over IEEE 802 as EAPOL or "EAP over LANs".
 EAPOL is used in widely adopted wireless network security standards WPA2. 
 In WPA2-Enterprise, EAPOL is used for communication between the supplicant and the authenticator.

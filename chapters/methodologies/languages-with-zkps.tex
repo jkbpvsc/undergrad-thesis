@@ -89,7 +89,7 @@ Unlike the Legendre symbol, if $\legendre{a}{n} = 1$, $a$ is a quadratic residue
 		$1996 = 2^2 \cdot 499$ \\
 		\hline
 		$1997 = 1997$ &
-		$1998 = 2 \cdot 3^3 * 37$\\
+		$1998 = 2 \cdot 3^3 \cdot 37$\\
 		\hline
 	\end{tabular}
 \end{center}
@@ -100,7 +100,7 @@ Unlike the Legendre symbol, if $\legendre{a}{n} = 1$, $a$ is a quadratic residue
 Prime factorization is the decomposition of an integer $n$ to its prime factors $p_1 p_2 \cdots p_r$.
 %%TODO: Citations
 The problem is considered "hard", because currently no polynomial time algorithm exists. It is in class \textit{NP}, but is not proven to be NP-complete.
-The hardest instance of this problem are when factoring the product of two prime numbers (\textit{semiprimes}).
+The hardest instance of this problem is factoring the product of two prime numbers (\textit{semiprimes}).
 The difficulty of this problem is a core building block in modern asymmetric cryptography like RSA \cite{rivest1978method}.
 
 \subsubsection{Quadratic Residuosity Problem}
@@ -115,19 +115,19 @@ To calculate this we would have to know the primes $p$ and $q$ by factoring $n$.
 \subsubsection{Zero-Knowledge Proof of Quadratic Residuosity}
 In the original paper \cite{goldwasser1989knowledge} on zero-knowledge proofs, the problem of quadratic residuosity was used to construct a zero-knowledge proof system.
 The protocol is an interactive proof system in which a \textit{prover} attempts to convince a \textit{verifier} that an integer $x$ is a quadratic residue modulo $n$. 
-The prover attempts to proving the knowledge $w$, where $w^2 \equiv x \Mod{n}$.
+The prover attempts to prove the knowledge of $w$, where $w^2 \equiv x \Mod{n}$.
 
 
 \bigskip
 The bottom table demonstrates the steps in the protocol, 
-the number on the left side of each row determines the \textit{step}.
-The middle space displays what information is exchanged between two parties and the direction of the exchange.
-Space of individual parties display computations done by each party. 
-This notation is used in all further protocol examples.\\
+the number on the left side of each row determine the \textit{step}.
+The middle space displays the information exchanged between two parties and the direction of the exchange.
+Space of individual parties displays computations done by each party. 
+\textit{This notation is used in all further protocol examples.}\\
 \begin{center}
 	\begin{tabular}{rl}
 		$n$ & Semiprime, where Jacobi $\legendre{x}{n} = 1$\\
- 		$x$ & Public input, where $x = w^2 \Mod n$\\
+ 		$x$ & Public input, where $w^2 \equiv x \Mod n$\\
  		$w$ & Provers private input\\
 	\end{tabular}
 \end{center}
@@ -144,26 +144,23 @@ This notation is used in all further protocol examples.\\
 The prover begins by picking a random number $u$ from field $\Bbb{Z}_{n}$, computing $y = u^2 \Mod n$ and sending $y$ to the verifier.
 The verifier picks a random bit $b$ and sends it to the prover, this random bit functions as the "split in the tunnel" of our earlier cave analogy.
 The prover computes the value $z$ based on $b$ and sends it over.
-The verifier verifies the proof, by checking if $z^2 = yx^b \Mod{n}$, this is possible since,
-$$z^2 = yx^b \Mod{n}$$
-$$(uw^b)^2 = u^2(w^2)^b \Mod{n}$$
-$$u^2w^{2b} = u^2w^{2b} \Mod{n}$$
+The verifier checks the proof, by asserting $z^2 \equiv yx^b \Mod{n}$, this is possible since,
+$$z^2 \equiv yx^b \Mod{n}$$
+$$(uw^b)^2 \equiv u^2(w^2)^b \Mod{n}$$
+$$u^2w^{2b} \equiv u^2w^{2b} \Mod{n}$$
 
-In each round the prover has $\frac{1}{2}$ probability of cheating, by attempting to guess the value of random bit $b$, to improve the strength of the proof the verification is repeated $m$ times, for a confidence of $ 1-2^{-m}$.
+For each round a cheating prover has a $\frac{1}{2}$ probability of succeeding, by correctly guessing the value of the random bit $b$, to decrease the chances of a cheating verifier succeeding and improving the confidence in the proof this is repeated $m$ times.
 
 \paragraph{Parallel Composition}
 Zero-knowledge proof of quadratic residuosity, can be alternatively be composed in \textit{parallel} instead of sequentially.
 Parallel composition is very interesting because it reduces the number of interactions between the prover and the verifier, in practical applications this improves the speed of the protocol as we are less affected by communication inefficiencies.
 
-Only languages in \textit{BPP} have 3-round interactive zero-knowledge proofs \cite{goldreich1996composition}. 
+Only languages in \textit{BPP} \S\ref{label:bpp} have 3-round interactive zero-knowledge proofs \cite{goldreich1996composition}. 
 However the quadratic residuosity problem is not believed to be in BPP, so its parallel 3-round proof system, is assumed to have a weaker notion of zero-knowledge.
-Our protocol design uses a sequential proof
-
-The QRP is not believed to be in BPP, so a parallel composition of QRP has weaker notion of zero-knowledge.
-
+Our protocol design uses a sequential proof composition.
 
 \subsection{Computational Complexity Classes}
-Alongside specific problems with zero-knowledge proof systems, existence of ZKPs can be related to computational complexity classes.
+Alongside specific languages with zero-knowledge proof systems, their existence can be related to computational complexity classes.
 
 This knowledge is not necessary for understanding our authentication protocol, but offers an interesting background of zero-knowledge proofs.
 
@@ -173,13 +170,14 @@ This knowledge is not necessary for understanding our authentication protocol, b
 Or rather proof of any language in NP can be verified by a deterministic Turing machine in polynomial time.
 \bigskip
 \newline
-Article \cite{GMW} proved that every language in NP has a zero-knowledge proof system, by creating a ZKP protocol for the Graph 3-Colouring problem (3-COL).
+Article \cite{GMW} proved that every language in NP has a zero-knowledge proof system, by defining a ZKP protocol for the Graph 3-Colouring problem (3-COL).
 \textit{Minimum colouring problem} is a problem in graph theory, of what is the minimal $k$ \textit{proper} colouring of a graph, where no adjacent vertices are of the same colour.
 An instance of ($k=3$) colouring (3-COL) is proven to be \textit{NP-Hard} because a polynomial reduction exists from \textit{Boolean-Satisfiability problem} (3-SAT) to 3-COL \cite{mouatadid2014introduction}.
-According to Cook's theorem \cite{cook1971complexity} SAT or its 3 literal instance 3-SAT is \textit{NP-Complete}, and any language in $L \in NP$ can be reduced to and instance of 3-SAT. 
+According to Cook's theorem \cite{cook1971complexity} SAT or its 3 literal instance 3-SAT is \textit{NP-Complete}, and any language in $L \in NP$ can be reduced to an instance of 3-SAT. 
 Furthermore because polynomial reductions are \textit{transient}, any language $L \in NP$ can be reduced to an instance of 3-COL.
 
-\subsubsection{Bounded-Error Probabilistic Polynomial Time Languages}
+\subsubsection{BBP (Bounded-Error Probabilistic Polynomial Time Languages)}
+\label{label:bpp}
 
 \textbf{BBP} is a class of problems that can be verified by a probabilistic Turing machine in polynomial time.
 

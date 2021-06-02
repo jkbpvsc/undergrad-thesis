@@ -1,22 +1,23 @@
 \section{Zero-Knowledge Proofs}
-In our protocol we wish to use zero-knowledge proofs as a core tool to verify users password.
+In the hearth of our authentication protocol we wish to use zero-knowledge proofs as a core tool to verify users password.
 
-We explore what ZKPs are on a high level, look at a practical analogy of how they work and also how they are used in real life.
+In this section we explore what ZKPs are on a high level, look at a practical analogy of how they work and also how they are used in real life.
 Next we look at what are \textit{interactive proof systems}, the framework of zero-knowledge protocols.
 And what is \textit{knowledge complexity}, or how to quantify the information exchanged in an interactive proof system and finally what makes an interactive proof systems zero-knowledge.
 
 \subsection{Introduction}
-\textit{Zero-Knowledge Proofs} (ZKPs) are a concept in the field of cryptography, and can be used to prove the validity of mathematical statements. What makes ZKPs particularly interesting is that it can achieve that without revealing any information about why a statement is true.
+\textit{Zero-Knowledge Proofs} (ZKPs) are a concept in the field of cryptography, and can be used to prove the validity of mathematical statements. What makes ZKPs particularly interesting is that it can achieve that without revealing any information about why a statement is true, hence the term \textit{zero-knowledge}.
 
 In mathematics, traditional theorem proofs are logical arguments that establish truth through inference rules of a deductive system based on axioms and other proven theorems.
 ZKPs are probabilistic, meaning they \textit{"convince"} the verifier of the validity with a negligible margin of error.
-We use the term convince, because ZKPs are not absolute truth, but rather the chance of being \textit{false} is next to zero. The difference in definition is subtle, but we will see what that means in practice further on.
+We use the term convince, because ZKPs are not absolute truth, but rather the chance of a \textit{false} statement convincing a verifier is arbitrarily small. 
+The difference in definition is subtle, but we will see what that means in practice further on.
 
-ZKPs were first described by Goldwasser, Micali and Rackoff in \cite{GMR} in 1985. 
-They proposed a proof system as a two-party protocol between a \textit{prover} and a \textit{verifier}. It relies on the computational difficulty of the quadratic residuosity problem.
+ZKPs were first described by Goldwasser, Micali and Rackoff in \cite{goldwasser1989knowledge} in 1985. 
+They proposed a proof system as a two-party protocol between a \textit{prover} and a \textit{verifier}.
 \newpage
 \subsubsection{The Strange Cave of Ali Baba}
-To help our understanding we will explore the \cite{QJM} The Strange Cave of Ali Baba, a famous analogy for a zero-knowledge protocol from a publication called \textit{"How to explain zero-knowledge protocols to your children"}.
+To help our understanding we will explore \cite{QJM} \textit{the strange cave of Ali Baba}, a famous analogy for a zero-knowledge protocol from a publication called \textit{"How to explain zero-knowledge protocols to your children"}.
 
 \begin{figure}[h]
 	\centering
@@ -35,21 +36,21 @@ Peggy (or Prover) wants to prove to Victor (or Verifier) that she knows the secr
 
 \bigskip
 
-To do this they come up with a scheme.
-Victor stands in front of cave and faces away from the entrance, to not see Peggy. She enters the cave, and goes into one of the tunnels at random.
+To accomplish this they come up with a scheme.
+Victor stands in front of cave and faces away from the entrance, to not see Peggy as she enters the cave, and goes into one of the tunnels at random.
 Victor looks at the entrance, so he can see both tunnels, and signals Peggy which tunnel to come out from.
 Peggy knowing the secret can pass through the door in the middle and emerge from the tunnel requested.
 
 \bigskip
 
 If Peggy didn't know the secret she could fool Victor, only by entering the correct tunnel by chance.
-But since Victor is choosing the tunnel at random, Peggy's chance of picking the correct tunnel is 50\%. If Victor were to repeat the process $n$ time, her chances of fooling him become arbitrarily small ($2^{-n}$).
+But since Victor is choosing the tunnel at random, Peggy's chance of picking the correct tunnel is $\frac{1}{2}$. If Victor were to repeat the process $n$ time, her chances of Peggy fooling him become arbitrarily small ($\frac{1}{2^n}$).
 
-With this process Victor can be convinced that Peggy really knows the secret with a very chance ($1 - 2^{-n}$).
+With this process Victor can be convinced that Peggy really knows the secret with a very chance ($1 - \frac{1}{2^n}$).
 
 \bigskip
 
-Further more any third party observing the interaction cannot be convinced of the validity of the proof because it cannot be assured that the interaction was truly random. 
+Further more any third party observing the interaction cannot be convinced of the validity of the proof because they cannot be assured that the interaction was truly random. 
 For example, Victor could have told Peggy his questions in advance, so Peggy would produce a convincing looking proof.
 
 \subsubsection{Applications}
@@ -60,14 +61,16 @@ The cryptocurrency Zcash uses a \textit{non-interactive zero-knowledge protocol}
 
 The cryptocurrency Monero uses a ZKP protocol Bulletproofs \cite{bunz2018bulletproofs}, to achieve anonymous transactions.
 
-\textit{Idemix} \cite{camenisch2002design} an anonymous credential system for interaction between digital identities relies on CL-signatures \cite{camenisch2001efficient} to prove ownership of a credential offline, without the issuing organisation.
+\textit{Idemix} \cite{camenisch2002design} an anonymous credential system for interaction between digital identities relies on CL-signatures \cite{camenisch2001efficient} to prove validity of a credential offline, without the issuing organisation.
 Idemix has been implemented in the open-source Hyperledger Indy project.
+
+ZKPs can be also used to prove that value satisfy complex constraints like set membership and range proofs \cite{camenisch2008efficient}.
 
 \newpage
 \subsection{Interactive Proof Systems}
 \label{section:interactive-proof-systems}
-An interactive proof system is a proof system in which a \textit{prover} attempts to convince a \textit{verifier} that a statement is true.
-The prover and the verifier exchange messages until the verifier is convinced of the proof or not.
+An interactive proof system is a proof system where a \textit{prover} attempts to convince a \textit{verifier} that a statement is true.
+The prover and the verifier interact with each other by exchanging data until the verifier is convinced or not.
 
 \begin{figure}[h]
 	\centering
@@ -83,7 +86,7 @@ An interactive proof system is defined by properties \textit{completeness} and \
 \begin{description}
 	\item $\Pr[A]$: probability of event $A$ happening.
 	\item $P(x) = y$: prover $P$, outputs a witness $y$ for statement $x$.
-	\item $V(y) = 1$: verifier $V$, analyses witness $y$ and outputs $1$ for valid witness or $0$.
+	\item $V(y) = 1$: verifier $V$, asserts witness $y$ and outputs $1$ for valid a witness or $0$.
 \end{description}
 
 \paragraph{Completeness}
@@ -102,20 +105,17 @@ $$\Pr[x \notin L; P(x) = y; V(y) = 0] \ge 1 - \frac{1}{n^k}$$
 
 \subsection{Knowledge Complexity}
 
-\textit{Zero-knowledge proof systems} prove the  membership of $x$ in language $L$, without revealing any additional knowledge (e.g why is $x \in L$).
-
-The essence of zero-knowledge is the idea that what the verifier \textit{sees} is indistinguishable from what can be easily \textit{simulated} on public inputs.
-The term \textit{knowledge complexity} quantifies the degrees of indistinguishability of different languages and proof constructions.
-
-The essence of zero-knowledge is the idea that the data the verifier has (from current and past interactions with the prover) is indistinguishable from data that can be \textit{"simulated"} without provers secret information.
+\textit{Zero-knowledge proof systems} prove the  membership of $x$ in language $L$, without revealing any additional knowledge (e.g why is $x \in L$).\\
+The essence of achieving zero-knowledge is the idea that the data the verifier has (from current and past interactions with the prover) is indistinguishable from data that can be \textit{"simulated"} without provers secret information.
 For example, if we return to our analogy in the introduction. 
 Victor wants to "cheat" and record what he sees to later analyse, or to prove to someone else that Peggy knows the secret.
 Victor manages to record which tunnels he calls and from which Peggy emerges, he doesn't record which tunnel Peggy goes into as he is facing away.
 Later on Larry and Monica decide to record a similar scheme without knowing the secret.
 Larry records himself calling the tunnels and Monica emerging randomly, sometimes she emerges from the correct one other times she doesn't. 
 Larry later edits the video to only show the times Monica correctly emerged from the tunnel, as if she knew the secret.
-Assuming Larry's video editing skills are good, the videos Larry and Victor recorded are indistinguishable, both videos feature someone calling tunnels and a person emerging. 
-While one video records a valid proof and the other one doesn't, there is no information in them from which we could learn that.
+Assuming Larry's video editing skills are good, the videos Larry and Victor recorded are indistinguishable, both videos feature someone calling tunnels and a person correctly emerging. 
+While one video records a valid proof and the other one doesn't, however there is no information in them from which we could learn that.
+The only one who can be truly convinced is Victor, because he trusts that his own choices of tunnels were truly random.
 
 \subsubsection{Indistinguishability}
 Indistinguishability describes the (in)ability of distinguishing between two set of data. The "data" we are comparing is formalised as a random variable.
@@ -207,13 +207,12 @@ Zero-knowledge is a level of knowledge complexity of an interactive proof system
 \bigskip
 \newline
 An interactive proof system is \textit{zero-knowledge} if $V(x)$ data available to the verifier is \textit{approximable} by $S(x)$ data that can be generated by a \textit{simulator} $S$ from public information.
-Because the verifier is formalised as a probabilistic Turing machine, the term \textit{view} is used to describe data available to the verifier, as in what the verifier sees on its tapes.
-The verifiers view doesn't contain only data of the current interaction with the prover, but might contain data from past interactions with the prover (in the case of a cheating verifier).
+A cheating verifier might also have additional data, for example from past interactions with the prover.
 
 \subsubsection{Strengths of Zero-Knowledge}
 There are three levels of zero-knowledge, defined by the strength of indistinguishability. 
-We will defined the levels of indistinguishability as the ability of a \textit{judge} to distinguish between random variables $V(x)$ and $S(x)$, by attempting to determine the origin of a sample $x$, taken randomly from either distribution.
-Two factors determine the strength of indistinguishability, the time available to the judge and the size of the sample available to study.
+We will define the levels of indistinguishability as the ability of a \textit{judge} to distinguish between random variables $V(x)$ and $S(x)$, by attempting to determine the origin of a sample $x$, taken randomly from either distribution.
+Two parameters determine the strength of indistinguishability, the \textit{time} available to the judge and the \textit{size of the sample} available to study.
 $V(x)$ represents the verifiers view and $S(x)$ the generated data by the simulator $S$.
 
 \begin{description}

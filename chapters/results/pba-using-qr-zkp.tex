@@ -1,28 +1,27 @@
 \section{Protocol Design}
 \label{label:protocol-design}
-The main goal of our authentication protocol was to enable password authentication using zero-knowledge proof, based on the quadratic residuosity problem. 
+The main goal of our authentication protocol was to enable password authentication using zero-knowledge proof based on the quadratic residuosity problem. 
 The computations used to assert the zero-knowledge proof present a vulnerability when used with passwords.
-We extend the protocol with password-hashing tools to secure the data derived from insecure passwords.
-The integration of password hashing is not as trivial as it might seem because of the underlying zero-knowledge protocol, we can overcome mathematical limitations imposed by the ZKP protocol by introducing a setup phase to derive the parameters used in the ZKP protocol.
+We extend the protocol with key stretching to protect the low entropy passwords.
+The integration of key stretching is not as trivial as it might seem because of the underlying zero-knowledge protocol. 
+We can overcome mathematical limitations imposed by the ZKP protocol by separating the data layer where all key stretching operations are done before the ZKP protocol.
 
 In this section we will refer to the \S\ref{zkp-qrp} ZKP protocol of quadratic residuosity as the \textit{original protocol}  and our new protocol as the \textit{extended protocol}.
 
 \subsection{Vulnerabilities}
 Our use case is for password authentication, which features unique vulnerabilities, resulting from properties of passwords themselves, we've explored this topic in \S \ref{label:password-vulnerabilities}.
 In particular the original protocol is vulnerable to offline attacks with pre-computed tables.
-This vulnerability is caused the equation used to derive the quadratic residue $x$, which we later prove as a quadratic residue with the knowledge of password $w$.
+This vulnerability is caused the operation $x = w^2 \Mod{n}$ used to derive the quadratic residue $x$ mod $n$, which we later prove as a quadratic residue by proving the knowledge of secret $w$.
+Intuitively the computation of this equation is relatively inexpensive when compared to special key-stretching function like \textit{Argon2} \cite{biryukov2016argon2}, allowing an attacker to use a pre-computed hash table or a rainbow table.
 
-$$x = w^2 \Mod{n}$$
-
-Additionally, intuitively the computation of this equation is relatively inexpensive when compared to special password-hashing function like \textit{Argon2} \cite{biryukov2016argon2} .
 \newpage
 \subsection{Limitations}
-The solution seems to be a password-hashing function, as we've described in \S\ref{paragraph:password-hashing}.
+The solution seems to be a key stretching, as we've described in \S\ref{paragraph:password-hashing}.
 However we cannot simply hash the data that would be otherwise held by the verifier. 
 Let's have a look at how the verifier verifies the proof.
 On the last step the verifier asserts that,
-$$ z^2 = yx^b$$
-if we were to hash the sensitive value $x$,
+$$ z^2 \equiv yx^b \Mod{n}$$
+if we were to hash the vulnerable value $x$,
 $$H(x, s) = x_H$$
 to verify the proof, we would need an inverted function $H^{-1}$, where $H(H^{-1}(H(x))) = H(x)$,
 $$z^2 = yH^{-1}(x_H, s)^b$$
@@ -33,17 +32,15 @@ Additionally, even if hypothetically the function $H^{-1}$ would succeed with pr
 
 
 \subsection{Solution}
-To overcome our limitation, we will use a two-phase approach. Our extended protocol is constructed from two phases, first the \textit{setup phase} and the \textit{verification phase}.
+Our extended protocol is constructed from two phases, the \textit{setup phase} and the \textit{verification phase}.
 The purpose of the setup phase is to derive the parameters used in the verification phase of the protocol.
-The users password $p$ is hashed to compute the provers private input $w$.
+The users password $p$ is stretched to compute the provers private input $w$.
 $$w = H(p, s)$$
 $$x = w^2 \Mod{n}$$
 The protocol is no longer vulnerable to offline attack with a pre-computed table, since to calculate any value $x$ a unique salt $s$ is required.
 
-We are assuming the prover knows the salt $s$, in practice this value can be passed to the user by the verifier.
-
 \subsection{Protocol}
-The setup phase runs exactly once in the protocols, while the verification phase is repeated $m$ times for a confidence of $1 - 2^{-m}$.
+The setup phase is done once in the protocol, while the verification phase is repeated $m$ times for a confidence of $1 - 2^{-m}$.
 
 \begin{center}
 	\begin{tabular}{rrl|c|l}
