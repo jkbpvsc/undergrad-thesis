@@ -1,0 +1,61 @@
+\documentclass[12pt]{article}
+
+\title{Povzetek Zaključnega Dela}
+\author{Jakob Povšič}
+\date{2021}
+
+\usepackage[slovene]{babel}
+\usepackage{fontspec}
+
+\begin{document}
+	\maketitle
+%	V delu predstavimo delovanje avtentikacijskih sistemov, avtentikacije z uporabniskim imenom in glesom, ter specifične ranljivosti tovrstnih sistemov in metod zascite.
+%	Predstavimo avtentikacijsko ogrodje "Extensible Authentication Protocol" (EAP).
+%	Raziščemo tudi "Zero-Knowledge Proofs" (ZKPs) in specifičen ZKPs protokol za problem kvardratnih ostankov.
+	
+
+	\section{Uvod}
+	Tehnologija in internet sta radikalno preobrazila našo družbo v zadnjih desetletjih, in z vsakim dnevom je naše življenje bolj zlito z digitalnim.
+	Vendar niso vse spremebe pozitivne, še posebej na področju zasebnosti, danes se zdita pojma digitalnega življenja in zasebnosti samo izključujoča.
+	Zaradi poslovnih modelov velikih tehnoloških podjetji, ki temeljijo na dostopanju osebnih podatkov uporabnikov, dobiva zasebnost vsak dan večji pomen.
+	
+	Zero-Knowledge Proofs (ZKPs) so eno od orodji, ki bi lahko spremenila naš pristop do obdelave podaktkov.
+	Njihove aplikacije omogočijo odločitve nad podatki, brez razkirvanja podatkov samih.
+	
+	V zaključnem delu bomo raziskali uporabo ZKP v avtentikacijskem sistemu, kot metodo dokazovanja pravilnosti gesla.	
+%	
+%	Danes se zdi, da sta si pojma digitalnega življenja in zasebnosti samo izkljucujoča, vendar nam tehnologije kot Zero-Knowledge Proofs (ZKPs) omogocajo, da dosezemo vkljucenost in hrakti zasebnost \cite{camenisch2002design}.
+	
+	\newpage
+	
+	\section{Avtentikacija in EAP}
+	Avtentikacija je proces preverjanja resničnosti trditev, ki jih predstavlja neka entiteta o sebi ali predmetih.
+	V informacijski varnosti se avtentikacija pogosto uporablja za uspostavljanje dostopa med uporabniki in zasčitenimi sistemi.
+	Avtentikacija z uporabniškim imenom in geslom je pogost model s katerim se danes srečujejo uporabniki.
+	
+	V zaključnem delu bomo zasnovali avtentikacijski sistem kot metodo v "extensible authentication protocol" ogrodju (EAP).
+	EAP \cite{aboba2004extensible} je razširljivo ogrodje za pogajanje in izvršitev mnogih avtentikacijskih metod (EAP metod).
+	Sistem bo omogočal avtentikacijo z uporabniškim imenom in geslom preko omrežja, in bo uporabljal ZKP kot mehanizem preverjanja gesla.
+
+	Uporaba gesel prinese določene ranljivosti, zato je industrija posvojila varnostne metode, ki onemogočajo določene napade na sistem.
+	Ena od teh metod je raztegovanje ključev, uporaba ZKP mora omogočati uporabo takšnih metod za zagotavljanje minimalne varnosti.
+	
+	\section{Zero-Knowledge Proofs}
+	ZKPs \cite{goldwasser1989knowledge} so zanimiv koncept z področja kriptografije, ki omogočajo dokazovanje metematičnih izjav brez razkrivanja \textit{zakaj} so resnične.
+	To omogoča izredno zanimive aplikacije, saj lahko takšen sistem izvaja "operacije" nad podatki brez, da bi do njih dostopal v surovi obliki.
+	V takem sistemu lahko dokažemo, da smo polnoletni oz državljani neke države	oz, da imamo določen znesek na bančnem računu, brez razkrivanja občutljivih osebnih podatkov.
+	Kriptovalute kot Monero in Zcash uporabljajo ZKPs za dokazovanje veljavnosti transakcij, brez razkrivanja identitete pošiljatelja, prejemnika ali vrednosti poslanega zneska.
+	Projetki kot Idemix \cite{camenisch2002design} uporabljajo ZKPs kot orodoje za operiranje nad osebnimi podatki na dokumentih izdanih z strani organizaciji oz avtoritet.
+		
+	ZKP sistemi obstajajo za vrsto matematičnih problemov.
+	V našem avtentiakcijskem sistemu, bomo uporabili ZKP sistem za problem kvadratnih ostankov.
+	
+%	Dodatni iziv uporabe ZKP za preverjanje gesel, je pri uporabi mehanizmov za zaščito pred sibkostmi, ki se pojavijo zaradi nizke entropije gesel.
+	
+	\section{Dizajn Avtentikacijskega Sistema in EAP Metode}
+	Naš avtentikacijski sistem razširja ZKP sistem za problem kvardatnih ostankov z metodami razširjevanja ključev, kar onemogoča napade nad podatki, ki ji uporablja sam sistem za preverjanje gesla.
+	Avtentikacijski sistem je dodatno definiran kot EAP metoda.
+	
+	\bibliographystyle{plain}
+	\bibliography{bib}
+\end{document}

@@ -1,4 +1,4 @@
-\section{Protocol Design}
+\section{System Design}
 \label{label:protocol-design}
 The main goal of our authentication protocol was to enable password authentication using zero-knowledge proof based on the quadratic residuosity problem. 
 The computations used to assert the zero-knowledge proof present a vulnerability when used with passwords.
@@ -6,41 +6,36 @@ We extend the protocol with key stretching to protect the low entropy passwords.
 The integration of key stretching is not as trivial as it might seem because of the underlying zero-knowledge protocol. 
 We can overcome mathematical limitations imposed by the ZKP protocol by separating the data layer where all key stretching operations are done before the ZKP protocol.
 
-In this section we will refer to the \S\ref{zkp-qrp} ZKP protocol of quadratic residuosity as the \textit{original protocol}  and our new protocol as the \textit{extended protocol}.
+In this section we will refer to the \S\ref{zkp-qrp} ZKP protocol of quadratic residuosity as the \textit{original protocol}.
 
-\subsection{Vulnerabilities}
-Our use case is for password authentication, which features unique vulnerabilities, resulting from properties of passwords themselves, we've explored this topic in \S \ref{label:password-vulnerabilities}.
+\subsubsection{Vulnerability}
+Our use case is for password authentication, which features a unique vulnerability, resulting from properties of passwords themselves, we've explored this topic in \S \ref{label:password-vulnerabilities}.
 In particular the original protocol is vulnerable to offline attacks with pre-computed tables.
 This vulnerability is caused the operation $x = w^2 \Mod{n}$ used to derive the quadratic residue $x$ mod $n$, which we later prove as a quadratic residue by proving the knowledge of secret $w$.
 Intuitively the computation of this equation is relatively inexpensive when compared to special key-stretching function like \textit{Argon2} \cite{biryukov2016argon2}, allowing an attacker to use a pre-computed hash table or a rainbow table.
 
-\newpage
-\subsection{Limitations}
+\subsubsection{Theoretical Constraints}
 The solution seems to be a key stretching, as we've described in \S\ref{paragraph:password-hashing}.
-However we cannot simply hash the data that would be otherwise held by the verifier. 
 Let's have a look at how the verifier verifies the proof.
-On the last step the verifier asserts that,
-$$ z^2 \equiv yx^b \Mod{n}$$
-if we were to hash the vulnerable value $x$,
-$$H(x, s) = x_H$$
-to verify the proof, we would need an inverted function $H^{-1}$, where $H(H^{-1}(H(x))) = H(x)$,
-$$z^2 = yH^{-1}(x_H, s)^b$$
-but since we know that $H$ is a one-way function, the probability of a polynomial algorithm $H^{-1}$ to successfully compute a \textit{pseudo-inverse} is negligibly small, for all positive integers $c$.
-$$\Pr[H(H^{-1}(H(x))) = H(x)] < |x|^{-c}$$
-%TODO: Make sure the math checks out here
-Additionally, even if hypothetically the function $H^{-1}$ would succeed with probability of $1$, because the function $H$ is not injective, the \textit{pesudo-inverse} $x' = H^{-1}(H(x))$, might not be equal to $x$.
+On the last step the verifier asserts that
+$$ z^2 \equiv yx^b \Mod{n}$$.
+If we were to protect the control value $x$, by stretching it with a function $H$
+$$H(x, s) = x_H$$,
+we can then verify the proof with an inverse function $H^{-1}$
+$$z^2 = yH^{-1}(x_H, s)^b$$.
+This is possible assuming a polynomial algorithm $H^{-1}$ exists, however since key-stretching methods are based on hashing functions which are one-way functions, we know that the probability of a polynomial algorithm $H^{-1}$ to successfully compute a \textit{pseudo-inverse} is negligibly small, for all positive integers $c$ \cite{goldreich2007foundations}
+$$\Pr[H(H^{-1}(H(x))) = H(x)] < |x|^{-c}$$.
+Even if given unbounded time and resources, the \textit{pseudo-inverse} $x' = H^{-1}(H(x))$ might not be equal to $x' \not = x$.
+The set $I_x$ are values that map into $H(x)$, and since $H$ is not injective we know that $|I_x| > 1$.
+Meaning that the probability that $x' = x$ is equal to the $\frac{1}{|I_x|}$ 
+$$\Pr[H^{-1}(H(x)) = x] = \frac{1}{|I_x|}$$.
 
-
-\subsection{Solution}
-Our extended protocol is constructed from two phases, the \textit{setup phase} and the \textit{verification phase}.
+\subsubsection{Solution}
+Our system is constructed from two phases, the \textit{setup phase} and the \textit{verification phase}.
 The purpose of the setup phase is to derive the parameters used in the verification phase of the protocol.
-The users password $p$ is stretched to compute the provers private input $w$.
-$$w = H(p, s)$$
-$$x = w^2 \Mod{n}$$
+The users password $p$ is stretched to compute the provers private input $w = H(p, s)$,
+the control value $x = w^2 \Mod{n}$ is computed.
 The protocol is no longer vulnerable to offline attack with a pre-computed table, since to calculate any value $x$ a unique salt $s$ is required.
-
-\subsection{Protocol}
-The setup phase is done once in the protocol, while the verification phase is repeated $m$ times for a confidence of $1 - 2^{-m}$.
 
 \begin{center}
 	\begin{tabular}{rrl|c|l}
@@ -48,12 +43,17 @@ The setup phase is done once in the protocol, while the verification phase is re
   		\hline
 		Setup Phase & 1 & $w = H(P, s)$ & & \\
 		\hline
-		Verification & 1 & $u \leftarrow_R \Bbb{Z}_{n}$ & $\xrightarrow{y}$ \\
-		Phase& & $y = u^2$ & \\
-		& 2 & & $\xleftarrow{b}$ & $b \leftarrow_R \{0, 1\} $ \\
+		& 1 & $u \leftarrow_R \Bbb{Z}_{n}$ &  \\
+		Verification & & $y = u^2$ & $\xrightarrow{y}$ \\
+		Phase & 2 & & $\xleftarrow{b}$ & $b \leftarrow_R \{0, 1\} $ \\
 		& 3 & $z = uw^b \Mod n $ & $\xrightarrow{z}$ & assert $z^2 \equiv yx^b \Mod{n}$\\ 
 	\end{tabular}
 \end{center}
+
+After the setup phase has been established, the verification phase can start.
+After a completion of a single verification phase the verifier can be confident in the proof with the probability of $\frac{1}{2}$.
+Additional repetitions of the verification phase improve the confidence in the proof, with $m$ repetitions yielding a confidence of $1 - \frac{1}{2^m}$.
+There is no need to repeat the setup phase before each verification phase, since the provers secret $w$ has already beed derived.
 
 %To overcome our limitation, we will use a "layered" approach, where we will apply password-hashing transformations (non-linear functions), before establishing the linear relationship between $w$ and $x$.
 %
