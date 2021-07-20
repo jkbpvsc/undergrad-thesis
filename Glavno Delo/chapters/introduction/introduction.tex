@@ -1,0 +1,98 @@
+\label{chapter:1}
+
+\section{Motivation}
+Our lives are becoming more digital everyday, and with big tech companies whose business models rely on accessing user data, privacy is becoming more important every day.
+It seems that to participate in digital spaces we have to sacrifice some privacy, however technologies like zero-knowledge proofs could help us retain it.
+Zero-knowledge proofs are a fascinating cryptographic phenomenon for proving mathematical statements, without revealing \textit{why} they are true. 
+This has incredibly interesting real world applications.
+
+Cryptocurrencies like Zcash \cite{hopwood2016zcash} are using zero-knowledge proofs to validate transactions on their networks while keeping transaction senders, recipients anonymous and amounts opaque.
+
+The Self Sovereign Identity space is using zero-knowledge proofs and blockchain technologies to build a decentralised and privacy preserving digital identity infrastructure.
+Zero-knowledge proofs enable asking complex questions about sensitive user data in a completely privacy preserving manner \cite{10.1007/978-3-540-89255-7_15}.
+For example, proving you are over 18 without revealing your date of birth, or that you hold a certain amount of funds in your bank account without disclosing your financial statements.
+
+Advancements like this hint that we will look at this time and our attitude to personal data handling, as before we started washing our hands.
+\bigskip
+
+\section{Focus of the Thesis}
+Our work will be focused on building a password authentication system using zero-knowledge proofs as a method of verifying the password.
+When creating a password authentication system we have to protect ourselves from vulnerabilities of password, however the integration of key stretching methods is not as straight forward as in regular password authentication systems, because of the underlying zero-knowledge proof.
+Our system is defined as an authentication method on top of the extensible authentication protocol (EAP).
+
+\section{Structure of the Thesis}
+This thesis is composed of three chapters.
+In the \textit{introduction} \S\ref{chapter:1} we explain the motivation behind the thesis, the focus of the thesis and its structure.
+In chapter \S\ref{chapter:2} we explore the two main topics of \textit{authentication} and \textit{zero-knowledge proofs}.
+In the last chapter \S\ref{chapter:3} we present the design of our authentication system and the extensible authentication protocol method definition.
+
+%TODO: Interesting story
+
+%TODO: Work structure 
+
+%
+%In computer systems authentication is a process where a system user asserts their identity via an authentication method.
+%There are many authentication systems appropriate for different use cases,
+%one of the most common systems for end user authentication is a combination of username and password.
+%
+%
+%Our authentication protocol is using zero-knowledge proofs (ZKP) to verify the users password. 
+%ZKPs are proofs that prove noting more than that they are true, this allows us to verify the users password without ever revealing or sending the password or password equivalents over the network.
+%
+%Conceptually passwords are secrets memorised by the user, and it is often the case that weaker passwords are easier to memorise, additionally many users reuse passwords between different systems.
+%When designing a password authentication system, we must keep adopt strategies that mitigate the vulnerabilities of passwords.
+%
+%
+%Password authentication is based on a shared secret between the user and the system. Passwords however require special handling because 
+%
+%
+%
+%
+%
+%In computer systems authentication is a process where a system user asserts their identity.
+%
+%Extensible Authentication Protocol (EAP) is a general purpose authentication protocol framework, designed for network authentication.
+%It defines a set of messages and communication patterns to support the negotiation and execution of authentication protocols.
+%EAP is authentication method agnostic and is designed to be extended with new authentication methods.
+%
+%There are many types of authentication methods appropriate for different use cases and contexts, one of the most common authentication methods is a combination of username and password.
+%
+%In a secure implementation of a password authentication, the system needs protect itself from shortcomings for passwords.
+
+
+
+%%Passwords
+%One of the most common authentication use cases is end-user authentication with a username and password.
+%
+%To securely use password authentication, we have to adapt our system to work around short comings of passwords.
+%
+%%NIST
+%Authentication protocols focus on execution in a context where all necessary data exists. 
+%NIST Digital Identity Guidelines outline the complete lifecycle of an authentication system.
+%
+%%ZKP
+%Zero-Knowledge Proofs are proofs that reveal only that something is true, without revealing why it is true.
+%A simple ZKP protocol is for the problem of quadratic residuosity, which can be used as a basis for a password authentication protocol within the EAP framework.
+%
+%The protocol has to be extended to overcome the short comings of passwords.
+%
+%
+%
+%
+%* Authentication
+%* Password authentication
+%* EAP
+%* ZKP
+
+
+
+
+
+
+
+%TODO: Move to ZKP section
+
+
+%TODO: Add VC in-range/in-set ZKPs
+
+\newpage
