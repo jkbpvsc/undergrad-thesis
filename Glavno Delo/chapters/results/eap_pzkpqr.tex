@@ -1,27 +1,25 @@
 \section{EAP Method Definition}
-We want to encapsulate our extended zero-knowledge authentication system defined in \S\ref{label:protocol-design} within the EAP framework \S\ref{section:eap} as an EAP method.
+We want to encapsulate our extended zero-knowledge authentication system defined in \S\ref{label:protocol-design}  as an EAP method in the EAP framework we've explored in \S\ref{section:eap}.
 To achieve this we must define a new EAP method, which consists of messages exchanged between the \textit{peer} and the \textit{authenticator}, their data formats and how processes for handling them.
 
 \paragraph{Terminology}
-In interactive proof systems and EAP different terminology is used.
-In interactive proof systems \S\ref{section:interactive-proof-systems}, we name participating parties as the \textit{prover} and the \textit{verifier}. The prover provides the proof which is verified by the verifier.
-In EAP \S\ref{section:eap} the protocol runs between the \textit{peer} and the \textit{authenticator}, where the authenticator authenticates the peer based on the result of an EAP method execution.
+In this section we will be using EAP terminology as described in \S\ref{section:eap}, which uses different names to describe parties involved, as the ones used in our system architecture in \S\ref{label:protocol-design} or as in the ZKP protocol in \S\ref{zkp-qrp}.
+The two parties in EAP are called the peer and the authenticator, where the peer is authenticating with the authenticator.
+To draw parallels between our system architecture, where we use the names \textit{user} and \textit{authentication system}, the peer is the user and the authenticator is the authentication system.
+In the ZKP protocol names \textit{prover} and \textit{verifier} are used, the peer is the prover, and the authenticator is the verifier.
 
-Our authentication system builds on the original zero-knowledge protocol \S\ref{zkp-qrp} which is an interactive proof system. 
-When mapping the extended protocol to an EAP framework, the \textit{prover} becomes the \textit{peer} and the \textit{verifier} becomes the \textit{authenticator}.
-The authentication material (zero-knowledge proof) provided by the peer (prover) is used to assert the validity of authentication material (zero-knowledge proof) by the authenticator (verifier).
 
 \subsection{Method Definition}
 
-To define an EAP method we need to break down our extended protocol to EAP messages representing interactions between between the prover and the verifier.
+To define an EAP method we need to break down our authentication system to EAP messages representing interactions between between the prover and the verifier.
 Each message defines its data format, the sender and recipient processes and local state changes.
 
-The symbols $n, s, w, y, z$ have the same definition as in the system design \S\ref{label:protocol-design}.
-In our system design we assumed the modulus $n$ and salt $s$ are known by the prover, however the EAP method needs to facilitate the discovery of this data by the peer.
+The symbols $n, s, w, y, z$ have the same definition as in the system architecture described in \S\ref{label:protocol-design}.
+In our architecture we assumed the modulus $n$ and salt $s$ are known by the prover, however the EAP method needs to facilitate the discovery of this data.
 
 The EAP method consists of two message pairs, the \textit{setup message} pair exchanged sent once and the \textit{verification message} pair is exchanged $m$ times.
 The first pair is used to facilitate the \textit{setup phase} of the \textit{authentication process} and the second pair to facilitate the \textit{verification phase}.
-It should be noted that both message pairs are not one-to-one match with the communication in the authentication process of our system. 
+It should be noted that both message pairs are not one-to-one match with the communication described in our architecture in \S\ref{zkp-qrp} . 
 Doing a one-to-one match would create three message pairs with empty spaces in some response and request data.
 In order to save on space we've managed to compress the authentication process into two message pairs, by interlacing some data transfer of the \textit{verification} phase in the response of the \textit{setup} phase and the response of the preceding verification phase, we'll explore how exactly we achieve this when defining the data formats of each message.
 

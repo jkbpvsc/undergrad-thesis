@@ -11,10 +11,10 @@ Government and international institutions have developed guidelines for managing
 While both humans and other computer systems can be authenticated, we are focusing on authentication of a human end user.
 
 \subsubsection{Authentication Process Components}
-Authentication \cite{shirey2007internet} is \textit{the process of verifying a claim that a system entity or system resource has a certain attribute value.}
+Authentication \cite{shirey2007internet} is the process of verifying a claim that an entity or a resource has a certain attribute value.
 This is a broad definition, and it most frequently applies to the verification of users identity (e.g at login), however assertions can be made and verified about any subject or object.
 The process of authentication is done in two parts, \textit{identification} and \textit{verification}.
-A common application of authentication is to manage access of a restricted system resources of an external user or system.
+A common application of authentication is to manage access of a restricted system resources of an external users.
 
 When designing an authentication system it's important to understand all components of the authentication process.
 
@@ -24,12 +24,12 @@ The identifier needs to be unique for the entity it identifies.
 The process of identification is not necessarily externally visible, as the identity of the subject can be implicit in the environment. 
 For example an identifier can be determined by an IP address the user wants to authenticate from, or a system might only have a single identity that can authenticate.
 
-In our system the user will identify himself with a username.
+%In our system the user will identify himself with a username.
 
 \paragraph{Verification} Presenting or generating authentication information that can be used to verify the claim.
 Commonly used authentication information are passwords, one-time tokens, digital signatures.
 
-In our system the user will prove his knowledge of a password with a zero-knowledge proof.
+Our system will verify the users password with a zero-knowledge proof.
 
 \subsubsection{Authentication Factors}
 

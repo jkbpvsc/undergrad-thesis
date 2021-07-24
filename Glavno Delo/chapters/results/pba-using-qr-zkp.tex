@@ -1,45 +1,22 @@
-\section{System Design}
+\section{System Architecture}
 \label{label:protocol-design}
-
-%Focus was designing a password authentication system with a ZKP password verification method.
-%
-%How will we use the ZKP as a PVM?
-%
-%To recap the ZKP works by proving the knowledge of root $w$, where $w^2 \equiv x \Mod{n}$.
-%We will treat our password as the value the prover is proving knowledge of.
-%Simple
-%
-%Since we are working with passwords we need to be mindful of the pitfalls.
-%Using the password directly as a root brings vulnerabilities to offline attacks.
-%
-%Our final design needs to utilise key stretching,
-%constraints when using key stretching
-%final design
-%
-%alternative consideration - parallel composition
-
-
-
-
-%The main focus of this thesis is to design a password authentication system using zero-knowledge proofs. 
-We've examined the password authentication model \S\ref{section:password-authentication} and ZKP for quadratic residuosity problem \S\ref{zkp-qrp}.
-How do we combine those concepts, specifically how do we utilise the mentioned ZKP protocol as a password verification method?
+In this section we will define the architecture of our authentication system, to so we need to combine the model of password authentication we've examined in \S\ref{section:password-authentication} and the ZKP system for quadratic residuosity problem from \S\ref{zkp-qrp}.
 
 \subsection{Password Verification}
 \label{section:zkp-password-verification}
-The purpose of password verification is to assert that the user authenticating knows the correct password. 
+The purpose of password verification is to assert that the user authenticating knows the correct password $p$. 
 How can we do this with the ZKP protocol?
 The ZKP protocol proves that $x$ is a quadratic residue modulo $n$, by proving the knowledge of the root $w$, where  $w^2 \equiv x \Mod{n}$.
 To use this protocol as a password verification method we can treat the root $w$ as the password $w = p$ known by the user.
-If the user assumes the role of prover and the system the role of the verifier, when both follow the ZKP protocol, the user will prove that $x$ is a quadratic residue modulo $n$, to do this however the user needs to prove the knowledge of the password $w$. 
+If the user assumes the role of prover and the authentication system the role of the verifier, when both follow the ZKP protocol, the user will prove that $x$ is a quadratic residue modulo $n$, to do this however the user needs to prove the knowledge of the password $w$. 
 With this, the system can assert that the password is valid.
 
 
 \subsubsection{Vulnerability}
 To verify the proof provided by the user the system needs to know the quadratic residue $x$.
-Because the root $w = p$ is a password, this introduces a vulnerability \S\ref{label:password-vulnerabilities} into our system.
-An attacker with access to $x$ could crack the password $w$ using an offline attack with pre-computed tables.
-We need to use a key-stretching method \S\ref{paragraph:password-hashing} to ensure adequate security.
+Because the root $w = p$ is a password, this introduces a vulnerability as mentioned in \S\ref{label:password-vulnerabilities}.
+An attacker with access to $x$ could crack the password $w$ in an offline attack with pre-computed tables.
+As mentioned in \S\ref{paragraph:password-hashing}, we need to use a key-stretching method to ensure adequate security.
 
 
 
@@ -61,9 +38,9 @@ We need to use a key-stretching method \S\ref{paragraph:password-hashing} to ens
 %Intuitively the computation of this equation is relatively inexpensive when compared to special key-stretching function like \textit{Argon2} \cite{biryukov2016argon2}, allowing an attacker to use a pre-computed hash table or a rainbow table.
 
 \subsubsection{Theoretical Constraints of Key-Stretching Vulnerable Data}
-A common usage of a key-stretching method is to transform the vulnerable data stored in the system.
+A common usage of a key-stretching method is to transform the vulnerable data stored in the authentication system.
 However this approach doesn't work in our case.
-Let us explore how the system verifies the proof, and why using key-stretching directly over stored data is a problem for us.
+Let us explore how the authentication system verifies the proof, and why using key-stretching directly over stored data is an issue.
 We assume the system can verify the proof and use key-stretching methods directly over the vulnerable data. 
 However we will see why this is not possible.
 
@@ -108,14 +85,14 @@ The process begins with the user deriving the root $w$ from the password $w$ and
 \begin{table}[h!]
 	\centering
 	\begin{tabular}{p{0.016\textwidth}|p{0.25\textwidth}|p{0.03\textwidth}|p{0.3\textwidth}}
-  		& User & & System\\
+  		& User & & Authentication System\\
   		\hline
 		1 & $w = H(P, s)$ & & \\ 
 	\end{tabular}
 \end{table}
 
 \noindent
-Once the user derives the root $w$, both parties can follow the ZKP protocol \S\ref{zkp-qrp} to authenticate.
+Once the user derives the root $w$, he can authenticate, by following ZKP protocol with the system as mentioned in \S\ref{zkp-qrp}
 Earlier we argued that the ZKP works as a password verification method because $p = w$, this argument isn't true anymore.
 However even though $w \not = p$, the user can only derive $w$ knowing the password $p$, so when the user proves the knowledge of $w$, it can only be so because they know $p$ as well.
 This part of the process is repeated $m$ times for a confidence of $1 - 2^{-m}$
@@ -169,13 +146,13 @@ This part of the process is repeated $m$ times for a confidence of $1 - 2^{-m}$
 \subsection{Considerations}
 \paragraph{Parallel ZKP Composition}
 If we look at the steps that occur in our ZKP verification process, we can notice many iterations of data exchanges between the user and the system.
-In a real world environment, this can cause the authentication process to be slow, because of network inefficiencies when transmitting data between the user and the system.
+In a real world environment, this can cause the authentication process to be slow, because of network inefficiencies when transmitting data between the user and the authentication system.
 Can we improve this by running the steps in parallel instead of sequentially?
 If look closely at the data, we can see that at any given step there are no dependencies to data from the previous step, meaning that technically nothing is preventing us from running this in parallel.
 
 What we are proposing is theoretically called a 3-round interactive zero-knowledge proof.
 The existence of these proofs is limited only to a class of problems \textit{BPP} \cite{goldreich1996composition}.
-Unfortunately the quadratic residuosity problem is not believe to be in this class, so it is assumed to have a weaker notion of zero-knowledge.
+Unfortunately the quadratic residuosity problem is not believed to be in this class, so a parallel proof is assumed to have a weaker notion of zero-knowledge.
 
 For this purpose we've decided to use a sequential execution for our authentication process.
 

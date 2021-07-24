@@ -1,6 +1,6 @@
 \section{Extensible Authentication Protocol}
 \label{section:eap}
-Our authentication protocol is designed as a method in the extensible authentication protocol (EAP) framework.
+Our authentication system is defined as a method in the extensible authentication protocol (EAP) framework.
 
 %EAP - PROTOCOL IN DETAIL
 
@@ -107,13 +107,13 @@ IANA \cite{joseph2004eap} assigns type numbers to 49 different authentication me
 The original RFC \cite{aboba2004extensible} already assigned 3 authentication protocols.
 
 \begin{description}
-	\item[MD5-Challenge] \textit{Type 4}. An EAP implementation of the \cite{simon2008eap} PPP-CHAP protocol.
-	\item[One-Time Password] \textit{Type 5}. An EAP implementation of the \cite{haller1998one} one-time password system.
+	\item[MD5-Challenge] \textit{Type 4}. An EAP implementation of the PPP-CHAP protocol \cite{simon2008eap}.
+	\item[One-Time Password] \textit{Type 5}. An EAP implementation of the one-time password system \cite{haller1998one}.
 	\item[Generic Token Card] \textit{Type 6.} This type facilitates various challenge/response \textit{token card} implementations.
 \end{description}
 
 Some other notable examples are EAP-TLS \cite{simon2008eap}, EAP-PSK \cite{bersani2007eap}.
-EAP SRP-SHA1 \cite{carlson135eap} is especially interesting as it uses a zero-knowledge protocol to verify the peers secret, similar to our own EAP method.
+EAP SRP-SHA1 \cite{carlson135eap} is especially interesting as it uses a ZKP system to verify the peers secret, similar to our own EAP method.
 
 \subsection{Pass-Through Behaviour}
 An authenticator can act as a \textit{Pass-Through Authenticator}, by using the authentication services of a \textit{backend authentication server}.
@@ -130,3 +130,68 @@ In WPA2-Enterprise, EAPOL is used for communication between the supplicant and t
 
 With WPA2-Enterprise, the authenticator functions in a pass-through mode and uses a RADIUS server to authenticate the supplicant.
 EAP packets between the authenticator and the authentications server (RADIUS) are encapsulated as RADIUS messages \cite{aboba2003radius, chen2005extensible, congdon2003ieee}
+
+\subsection{MD5-Challenge EAP method}
+Let's look at an example EAP authentication with the MD5-Challenge authentication method.
+MD5-Challenge is an EAP method analogous to the PPP CHAP \cite{simpson1996ppp}. The method is denoted by the message type 4.
+
+The PPP challenge handshake authentication protocols is an authentication model based on a shared secret between the peer and the authenticator.
+The authenticator authenticates the user by first sending him a challenge value $c$, which the user concatenates with the secret $s$ and hashes with a hashing function $d = h(c | s)$.
+The hash digest $d$ is returned in the response and the authenticator compares the received hash with the local hash, if they match the peer is authenticated.
+As mentioned before MD5-Challenge is analogous to PPP CHAP, meaning the authentication process is the same. While PPP CHAP is agnostic to the hashing algorithm used, MD5-Challenge always uses the MD5 hashing algorithm.
+
+\bigskip
+\noindent
+Let's examine the authentication process with EAP and MD5-Challenge method. 
+The process is visually displayed in the sequence diagram \ref{fig:eap-md5}.
+At each step we will show the $code$ and the $type$ field value, we are omitting the $identifier$ and $length$ fields as their values are dynamically determined when the protocol is running.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=9cm]{images/eap-md5}
+	\caption{EAP, MD5-Challenge}
+	\label{fig:eap-md5}
+\end{figure}
+
+\begin{description}
+	\item [MD5-Challenge] Message is sent by to the peer with a random challenge $c$. $(Code=1, Type=4)$.
+	\item [Nak] In the case that MD5-Challenge method is unacceptable to the peer, he should respond with a \textit{Nak} message $(Code=2, Type=3)$, the \textit{type data} of the message can contain the number indicating the preferred EAP method.
+	\item [MD5-Response] The peer computes the hash digest $d$ as described before with the MD5 hashing algorithm and sends it in a response. $(Code=2, Type=4)$.
+	\item [Success] The authenticator sends this message if the digest $d$ was successfully verified. The peer was successfully authenticated, and the protocol stops. $(Code=3)$.
+	\item [Failure] The authenticator sends this message on an incorrect digest $d$, the peer could not be authenticated, and the protocol stops. $(Code=4)$.
+\end{description}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

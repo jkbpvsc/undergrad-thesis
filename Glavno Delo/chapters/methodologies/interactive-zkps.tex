@@ -1,8 +1,8 @@
 \section{Zero-Knowledge Proofs}
-In the hearth of our authentication protocol we wish to use zero-knowledge proofs as a method to verify users password.
+In our authentication system we wish to use zero-knowledge proofs as a password verification method.
 
 In this section we explore what ZKPs are on a high level, look at a practical analogy of how they work and also how they are used in real life.
-Next we look at what are \textit{interactive proof systems}, the framework of zero-knowledge protocols.
+Next we look at what are \textit{interactive proof systems}, the parent of ZKP systems.
 And what is \textit{knowledge complexity}, or how to quantify the knowledge exchanged in an interactive proof system and finally what makes an interactive proof systems zero-knowledge.
 
 \subsection{Basics}
@@ -59,7 +59,7 @@ For example, Victor could have told Peggy his questions in advance, so Peggy wou
 
 \subsubsection{Applications}
 Most commonly ZKPs were used in authentication and identification systems, as a way to prove knowledge of a secret. 
-Recently however there have been a number of new applications in the cryptocurrency and distrubuted identity systems.
+Recently however there have been a number of new applications in the cryptocurrency and decentralised identity systems.
 
 The cryptocurrency Zcash uses a \textit{non-interactive zero-knowledge protocol} zk-SNARK \cite{bowe2018multi} to prove the validity of transactions, without revealing anything about the recipients nor the amount sent.
 
@@ -89,7 +89,7 @@ An interactive proof system is defined by properties \textit{completeness} and \
 	\item $\Pr[A]$: probability of event $A$ happening.
 	\item $P(x) = y$: prover $P$, outputs a proof $y$ for statement $x$.
 	\item $V(y) = 1$: verifier $V$, verifies proof $y$ and outputs $1$ or $0$.
-	\item $L$: a language, where a statement $x$ is valid iff $x \in L$.
+	\item $L$: Language $L$ is a set of \textit{words} or values $x$, with a property $P$, $L = \{x | P(x)\}$. Often used to described a set of values that are a solutions to a mathematical problem. For example, a problem, find $x$ larger than $3$ and lesser than $7$, has the associated language $L_A$ is $L_A = \{x| 3<x<7\} = \{4,5,6\}$. Proving membership of $x$ in $L$ is equivalent to proving $x$ is a solution to a problem $P$ that defines the language $L$.
 \end{description}
 
 \paragraph{Completeness}
