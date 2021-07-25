@@ -6,7 +6,7 @@ Our authentication system is defined as a method in the extensible authenticatio
 
 %\subsubsection{Overview}
 Extensible authentication protocol \cite{aboba2004extensible} (EAP) is a general purpose authentication framework, designed for network access authentication. 
-It runs directly over the data link layer such as PPP  \cite{simpson1994rfc1661} and IEEE 802 \cite{walke2007ieee}.
+It runs directly over the data link layer such as PPP  \cite{simpson1994rfc1661} and IEEE 802 \cite{10.5555/18422.18423}.
 EAP defines a set of messages that support negotiation and execution of a variety of authentication protocols.
 EAP is a two-party protocol between a \textit{peer} and an \textit{authenticator} at the each end of a link. The terms \textit{peer} and \textit{authenticator} are EAP terminology.
 
@@ -113,7 +113,7 @@ The original RFC \cite{aboba2004extensible} already assigned 3 authentication pr
 \end{description}
 
 Some other notable examples are EAP-TLS \cite{simon2008eap}, EAP-PSK \cite{bersani2007eap}.
-EAP SRP-SHA1 \cite{carlson135eap} is especially interesting as it uses a ZKP system to verify the peers secret, similar to our own EAP method.
+EAP SRP-SHA1 \cite{ietf-pppext-eap-srp-03} is especially interesting as it uses a ZKP system to verify the peers secret, similar to our own EAP method.
 
 \subsection{Pass-Through Behaviour}
 An authenticator can act as a \textit{Pass-Through Authenticator}, by using the authentication services of a \textit{backend authentication server}.
@@ -132,24 +132,26 @@ With WPA2-Enterprise, the authenticator functions in a pass-through mode and use
 EAP packets between the authenticator and the authentications server (RADIUS) are encapsulated as RADIUS messages \cite{aboba2003radius, chen2005extensible, congdon2003ieee}
 
 \subsection{MD5-Challenge EAP method}
-Let's look at an example EAP authentication with the MD5-Challenge authentication method.
-MD5-Challenge is an EAP method analogous to the PPP CHAP \cite{simpson1996ppp}. The method is denoted by the message type 4.
+Let us look at an example of an EAP authentication process and examine messages exchanged between the peer and the authenticator. This EAP instance uses the MD5-Challenge authentication method.
+MD5-Challenge is an EAP method analogous to PPP CHAP \cite{simpson1996ppp}. The method is denoted by the message type 4.
 
-The PPP challenge handshake authentication protocols is an authentication model based on a shared secret between the peer and the authenticator.
-The authenticator authenticates the user by first sending him a challenge value $c$, which the user concatenates with the secret $s$ and hashes with a hashing function $d = h(c | s)$.
-The hash digest $d$ is returned in the response and the authenticator compares the received hash with the local hash, if they match the peer is authenticated.
-As mentioned before MD5-Challenge is analogous to PPP CHAP, meaning the authentication process is the same. While PPP CHAP is agnostic to the hashing algorithm used, MD5-Challenge always uses the MD5 hashing algorithm.
+\paragraph{PPP CHAP}
+The PPP \textit{challenge handshake authentication protocol} is an authentication model based on a shared secret between the peer and the authenticator.
+The authenticator authenticates the user by first sending him a random challenge $c$, which the user concatenates with the secret $s$ and hashes with a hashing function $d = h(c | s)$.
+The hash digest $d$ is returned in the response and the authenticator compares the received hash with the locally computed hash, if they match the peer is authenticated.
+
+Aside from a slightly different message format, the MD5-Challenge authentication process is functionally the same as PPP CHAP, with the difference that while PPP CHAP is hashing algorithm agnostic, MD5-Challenge specifics the use of the MD5 hashing algorithm \cite{rivest1992md5}.
 
 \bigskip
 \noindent
-Let's examine the authentication process with EAP and MD5-Challenge method. 
-The process is visually displayed in the sequence diagram \ref{fig:eap-md5}.
-At each step we will show the $code$ and the $type$ field value, we are omitting the $identifier$ and $length$ fields as their values are dynamically determined when the protocol is running.
+Let us examine the individual steps in EAP authentication with this method. 
+The steps is visualised in the sequence diagram \ref{fig:eap-md5}.
+At each step we will describe what is happening and note contents of the EAP messages being exchanged, we are omitting the \textit{identifier}, \textit{length} and \textit{type-data} fields of the messages as their contents are dynamically determined when the protocol is running.
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=9cm]{images/eap-md5}
-	\caption{EAP, MD5-Challenge}
+	\includegraphics[width=10cm]{images/eap-md5-2}
+	\caption{EAP (MD5-Challenge)}
 	\label{fig:eap-md5}
 \end{figure}
 
@@ -158,7 +160,7 @@ At each step we will show the $code$ and the $type$ field value, we are omitting
 	\item [Nak] In the case that MD5-Challenge method is unacceptable to the peer, he should respond with a \textit{Nak} message $(Code=2, Type=3)$, the \textit{type data} of the message can contain the number indicating the preferred EAP method.
 	\item [MD5-Response] The peer computes the hash digest $d$ as described before with the MD5 hashing algorithm and sends it in a response. $(Code=2, Type=4)$.
 	\item [Success] The authenticator sends this message if the digest $d$ was successfully verified. The peer was successfully authenticated, and the protocol stops. $(Code=3)$.
-	\item [Failure] The authenticator sends this message on an incorrect digest $d$, the peer could not be authenticated, and the protocol stops. $(Code=4)$.
+	\item [Failure] If the digest $d$ isn't valid, the authenticator sends the \textit{failure} message indicating that the peer could not be authenticated. $(Code=4)$.
 \end{description}
 
 

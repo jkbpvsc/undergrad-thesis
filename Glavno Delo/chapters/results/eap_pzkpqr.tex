@@ -9,45 +9,60 @@ To draw parallels between our system architecture, where we use the names \texti
 In the ZKP protocol names \textit{prover} and \textit{verifier} are used, the peer is the prover, and the authenticator is the verifier.
 
 
-\subsection{Method Definition}
+%\subsection{Method Definition}
 
-To define an EAP method we need to break down our authentication system to EAP messages representing interactions between between the prover and the verifier.
+\bigskip
+\noindent
+To define an EAP method we need to break down our authentication system described in \S\ref{label:protocol-design} to EAP messages representing interactions between the user and the authentication system.
 Each message defines its data format, the sender and recipient processes and local state changes.
+Our EAP method defines of two message pairs, the \textit{setup} message pair and the \textit{verification} message pair.
+The message pairs are not an identical mapping to the exchanges as described in \S\ref{zkp-qrp}, but are slightly interlaced to optimise the number of messages sent for a successful authentication.
 
-The symbols $n, s, w, y, z$ have the same definition as in the system architecture described in \S\ref{label:protocol-design}.
-In our architecture we assumed the modulus $n$ and salt $s$ are known by the prover, however the EAP method needs to facilitate the discovery of this data.
+Our authentication system was designed for systems with multiple users, for this reason the authenticator needs to start the authentication process by querying the identity of the peer with the \textit{identity} (type 1) EAP message.
+The \textit{setup} message pair is used for discovery of ZKP parameters by the peer, and to provide the values for the first proof verification round to the authenticator.
+This message pair is exchange only once.
+The \textit{verification} message pair is used to exchange data required for a single round of proof verification. Since proof verification as described in \S\ref{zkp-qrp} requires $m$ iterations, this message pair is exchange $m$ times.
+The protocol ends with the authenticator sending either a \textit{success} or a \textit{failure} message.
 
-The EAP method consists of two message pairs, the \textit{setup message} pair exchanged sent once and the \textit{verification message} pair is exchanged $m$ times.
-The first pair is used to facilitate the \textit{setup phase} of the \textit{authentication process} and the second pair to facilitate the \textit{verification phase}.
-It should be noted that both message pairs are not one-to-one match with the communication described in our architecture in \S\ref{zkp-qrp} . 
-Doing a one-to-one match would create three message pairs with empty spaces in some response and request data.
-In order to save on space we've managed to compress the authentication process into two message pairs, by interlacing some data transfer of the \textit{verification} phase in the response of the \textit{setup} phase and the response of the preceding verification phase, we'll explore how exactly we achieve this when defining the data formats of each message.
+%TODO: Change title
+\subsubsection{Authentication steps}
+Let us examine the steps involved in authentication with our EAP method. We are going to be referencing messages displayed in the sequence diagram in \ref{fig:eap-84}.
+The purpose of this section is to visually aid the understanding of the authentication process, meaning that some nuances are left our for the purpose of simplification, a detailed definition of individual messages is in the next section.
 
-The authenticator can optionally use the \textit{identity} type EAP message the query the identity of the peer, this might be useful to locate the unique salt belonging to the peer.
+The mathematical variables have the same meaning as in the system architecture described in \S\ref{label:protocol-design}, this applies to all further sections.
 
-To end the method, the authenticator sends a \textit{success} message after successfully authenticating the peer, or a \textit{failure} message otherwise.
-
-\begin{figure}[h]
+\begin{figure}[h!]
 	\centering
-	\includegraphics[width=12cm]{images/EAP_Method.png}
+	\includegraphics[width=10cm]{images/eap-zkp}
 	\caption{EAP Method Execution}
-	\label{fig:eap-method-protocol}
+	\label{fig:eap-84}
 \end{figure}
 
-%\subsubsection{Message Format}
-Each EAP method is identified by the \textit{type} field of the EAP message, our method is represented by the type 84.
-The message pair of the EAP method is identified by the \textit{sub-type} field.
-\medskip
+\newpage
+\begin{description}
+	\item [Identity] This message is used to query the identity of the peer. In a system with multiple users this is required to identify the peer authenticating, but more specifically the authenticator needs to find the correct salt $s$ and quadratic residue $x$. 
+	\item [Setup] The peer needs both the salt $s$ and the modulus $n$ to compute the proof, however he only know the password $p$. Once the peer identifies himself, the authenticator needs to send him the salt $s$ and modulus $n$ in the \textit{setup request} message.
+	\item [Verification] With this message pair the peer and the authenticator exchange data to compute and verify the ZKP. The authenticator send the random bit $b$ and the peer responds with the proof $z$. The peer also sends the control value $y_{i+1}$ for the next verification round $i+1$, this is done as an optimisation to improve the speed of the process.
+	\item [Success/Failure] After each \textit{verification} message, the authenticator verifies the proof, and once it was successfully verified for $m$ rounds, the authenticator sends the \textit{success} message. However at anytime if the proof isn't valid the authenticator must send a \textit{failure} message.
+\end{description}
+
+\subsubsection{Method \textit{Type} and \textit{Sub-Type}}
+Our EAP method is identified by the \textit{type} number $84$.
+The message pairs of the EAP method are identified by the \textit{sub-type} field within the \textit{type data}.
 \begin{itemize}
 	\item Setup (Sub Type 1)
 	\item Verification (Sub Type 2)
 \end{itemize}
 
-\subsection{Setup Message Pair}
+\subsubsection{Key-Stretching Method}
+Our architecture does not specify a key-stretching method, and neither does this EAP method.
+We assume that in a practical implementation the method would be pre-defined and implicitly known by both parties, without the need for discovery.
 
-%\paragraph{Request}
-%
-%\paragraph{Response}
+\subsection{Setup Message Pair}
+In our architecture we assumed the modulus $n$ and salt $s$ are known by the user, however the EAP method needs to facilitate the discovery of this data.
+The response message additionally contains the control value $y_1$, used to verify the proof in the fist verification round. The data is already included in this message to improve the method performance.
+
+We are assuming that in a system with multiple users, the authenticator has identified the peer with the \textit{identity} message.
 
 \subsubsection{Request} Message is used to deliver the salt $s$ and semiprime modulus $n$ to the peer.
 
@@ -58,7 +73,7 @@ The message pair of the EAP method is identified by the \textit{sub-type} field.
 	\hline
 	Length (Octets) & ... & 1 & $4 \le k \le 255 $ & $64 \le j$\\
 	\hline
-	Field Type & ... & Salt Length & Salt & Semiprime Modulus\\
+	Field Type & ... & Salt Length & Salt & Modulus\\
 	\hline
 \end{tabular}
 \end{center}
@@ -67,7 +82,7 @@ The message pair of the EAP method is identified by the \textit{sub-type} field.
 	\item[Salt Length] A single octet for the length of the \textit salt field in octets.
 	\item[Salt] A random salt value, should be from 4 octets to 255 octets long.
 The max length is determined by the largest number able to be encoded in the \textit {salt length} field.
-	\item[Semiprime Modulus] Fills the rest of the message to the length specified by the \textit{length} field in the EAP header. 
+	\item[Semiprime Modulus] Fills the rest of the message to the length specified by the \textit{length} field in the EAP message. 
 Should be at least 64 octets (512 bits).
 \end{description}
 
@@ -76,13 +91,10 @@ $$w = H(p, s)$$
 Secret value $w$ should be stored stored in memory by the peer. 
 Next the peer should pick a random integer $u$ from field $Z^*_n$, and store it in memory and then compute the control value $y = u^2 \Mod{n}$.
 The control value $y$ is included in the response message.
-\bigskip
-\\
-In order to locate the unique salt in a system with multiple peer identities, the authenticator can optionally use the \textit{identity} method (Type 1) to query the identity of the peer.
-
 
 \subsubsection{Response}
-The response transmits the control value $y$ to the authenticator to be used in the verification process.
+The response contains the control value $y_1$ to the authenticator to be used in the first round of the verification process.
+The subscript of a variable $y_i$ denotes in which verification round $i$ is the variable used.
 
 \paragraph{Data Format}
 
@@ -91,7 +103,7 @@ The response transmits the control value $y$ to the authenticator to be used in 
 	\hline
 	Length (Octets) & ... & $k$ \\
 	\hline
-	Field Type & ... & Control Value $y$\\
+	Field Type & ... & Control Value $y_1$\\
 	\hline
 \end{tabular}
 \end{center}
@@ -99,22 +111,23 @@ The response transmits the control value $y$ to the authenticator to be used in 
 \bigskip
 
 \begin{description}
-	\item[Control Value] Computed by the peer, where $y = u^2 \Mod{n}$ and $u \leftarrow_R \mathbb{Z}^*_n$.
+	\item[Control Value] Computed by the peer, where $y_1 = u_1^2 \Mod{n}$ and $u_1 \leftarrow_R \mathbb{Z}^*_n$.
 \end{description}
 
 \paragraph{Response Handler}
-The authenticator should store the $y$ control value locally to be used when verifying the proof.
+The authenticator should store the $y_1$ control value locally to be used when verifying the proof $z_1$.
 
 \subsection{Verification Message Pair}
-This message pair is continuously exchanged repeatedly until the authentication is concluded.
-The purpose of this message is to deliver data to the authenticator that can be used to assert the peers knowledge of $w$, if at any point the assertion fails the authentication was unsuccessful.
-Only after $m$ iterations, or after the authenticator reaches a set confidence of $1 - 2^{-m}$ in the proof is the authentication successful.
+The purpose of this message pair is to exchange data required to compute and verify the proof.
+It is continuously exchanged until the authentication is concluded.
+After $m$ successful rounds, when the authenticator reaches a confidence of $1 - 2^{-m}$ in the proof, the authentication is successful.
 
 To make our method more efficient, we reduce the number of exchanged messages between the parties by interlacing some data between iterations.
-On round $i$, the response contains data required for round $i+1$.
+On the round $i$, the response contains data required for the round $i+1$.
+
 
 \subsubsection{Request}
-The authenticator generates random bit $b$ stores it locally, and sends it to the peer.
+In the round $i$, the authenticator generates random bit $b_i$ stores it locally, and sends it to the peer.
 \paragraph{Data Format}
 
 \begin{center}
@@ -122,23 +135,25 @@ The authenticator generates random bit $b$ stores it locally, and sends it to th
 	\hline
 	Length (Octets) & ... & $1$ \\
 	\hline
-	Field Type & ... & Random Bit $b$\\
+	Field Type & ... & Random Bit $b_i$\\
 	\hline
 \end{tabular}
 \end{center}
 
 \begin{description}
-	\item[Random Bit] A single-bit $b$, at the right-most place. 1 octet long.
+	\item[Random Bit] A single-bit $b_i$, at the right-most place. 1 octet long.
 \end{description}
 
 \paragraph{Request Handling}
-The peer computes the proof $z = uw^b \Mod{n}$, with the bit $b$ received in the request.
+The peer computes the proof $z_i = u_iw^{b_i} \Mod{n}$, with the bit $b_i$ received in the request.
 
-Additionally the peer generates the control value $y$ for the next ($i+1$) round of the verification phase, it generates a random integer $u_{i+1}$ from field $Z^*_n$, and store it in memory and computes the control value $y_{i+1} = u_{i+1}^2 \Mod{n}$.
+Additionally the peer generates the control value $y_{i+1}$ for the next ($i+1$) verification round.
+The peer picks a random integer $u_{i+1}$ from field $Z^*_n$ and stores it in memory.
+The control value is computed as $y_{i+1} = u_{i+1}^2 \Mod{n}$ and sent in the response.
 
 \subsubsection{Response}
 
-The response transmits the proof $z$ and the control value $y_{i+1}$ to the authenticator, who verifies the proof and makes a decision on how to proceed.
+The response transmits the proof $z_i$ and the control value $y_{i+1}$ to the authenticator, who verifies the proof and makes a decision on how to proceed.
 \paragraph{Data Format}
 
 \begin{center}
@@ -146,21 +161,21 @@ The response transmits the proof $z$ and the control value $y_{i+1}$ to the auth
 	\hline
 	Length (Octets) & ... & $1$ & $k $ & $j$\\
 	\hline
-	Field Type & ... & Proof Length & Proof $z$ & Control Value $y_{i+1}$\\ %TODO: Witness, check if this is the correct term?
+	Field Type & ... & Proof Length & Proof $z_i$ & Control Value $y_{i+1}$\\ %TODO: Witness, check if this is the correct term?
 	\hline
 \end{tabular}
 \end{center}
 
 \begin{description}
 	\item [Proof Length] A field one octet in length. Determines the length of the Proof field in octets.
-	\item [Proof] Value $z$ computed by the peer, verified by the authenticator.
+	\item [Proof] Value $z_i$ computed by the peer, verified by the authenticator.
 	\item [Control Value] Value $y_{i+1}$, required to verify the proof of the $(i+1)$-th round.
 \end{description}
 
 \paragraph{Response Handling}
-The authenticator should verify the proof by asserting that $z^2 \equiv yx^b \Mod{n}$.
-If the assertion fails the a \textit{failure} message must be sent to the peer, otherwise a \textit{success} message must be sent if the peer was successfully verified $m$ times.
-If that is not the case, the $y_{i+1}$ is stored by the authenticator and a new random bit $b$ is send to the peer in the message request.
+The authenticator should verify the proof by asserting that $z_i^2 \equiv y_ix^{b_i} \Mod{n}$.
+If the verification fails the a \textit{failure} message must be sent to the peer, otherwise a \textit{success} message must be sent if the verification was successful for $m$ rounds.
+If that is not the case, the $y_{i+1}$ is stored by the authenticator and a new verification message request is sent.
 
 %\subsection{Optimisations}
 %EAP is a lock-step protocol, the authenticator and the peer exchange request and response messages.

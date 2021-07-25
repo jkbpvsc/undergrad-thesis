@@ -1,10 +1,10 @@
 \section{Appropriate Problems for Zero-Knowledge \newline Proof Systems}
-We have explored what defines an interactive proof system and knowledge complexity, but what are concrete examples of ZKP systems, and which statements can even be proven in zero-knowledge?
+We have explored what defines an interactive proof system and what makes it zero-knowledge, but what are concrete examples of ZKP systems, and which statements can even be proven in zero-knowledge?
 
 Whether a statement can be proven in zero-knowledge depends on the underlying mathematical problem.
 The problem also determines the ZKPs practical applications, simpler ZKPs are used to prove knowledge of a secret, while advanced ZKPs are used to prove signatures over committed values, set membership or range proofs \cite{camenisch2008efficient, bunz2018bulletproofs, camenisch2001efficient, bowe2018multi}.
 
-The ZKP \cite{goldwasser1989knowledge} used in our authentication system is based on the \textit{quadratic residuosity problem}.
+The ZKP system \cite{goldwasser1989knowledge} used in our authentication system is based on the \textit{quadratic residuosity problem}.
 We dive deep into how this ZKP system works, by exploring the mathematical foundation of quadratic residues, the quadratic residuosity problem, and the construction of the ZKP system.
 
 We also look at examples of other problems and more broadly at classes of problems with ZKP systems
@@ -12,7 +12,7 @@ We also look at examples of other problems and more broadly at classes of proble
 \subsection{ZKP system for the Quadratic Residuosity Problem}
 \label{zkp-qrp}
 The first ZKP system defined \cite{goldwasser1989knowledge} is for the \textit{quadratic residuosity problem}.
-The quadratic residuosity problem is much older than ZKPs, it was first described by Gauss in 1801 \cite{gauss1801disquisitiones}.
+The quadratic residuosity problem is much older than ZKPs, it was first described by Gauss in 1801 \cite{10.2307/j.ctt1cc2mnd}.
 The problem emerges when computing quadratic residues with a modulo that is a product of two unknown prime numbers.
 The properties of the problem, enable it to be used as a \textit{trapdoor} function. 
 To define the problem, we must define the concept of quadratic residues, and prime factorization.
@@ -185,7 +185,7 @@ Class of problems solvable by a poly-time non-deterministic Turing machine, thei
 %\newline
 Authors \cite{GMW} proved that every language in NP has a ZKP system, by defining a ZKP protocol for the Graph 3-Colouring problem (3-COL).
 \textit{Minimum colouring problem} is a problem in graph theory, of what is the minimal $k$ \textit{proper} colouring of a graph, where no adjacent vertices are of the same colour.
-An instance of ($k=3$) colouring (3-COL) is proven to be \textit{NP-Hard} because a polynomial reduction exists from \textit{Boolean-Satisfiability problem} (3-SAT) to 3-COL \cite{mouatadid2014introduction}.
+An instance of ($k=3$) colouring (3-COL) is proven to be \textit{NP-Hard} because a polynomial reduction exists from \textit{Boolean-Satisfiability problem} (3-SAT) to 3-COL \cite{moore2011nature}.
 According to Cook's theorem \cite{cook1971complexity} SAT or its 3 literal instance 3-SAT is \textit{NP-Complete}, and any language in $L \in NP$ can be reduced to an instance of 3-SAT. 
 Furthermore because polynomial reductions are \textit{transient}, any language $L \in NP$ can be reduced to an instance of 3-COL.
 
