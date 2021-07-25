@@ -8,9 +8,6 @@ The two parties in EAP are called the peer and the authenticator, where the peer
 To draw parallels between our system architecture, where we use the names \textit{user} and \textit{authentication system}, the peer is the user and the authenticator is the authentication system.
 In the ZKP protocol names \textit{prover} and \textit{verifier} are used, the peer is the prover, and the authenticator is the verifier.
 
-
-%\subsection{Method Definition}
-
 \bigskip
 \noindent
 To define an EAP method we need to break down our authentication system described in \S\ref{label:protocol-design} to EAP messages representing interactions between the user and the authentication system.
@@ -24,8 +21,7 @@ This message pair is exchange only once.
 The \textit{verification} message pair is used to exchange data required for a single round of proof verification. Since proof verification as described in \S\ref{zkp-qrp} requires $m$ iterations, this message pair is exchange $m$ times.
 The protocol ends with the authenticator sending either a \textit{success} or a \textit{failure} message.
 
-%TODO: Change title
-\subsubsection{Authentication steps}
+\subsubsection{Authentication process overview}
 Let us examine the steps involved in authentication with our EAP method. We are going to be referencing messages displayed in the sequence diagram in \ref{fig:eap-84}.
 The purpose of this section is to visually aid the understanding of the authentication process, meaning that some nuances are left our for the purpose of simplification, a detailed definition of individual messages is in the next section.
 
@@ -42,7 +38,7 @@ The mathematical variables have the same meaning as in the system architecture d
 \begin{description}
 	\item [Identity] This message is used to query the identity of the peer. In a system with multiple users this is required to identify the peer authenticating, but more specifically the authenticator needs to find the correct salt $s$ and quadratic residue $x$. 
 	\item [Setup] The peer needs both the salt $s$ and the modulus $n$ to compute the proof, however he only know the password $p$. Once the peer identifies himself, the authenticator needs to send him the salt $s$ and modulus $n$ in the \textit{setup request} message.
-	\item [Verification] With this message pair the peer and the authenticator exchange data to compute and verify the ZKP. The authenticator send the random bit $b$ and the peer responds with the proof $z$. The peer also sends the control value $y_{i+1}$ for the next verification round $i+1$, this is done as an optimisation to improve the speed of the process.
+	\item [Verification] With this message pair the peer and the authenticator exchange data to compute and verify the proof. The authenticator send the random bit $b$ and the peer responds with the proof $z$. The peer also sends the control value $y_{i+1}$ for the next verification round $i+1$, this is done as an optimisation to improve the speed of the process.
 	\item [Success/Failure] After each \textit{verification} message, the authenticator verifies the proof, and once it was successfully verified for $m$ rounds, the authenticator sends the \textit{success} message. However at anytime if the proof isn't valid the authenticator must send a \textit{failure} message.
 \end{description}
 
@@ -161,7 +157,7 @@ The response transmits the proof $z_i$ and the control value $y_{i+1}$ to the au
 	\hline
 	Length (Octets) & ... & $1$ & $k $ & $j$\\
 	\hline
-	Field Type & ... & Proof Length & Proof $z_i$ & Control Value $y_{i+1}$\\ %TODO: Witness, check if this is the correct term?
+	Field Type & ... & Proof Length & Proof $z_i$ & Control Value $y_{i+1}$\\
 	\hline
 \end{tabular}
 \end{center}
@@ -176,108 +172,3 @@ The response transmits the proof $z_i$ and the control value $y_{i+1}$ to the au
 The authenticator should verify the proof by asserting that $z_i^2 \equiv y_ix^{b_i} \Mod{n}$.
 If the verification fails the a \textit{failure} message must be sent to the peer, otherwise a \textit{success} message must be sent if the verification was successful for $m$ rounds.
 If that is not the case, the $y_{i+1}$ is stored by the authenticator and a new verification message request is sent.
-
-%\subsection{Optimisations}
-%EAP is a lock-step protocol, the authenticator and the peer exchange request and response messages.
-%
-%A naive mapping of PBA-ZKP-QRP messages to EAP packets yields 3 new request/response pairs. 
-%We can reduce the amount of new pairs to 2 instead of 3, by interlacing data shared in each pair.
-%This way we obtain a faster performance by reducing the number of packet needed to be exchanged.
-%
-%\subsubsection{Naive Map}
-%
-%\begin{center}
-%	\begin{tabular}{c|rcl}
-%	Pair & Peer  & $\leftrightarrow$ & Authenticator \\
-%	\hline
-%	1 & & $\xleftarrow{s, n}$ &\\
-%	&& $\xrightarrow{\textvisiblespace}$&\\
-%	\hline
-%	2 & & $\xleftarrow{\textvisiblespace}$&\\
-%	&& $\xrightarrow{y}$&\\
-%	\hline
-%	3 & & $\xleftarrow{b}$&\\
-%	&& $\xrightarrow{z}$&\\
-%	\hline
-%	\end{tabular}
-%\end{center}
-%
-%\paragraph{Pair 1} Exchanged once after the authenticator obtaining the peers identity. The authenticator sends the salt $s$ and semiprime modulus $n$ to the peer, in order for the peer to compute the private input $w$. 
-%Peers response serves as an acknowledgement of a successful setup.
-%
-%This pair corresponds to the \textit{setup} part of the protocol.
-%
-%\paragraph{Pair 2} The authenticator requests the peer to generate the \textit{square} value $y$ and share it in the response.
-%
-%This pair corresponds to the ZKP-QRP part of the protocol and is repeated for $m$ times. %TODO: Update the terminology to use ZKP-QRP everwhere
-%
-%\paragraph{Pair 3} The authenticator requests the peer to compute the \textit{witness} value $z$, with the value of the random bit $b$ in the request data.
-%
-%This pair corresponds to the ZKP-QRP part of the protocol and is repeated for $m$ times.
-%
-%\paragraph{Performance}
-%With this mapping a successful protocol run of $m$ iterations with a probability of error of $2^{-m}$, would require a minimum of $4m + 3$ packet exchanges.
-%
-%\bigskip
-%
-%\begin{center}
-%	\begin{tabular}{r|l}
-%		Packets exchanged & Type\\
-%		\hline
-%		2 & Pair 1\\
-%		$2m$ & Pair 2\\
-%		$2m$ & Pair 3\\
-%		1 & Type 2 (Success)\\
-%	\end{tabular}
-%\end{center}
-%
-%\subsubsection{Interlaced Data Mapping}
-%
-%\begin{center}
-%	\begin{tabular}{c|rcl}
-%	Pair & Peer  & $\leftrightarrow$ & Authenticator \\
-%	\hline
-%	1 & & $\xleftarrow{\text{s, n}}$ &\\
-%	&& $\xrightarrow{y_1}$&\\
-%	\hline
-%	2 & & $\xleftarrow{b}$&\\
-%	&& $\xrightarrow{z, y_{n+1}}$&\\
-%	\hline
-%	\end{tabular}
-%\end{center}
-%
-%\paragraph{Pair 1} Exchanged once after the authenticator obtains the peers identity. 
-%The authenticator sends the salt $s$ and semiprime modulus $n$ to the peer, in order for the peer to compute the private input $w$.
-%Peer computes the square value $y$ and sends it in the response.
-%
-%The main difference with the naive mapping is that the peer responds prematurely with $y$, instead of in the response to naive pair 2. %TODO: Reword, weird sentence
-%This is possible and valid, because the semiprime modulus value $n$ required to compute $y$, is provided in the pair 1 request.
-%
-%\paragraph{Pair 2}
-%The authenticator already has the square value $y$, and sends a request with a random bit $b$. 
-%The peer computes sends the \textit{witness} $z$ and the square value $y_{n+1}$, used in the next iteration of the protocol
-%
-%This is possible because the computation of square value $y$ is only dependent on the modulus $n$, which is provided in the request pair 1.
-%
-%\paragraph{Performance}
-%With this mapping a successful protocol run of $m$ rounds with an error rate $2^{-m}$, would require a minimum of $2m + 3$ packet exchanges.
-%
-%\begin{center}
-%\begin{tabular}{r|l}
-%	Packets exchanged & Type\\
-%	\hline
-%	2 & Pair 1\\
-%	$2m$ & Pair 2\\
-%	1 & Type 2 (Success)\\
-%\end{tabular}
-%\end{center}
-%
-%Comparing the performance of both mappings, the interlaced mapping requires half as many exchanges for the same $m$ rounds of protocol.
-%
-%$$\lim_{1 \rightarrow \infty} \frac{2m + 3}{4m + 3} = \frac{1}{2}$$
-%
-%\bigskip
-%\subsection{Security}
-%EAP PB-ZKP-QRP is resistant to passive attacks to over-the-wire information, eavesdropping, active attacks and offline attacks with pre-computed tables/rainbow tables.
-%
-%The protocol does not enable mutual authentication, nor helps in deriving a session key that can be used for data encryption.

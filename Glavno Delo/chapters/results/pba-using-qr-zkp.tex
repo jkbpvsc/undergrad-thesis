@@ -201,7 +201,6 @@ For this purpose we've decided to use a sequential execution for our authenticat
 %
 %The main issue with the protocols as a password based authentication method is vulnerability to dictionary attacks and attacks pre-computed tables.
 %
-%%TODO Maybe use passive/active attack terminology
 %\subsubsection{Password Cracking Vulnerability}
 %
 %The input $x$ is used by the verifier to verify the witness, it is computed from the private input $w$ as $x = w^2 \Mod n$.
@@ -212,7 +211,6 @@ For this purpose we've decided to use a sequential execution for our authenticat
 %An attacker can pre-compute the values of $x$ and compare them with the stored $x$ data by the verifier.
 %
 %% Key derivation function
-%% TODO Pick a different title
 %\subsubsection{Prover Password Key-Derivation}
 %To utilise PKDF, we need to apply it to derive the provers private input $w$.
 %Instead of the password being used directly as $w$, the password is processed by a PKDF, and the derivation is used as $w$.
@@ -259,7 +257,6 @@ For this purpose we've decided to use a sequential execution for our authenticat
 %
 %\bigskip
 %
-%%TODO Make sure this checks out.
 %CSP binds $x$ and $s$ as the authenticator to the credential $I$.
 %
 %\paragraph{Authentication}
@@ -304,7 +301,6 @@ For this purpose we've decided to use a sequential execution for our authenticat
 % Enrolment
 
 % Authentication
-%TODO: Add security segment
 
 %Unlike PAP, the pass-
 %   word never appears on the wire.  Unlike CHAP (and variants MS-CHAPv1
@@ -316,4 +312,3 @@ For this purpose we've decided to use a sequential execution for our authenticat
 %   that is resistant to man-in-the-middle attacks and can be used for
 %   data encryption.
 
-% TODO: Similar solutions like SRP

@@ -43,8 +43,6 @@ Messages are composed of fields, each field length is multiple of an octet of bi
 
 Each field has a special purpose.
 
-%TODO: EAP Packet with table
-
 \paragraph{Code Field}
 The code field determines who the packet is intended for and how or even should the recipient respond.
 
@@ -55,19 +53,15 @@ The code field determines who the packet is intended for and how or even should 
 	\item[Failure]\textit{Code 4}. Sent by the authenticator, when the peer cannot be authenticated. The peer doesn't respond to the message.
 \end{description}
 
-\medskip
 \paragraph{Identifier Field}
-The identifier field is used to match request and response messages, each response message needs to have the same identifier as the request.
+The identifier field is used to create a session between the peer and the authenticator.
+The authenticator uses the field to match request and response messages, each response message needs to have the same identifier as the request.
 The authenticator will discard response messages that don't have a matching identifier with the current request.
 The peer does not re-transmit response message, but relies on the authenticator to re-transmit a request message after some time if the matching response is lost.
-\medskip
 
 \paragraph{Length Field}
 The length field determines the total size of the EAP message. Because EAP provides support for generic authentication methods, the final length of the messages is variable.
 The length of the \textit{type data} field is entirely dependent on the authentication method used.
-
-%EAP - METHODS
-\medskip
 
 \paragraph{\textit{Type} and \textit{Type Data} Field}
 The \textit{type} field determines how the message should be processed and how to interpret the \textit{type data} field.
