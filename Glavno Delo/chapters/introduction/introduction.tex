@@ -1,28 +1,28 @@
 \section{Motivation}
-Our lives are becoming more digital everyday, and with big tech companies whose business models rely on accessing user data, privacy is becoming more important every day.
-It seems that to participate in digital spaces we have to sacrifice some privacy, however technologies like zero-knowledge proofs could help us retain it.
-Zero-knowledge proofs are a fascinating cryptographic phenomenon for proving mathematical statements, without revealing \textit{why} they are true. 
-This has incredibly interesting real world applications.
+Today privacy looks like a sacrifice necessary to take part in the digital world, imperative to our modern life. 
+Every day, our lives are more intertwined with digital systems with access to our personal information. While this practice is often a necessary evil, many companies seek to exploit this position.
+Zero-knowledge proofs have the potential to change how our data exists in the digital space. 
+Zero-knowledge proof systems are an intriguing cryptographic phenomenon for proving mathematical statements without revealing \textit{why} they are true.
 
-Cryptocurrencies like Zcash \cite{hopwood2016zcash} are using zero-knowledge proofs to validate transactions on their networks while keeping transaction senders, recipients anonymous and amounts opaque.
+Cryptocurrencies like Zcash \cite{hopwood2016zcash} use zero-knowledge proofs to confirm transactions while keeping the sender and the recipient anonymous and amounts opaque.
+The self-sovereign identity space \cite{tobin2016inevitable} uses zero-knowledge proofs as an essential part in a decentralized and privacy-preserving digital identity infrastructure.
+Zero-knowledge proofs enable a system to verify the properties \cite{10.1007/978-3-540-89255-7_15} of sensitive data without seeing it and risking misuse. With these tools, we can prove legal age, financial solvency, or our nationality, while revealing no sensitive information.
 
-The Self Sovereign Identity space is using zero-knowledge proofs and blockchain technologies to build a decentralised and privacy preserving digital identity infrastructure.
-Zero-knowledge proofs enable asking complex questions about sensitive user data in a completely privacy preserving manner \cite{10.1007/978-3-540-89255-7_15}.
-For example, proving you are over 18 without revealing your date of birth, or that you hold a certain amount of funds in your bank account without disclosing your financial statements.
+Advances like this hint of a future where we will look at our current personal data praxis as feudal and vulgar.
 
-Advancements like this hint that we will look at this time and our attitude to personal data handling, as before we started washing our hands.
 \bigskip
-
-\section{Focus of the Thesis}
-Our work will be focused on building a password authentication system using zero-knowledge proofs as a method of verifying the password.
-When creating a password authentication system we have to protect ourselves from vulnerabilities of passwords, however the integration of methods to improve security is not as straight forward as in regular password authentication systems, because of the underlying zero-knowledge proof.
-Our system is defined as an authentication method on top of the extensible authentication protocol (EAP).
+\noindent
+Our focus will be to define a simple use for zero-knowledge proofs.
+We will design an authentication system using a zero-knowledge proof as a password verification method, as an authentication method in the extensible authentication protocol (EAP).
+When designing the system, we need to protect ourselves from vulnerabilities of passwords.
+However, integrating security methods presents a challenge because of the zero-knowledge proof system.
 
 \section{Structure of the Thesis}
 This thesis is composed of three chapters.
-In \S\ref{chapter:1} we explain the motivation behind the thesis, the focus of the thesis and its structure.
-In \S\ref{chapter:2} we explore the two main topics of \textit{authentication} and \textit{zero-knowledge proofs}.
+In \S\ref{chapter:1} we explain the motivation behind the thesis, the focus of the thesis, and its structure.
+In \S\ref{chapter:2} we explore the two key topics of authentication and zero-knowledge proofs.
 In \S\ref{chapter:3} we present the architecture of our authentication system and the extensible authentication protocol method definition.
+
 
 %
 %In computer systems authentication is a process where a system user asserts their identity via an authentication method.
