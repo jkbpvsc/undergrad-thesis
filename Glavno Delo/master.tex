@@ -17,7 +17,6 @@
 \usepackage[utf8]{inputenc}
 \fontfamily{qcs}
 
-
 \newcommand{\Mod}[1]{\ (\mathrm{mod}\ #1)}
 
 \renewcommand{\thefootnote}{\fnsymbol{footnote}}
@@ -38,16 +37,14 @@
 \maketitle
 \newpage
 
+\include{abstract}
+
 \tableofcontents
 \newpage
 
 \pagenumbering{arabic}
 
-\include{abstract}
-
-
 \include{chapters/introduction/introduction}
-
 
 \include{chapters/methodologies/introduction}
 \include{chapters/methodologies/authentication}
@@ -61,7 +58,6 @@
 \include{chapters/results/eap_pzkpqr}
 \include{chapters/results/conclusion}
 
-%\bibliographystyle{alpha}
 \bibliographystyle{plain}
 \bibliography{ref}
 
