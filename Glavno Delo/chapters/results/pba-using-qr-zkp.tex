@@ -1,3 +1,5 @@
+
+
 \section{System Architecture}
 \label{label:protocol-design}
 In this section we will define the architecture of our authentication system, to so we need to combine the model of password authentication we've examined in \S\ref{section:password-authentication} and the ZKP system for quadratic residuosity problem from \S\ref{zkp-qrp}.
@@ -144,7 +146,8 @@ This part of the process is repeated $m$ times for a confidence of $1 - 2^{-m}$
 %There is no need to repeat the setup phase before each verification phase, since the provers secret $w$ has already beed derived.
 
 \subsection{Considerations}
-\paragraph{Parallel ZKP Composition}
+\label{section:pefromance-considerations}
+\paragraph{Performance.}
 If we look at the steps that occur in our ZKP verification process, we can notice many iterations of data exchanges between the user and the system.
 In a real world environment, this can cause the authentication process to be slow, because of network inefficiencies when transmitting data between the user and the authentication system.
 Can we improve this by running the steps in parallel instead of sequentially?

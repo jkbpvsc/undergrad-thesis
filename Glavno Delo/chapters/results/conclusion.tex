@@ -1,0 +1,17 @@
+\chapter{Conclusions and Future Work}
+The aim of this thesis was to study the utility of zero-knowledge proofs as an authentication mechanism.
+In section \S\ref{label:protocol-design}, we have presented the architecture of our authentication system, which uses a zero-knowledge proof protocol as the password verification method.
+We have described how the ZKP protocol can prove the knowledge of the user's password. The architecture also integrates key-stretching methods for protection from password vulnerabilities discussed in \S\ref{label:password-vulnerabilities}.
+In section \S\ref{section:eap-84-definition}, we have encapsulated our authentication system within EAP by defining a specification for a new EAP method.
+The specification contains definitions for EAP messages and their handling procedures.
+
+We have been successful in our goal of studying and using the ZKP protocol.
+However, upon observation, the system performance is not on par with today's industry standards. The iterative nature of the underlying ZKP protocol accumulates communication latencies, slowing down the system.
+
+\paragraph{Future work.}
+
+\begin{itemize}
+	\item The EAP method specification presented in this work can be implemented and tested in a real-world environment.
+	\item The ZKP protocol used in this work is a first generation protocol. Today there are many newer protocols that have solved many shortcomings of the older generation ZKPs. Using a newer generation ZKP protocol can improve the performance of the authentication system.
+	\item The ZKP protocol we've examined is iterative, which can cause worse performance. We've discussed an alternative proof construction in \S\ref{section:pefromance-considerations}, which we aren't pursuing in this thesis because of assumed weaker strength of zero-knowledge. However, in a real-world application, the performance improvements might justify the theoretical shortcomings.
+\end{itemize}
