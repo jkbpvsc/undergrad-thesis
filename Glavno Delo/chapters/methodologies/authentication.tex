@@ -1,35 +1,33 @@
 \section{Authentication}
 
 Authentication is the process of proving a claim or an assertion.
-Today it is most commonly used in information security \cite{shirey2007internet}, however methods of authentication are not limited to computer science and are also used in fields of archeology, anthropology and others \cite{Odegaard2014}.
-\bigskip
-\newline
-In computer science authentication is commonly used for establishing access rights between restricted system resources and users through digital identities.
-Government and international institutions have developed guidelines for managing digital identities and authentication processes \cite{grassi2017} .
-\bigskip
-\newline
-While both humans and other computer systems can be authenticated, we are focusing on authentication of a human end user.
+Today, the term is most commonly used in information security \cite{shirey2007internet}, however, we can find the principles of authentication in fields of archeology, anthropology and others \cite{Odegaard2014}.
+
+In computer science, we commonly used authentication for establishing access rights between restricted system resources and users through digital identities.
+Government and international institutions have developed guidelines for managing digital identities and authentication processes \cite{grassi2017}.
+
+While systems can authenticate both humans and other computer systems, we are focusing on authentication of a human end-user.
 
 \subsubsection{Authentication Process Components}
-Authentication \cite{shirey2007internet} is the process of verifying a claim that an entity or a resource has a certain attribute value.
-This is a broad definition, and it most frequently applies to the verification of users identity (e.g at login), however assertions can be made and verified about any subject or object.
+Authentication \cite{shirey2007internet} is verifying a claim that an entity or a resource has a certain attribute value.
+This is a broad definition, and it most frequently applies to the verification of a user's identity (e.g. at login), however we can make and verify claims about any subject or object.
 The process of authentication is done in two parts, \textit{identification} and \textit{verification}.
-A common application of authentication is to manage access of a restricted system resources of an external users.
+A common application of authentication is to manage access of an external user to protected system resources.
 
-When designing an authentication system it's important to understand all components of the authentication process.
+When designing an authentication system, it's important to understand all components of the authentication process.
 
-\paragraph{Identification} Presenting an identifier to the authentication system, that establishes the entity being authenticated, this is commonly a username or an email address.
+\paragraph{Identification.} Presenting an identifier to the authentication system that establishes the entity being authenticated, this is commonly a username or an email address.
 The identifier needs to be unique for the entity it identifies.
 
 The process of identification is not necessarily externally visible, as the identity of the subject can be implicit in the environment. 
-For example an identifier can be determined by an IP address the user wants to authenticate from, or a system might only have a single identity that can authenticate.
+For example, we can determine an identifier from the user’s IP address.
+Or a system might only have a single user that can authenticate.
 
-%In our system the user will identify himself with a username.
 
-\paragraph{Verification} Presenting or generating authentication information that can be used to verify the claim.
-Commonly used authentication information are passwords, one-time tokens, digital signatures.
+\paragraph{Verification.} Presenting or generating authentication information that can verify the claim.
+Commonly used authentication information are passwords, one time tokens, digital signatures.
 
-Our system will verify the users password with a zero-knowledge proof.
+Our system will verify the user's password with a zero-knowledge proof.
 
 \subsubsection{Authentication Factors}
 
@@ -41,9 +39,8 @@ Authentication systems can rely on three groups of factors \cite{bignell2006auth
 	\item \textbf{Inherence factors} - Something the user \textbf{is} or \textbf{does} (e.g, static biometrics - fingerprints, retina, face. dynamic biometrics - voice patterns, typing rhythm)
 \end{itemize}
 
-\paragraph{Strong authentication} As defined by governments and financial institutions \cite{cnss2006national, ecb2013recommendations}, is a system using two or more factors.
-This is also referred to as \textit{multi-factor authentication}.\\
-\newline
-Our system will focus only on the user possessing a password (\textit{knowledge factor}), while the relying party can use additional authentication factors to improve security.
+\paragraph{Strong authentication.}
+As defined by governments and financial institutions \cite{cnss2006national, ecb2013recommendations}, strong authentication is a system using two or more factors. 
+We also referred to this as \textit{multi-factor authentication}. Our system will focus only on the user possessing a password (\textit{knowledge factor}), while the relying party can use additional authentication factors to improve security.
 
 \newpage

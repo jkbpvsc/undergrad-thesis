@@ -9,42 +9,22 @@ In this section we will define the architecture of our authentication system, to
 The purpose of password verification is to assert that the user authenticating knows the correct password $p$. 
 How can we do this with the ZKP protocol?
 The ZKP protocol proves that $x$ is a quadratic residue modulo $n$, by proving the knowledge of the root $w$, where  $w^2 \equiv x \Mod{n}$.
-To use this protocol as a password verification method we can treat the root $w$ as the password $w = p$ known by the user.
+To use this protocol as a password verification method, we can treat the root $w$ as the password $w = p$ known by the user.
 If the user assumes the role of prover and the authentication system the role of the verifier, when both follow the ZKP protocol, the user will prove that $x$ is a quadratic residue modulo $n$, to do this however the user needs to prove the knowledge of the password $w$. 
 With this, the system can assert that the password is valid.
 
-
 \subsubsection{Vulnerability}
-To verify the proof provided by the user the system needs to know the quadratic residue $x$.
+To verify the proof provided by the user, the system needs to know the quadratic residue $x$.
 Because the root $w = p$ is a password, this introduces a vulnerability as mentioned in \S\ref{label:password-vulnerabilities}.
 An attacker with access to $x$ could crack the password $w$ in an offline attack with pre-computed tables.
-As mentioned in \S\ref{paragraph:password-hashing}, we need to use a key-stretching method to ensure adequate security.
-
-
-
-
-
-
-%The main goal of our authentication system was to enable password authentication using a zero-knowledge proof based on the quadratic residuosity problem. 
-%The computations used to assert the zero-knowledge proof present a vulnerability when used with passwords.
-%We extend the protocol with key stretching to protect the low entropy passwords.
-%The integration of key stretching is not as trivial as it might seem because of the underlying zero-knowledge protocol. 
-%We can overcome mathematical limitations imposed by the ZKP protocol by separating the data layer where all key stretching operations are done before the ZKP protocol.
-%
-%In this section we will refer to the \S\ref{zkp-qrp} ZKP protocol of quadratic residuosity as the \textit{original protocol}.
-%
-%\subsubsection{Vulnerability}
-%Our use case is for password authentication, which features a unique vulnerability, resulting from properties of passwords themselves, we've explored this topic in \S \ref{label:password-vulnerabilities}.
-%In particular the original protocol is vulnerable to offline attacks with pre-computed tables.
-%This vulnerability is caused the operation $x = w^2 \Mod{n}$ used to derive the residue $x$, which we later prove as a quadratic residue $\Mod{n}$ by proving the knowledge of $w$.
-%Intuitively the computation of this equation is relatively inexpensive when compared to special key-stretching function like \textit{Argon2} \cite{biryukov2016argon2}, allowing an attacker to use a pre-computed hash table or a rainbow table.
+As mentioned in \S\ref{paragraph:password-hashing}, we need to use a key-stretching method to ensure adequate security against offline attacks.
 
 \subsubsection{Theoretical Constraints of Key-Stretching Vulnerable Data}
 A common usage of a key-stretching method is to transform the vulnerable data stored in the authentication system.
-However this approach doesn't work in our case.
+However, this approach doesn't work in our case.
 Let us explore how the authentication system verifies the proof, and why using key-stretching directly over stored data is an issue.
 We assume the system can verify the proof and use key-stretching methods directly over the vulnerable data. 
-However we will see why this is not possible.
+However, we will see why this is not possible.
 
 \newpage
 \paragraph{Proof Verification with Key-Stretched Data}
@@ -56,7 +36,7 @@ If we stretch the vulnerable value $x$ with a function $H$ and a salt $s$
 $$H(x, s) = x_H,$$
 we can then verify the proof with an inverse function $H^{-1}$
 $$z^2 = yH^{-1}(x_H, s)^b.$$
-This is possible assuming a polynomial algorithm $H^{-1}$ exists, however since key-stretching methods are based on hashing functions which are one-way functions, we know that the probability of a polynomial algorithm $H^{-1}$ to successfully compute a \textit{pseudo-inverse} is negligibly small, for all positive integers $c$ \cite{goldreich2007foundations}
+This is possible assuming a polynomial algorithm $H^{-1}$ exists, however, since key-stretching methods are based on hashing functions which are one-way functions, we know that the probability of a polynomial algorithm $H^{-1}$ to successfully compute a \textit{pseudo-inverse} is negligibly small, for all positive integers $c$ \cite{goldreich2007foundations}
 $$\Pr[H(H^{-1}(H(x))) = H(x)] < |x|^{-c}.$$
 Even if given unbounded time and resources, the \textit{pseudo-inverse} $x' = H^{-1}(H(x))$ might not be equal to $x' \not = x$. 
 The set $x'\in I_x$ are all values that map into $H(x) = H(x')$, and since $H$ is not injective we know that $|I_x| \ge 1$.
@@ -66,23 +46,23 @@ $$\Pr[H^{-1}(H(x)) = x] = \frac{1}{|I_x|}.$$
 
 \subsubsection{Key-Stretching the Root $w$}
 We've seen that key-stretching the vulnerable value $x$ prevents us from verifying the ZKP.
-However by increasing the entropy of the root $w$, we can eliminate the vulnerability and ensure adequate security.
+However, by increasing the entropy of the root $w$, we can eliminate the vulnerability and ensure adequate security.
 
 \bigskip
-\noindent Instead of treating the password $p$ as the root $w$, we can instead derive the root $w$ from the password $w$, by stretching it with a function $H$ and a salt $s$
+\noindent Instead of treating the password $p$ as the root $w$, we can instead derive the root $w$ from the password $p$, by stretching it with a function $H$ and a salt $s$
 $$w = H(p, s),$$
 and use the output as the root $w$.
 This way we've ensured the same level of protection as if we stretched the data stored in the system.
-Further more because we didn't change the value $x$, we can verify the proof without being affected by issues mentioned in \S\ref{paragraph:problems-with-key-stretch}.
+Because we didn't change the value $x$, we can verify the proof without being affected by issues mentioned in \S\ref{paragraph:problems-with-key-stretch}.
 
 \newpage
 \subsection{Secure Authentication Process using ZKPs}
-By key-stretching the password to derive the root $w$, we've figured out how to secure our system while respecting the constraints imposed by the the proof verification process.
+By key-stretching the password to derive the root $w$, we've figured out how to secure our system while respecting the constraints imposed by the proof verification process.
 How does this change the authentication process we've described in \S\ref{section:zkp-password-verification}?
 
 \bigskip
 \noindent
-The process begins with the user deriving the root $w$ from the password $w$ and salt $s$.
+The process begins with the user computing the root $w$ from the password $w$ and salt $s$.
 
 \begin{table}[h!]
 	\centering
@@ -94,10 +74,9 @@ The process begins with the user deriving the root $w$ from the password $w$ and
 \end{table}
 
 \noindent
-Once the user derives the root $w$, he can authenticate, by following ZKP protocol with the system as mentioned in \S\ref{zkp-qrp}
-Earlier we argued that the ZKP works as a password verification method because $p = w$, this argument isn't true anymore.
-However even though $w \not = p$, the user can only derive $w$ knowing the password $p$, so when the user proves the knowledge of $w$, it can only be so because they know $p$ as well.
-This part of the process is repeated $m$ times for a confidence of $1 - 2^{-m}$
+Once the user computes the root $w$, he can authenticate by following ZKP protocol with the system, as mentioned in \S\ref{zkp-qrp}
+Earlier we argued the ZKP works as a password verification method because $p = w$, this argument isn't true anymore.
+However, even though $w \not = p$, the user can only derive $w$ knowing the password $p$, so when the user proves the knowledge of $w$, it can only be so because they know $p$ as well.
 
 \begin{table}[h!]
 	\centering
@@ -111,207 +90,19 @@ This part of the process is repeated $m$ times for a confidence of $1 - 2^{-m}$
 	\end{tabular}
 \end{table}
 
-%\subsubsection{Handling the Salt}
-%In our authentication process we assume that the salt is available to the user when required. In our design the salt is considered public, 
-%
-%
-%In our authentication process we assume that the salt is available to the user when required.
-%Presumably in a practical application the salt would be stored by the system and provided to the user when needed, this is the case in our EAP method definition in the next section.
-%
-%
-%\subsubsection{The Final Solution}
-%\subsubsection{Solution}
-%Our system is constructed from two phases, the \textit{setup phase} and the \textit{verification phase}.
-%The purpose of the setup phase is to derive the parameters used in the verification phase.
-%The users password $p$ is stretched to compute the provers private input $w = H(p, s)$,
-%the residue $x = w^2 \Mod{n}$ is computed.
-%The protocol is no longer vulnerable to offline attack with a pre-computed table, since to calculate any value $x$ a unique salt $s$ is required.
-%
-%\begin{center}
-%	\begin{tabular}{rrl|c|l}
-%  		& & Prover & & Verifier\\
-%  		\hline
-%		Setup Phase & 1 & $w = H(P, s)$ & & \\
-%		\hline
-%		& 1 & $u \leftarrow_R \Bbb{Z}_{n}$ &  \\
-%		Verification & & $y = u^2$ & $\xrightarrow{y}$ \\
-%		Phase & 2 & & $\xleftarrow{b}$ & $b \leftarrow_R \{0, 1\} $ \\
-%		& 3 & $z = uw^b \Mod n $ & $\xrightarrow{z}$ & assert $z^2 \equiv yx^b \Mod{n}$\\ 
-%	\end{tabular}
-%\end{center}
-%
-%After the setup phase has been established, the verification phase can start.
-%After a completion of a single verification phase the verifier can be confident in the proof with the probability of $\frac{1}{2}$.
-%Additional repetitions of the verification phase improve the confidence in the proof, with $m$ repetitions yielding a confidence of $1 - \frac{1}{2^m}$.
-%There is no need to repeat the setup phase before each verification phase, since the provers secret $w$ has already beed derived.
-
+\noindent
+We repeat this part of the process $m$ times for a confidence of $1 - 2^{-m}$.
+ 
 \subsection{Considerations}
 \label{section:pefromance-considerations}
 \paragraph{Performance.}
 If we look at the steps that occur in our ZKP verification process, we can notice many iterations of data exchanges between the user and the system.
-In a real world environment, this can cause the authentication process to be slow, because of network inefficiencies when transmitting data between the user and the authentication system.
+In a real world environment, this can cause the authentication process to be slow because of network inefficiencies when transmitting data between the user and the authentication system.
 Can we improve this by running the steps in parallel instead of sequentially?
-If look closely at the data, we can see that at any given step there are no dependencies to data from the previous step, meaning that technically nothing is preventing us from running this in parallel.
+If we inspect the data, we can see that at any step there are no dependencies to data from the previous step, meaning that technically nothing is preventing us from running this in parallel.
 
 What we are proposing is theoretically called a 3-round interactive zero-knowledge proof.
 The existence of these proofs is limited only to a class of problems \textit{BPP} \cite{goldreich1996composition}.
-Unfortunately the quadratic residuosity problem is not believed to be in this class, so a parallel proof is assumed to have a weaker notion of zero-knowledge.
+Unfortunately, the quadratic residuosity problem is not believed to be in this class, so we assume a parallel proof to have a weaker notion of zero-knowledge.
 
-For this purpose we've decided to use a sequential execution for our authentication process.
-
-
-%To overcome our limitation, we will use a "layered" approach, where we will apply password-hashing transformations (non-linear functions), before establishing the linear relationship between $w$ and $x$.
-%
-%The extended protocol has an additional step where the password $p$ is "hashed" with a salt $s$ and password hashing function $H$ to obtain the value $w$.
-%After this step we can use the protocol as described in \S\ref{zkp-qrp}.
-%$$w = H(p, s)$$
-%$$x = w^2 \Mod{n}$$
-%
-%
-%$$x,w \in \mathbb{Z}_n; x = w^2; x_H = H(x);$$
-%$$y, u \in  \mathbb{Z}_n; y = u^2$$
-%$$(uw)^2 = yx$$
-%$$(uw)^2 = yH^{-1}(x_H)$$
-
-
-
-
-
-%\subsection{Original Protocol} %TODO: Restructure to focus soley on ZKP-QRP as PBA
-%\bigskip
-%\begin{center}
-%	\begin{tabular}{rl}
-%		$n$ & Semiprime, where $\legendre{x}{n} = 1$\\
-% 		$x$ & Public input, where $x = w^2 \Mod n$\\
-% 		$w$ & Password\\
-%	\end{tabular}
-%\end{center}
-%\bigskip
-%\begin{center}
-%	\begin{tabular}{rr|c|l}
-%		& Prover && Verifier\\
-%		\hline
-%		1 & $u \leftarrow \Bbb{Z}_{n}^{*}; y = u^2 \Mod n$ & $\xrightarrow{y}$\\
-%		2 & & $\xleftarrow{b}$ & $b \leftarrow_R \{0, 1\} $\\
-%		3 & $z = uw^b\Mod n$ & $\xrightarrow z$ & verify $z^2 = yx^b \Mod n$\\
-%	\end{tabular}
-%\end{center}
-%This protocol is repeated $m$ times, for a probability of error of $\frac{1}{2^m}$.
-%% Security
-%\subsection{Security}
-%The protocol is secure against active attacks like masquerading and replay-attacks. 
-%Zero-knowledge also makes it secure against eavesdropping.
-%
-%The main issue with the protocols as a password based authentication method is vulnerability to dictionary attacks and attacks pre-computed tables.
-%
-%\subsubsection{Password Cracking Vulnerability}
-%
-%The input $x$ is used by the verifier to verify the witness, it is computed from the private input $w$ as $x = w^2 \Mod n$.
-%The provers private input $w$ is the password.
-%
-%The need of the verifier to access the raw value of $x$ prevents the authentication system from processing $x$ with modern password key-derivation methods.
-%This creates a vulnerability for attacks with pre-computed tables.
-%An attacker can pre-compute the values of $x$ and compare them with the stored $x$ data by the verifier.
-%
-%% Key derivation function
-%\subsubsection{Prover Password Key-Derivation}
-%To utilise PKDF, we need to apply it to derive the provers private input $w$.
-%Instead of the password being used directly as $w$, the password is processed by a PKDF, and the derivation is used as $w$.
-%
-%%This approach is similar to the one used in \cite{wu1998secure} the Secure Remote Password protocol.
-%%Using a KDF $H$, a random salt $s$ and password $P$, we can derive $w$ and $x$.
-%%
-%%$$w = H(P, s)$$
-%%$$x = w^2 \Mod n$$
-%%
-%%\subsection{Protocol} %TODO: Pick better title
-%%Using the terminology in NIST Digital Identity Guidelines \cite{grassi2017}. %TODO: Make a mapping between ZKP terminology and NIST DIG
-%%To draw parallels between this terminology and the terminology used in the ZKP-QRP \cite{GMR}. The Prover is the Claimant and Applicant, and the Verifier is the Authenticator ant the CSP.
-%%
-%%\paragraph{Values}
-%%\begin{center}
-%%	\begin{tabular}{rl} %TODO: USE DIG Terminology
-%%		$q, p$ & Primes, where $q \ne p$\\
-%%		$n$ & Semiprime modulus, where $n = qp$\\
-%%		$P$ & Credential password \\
-%%		$I$ & Credential identifier \\
-%%		$H$ & PKDF \\
-%%		$s$	& Salt\\
-%%		$w$ & Password hash, where $w = H(P, s)$\\ %TODO check the correct term for this
-%%		$x$ & Integer, where $x = w^2 \Mod{n}$ %TODO check the correct term for this
-%%	\end{tabular}
-%%\end{center}
-%%
-%%
-%%\paragraph{Enrolment} In the enrolment process the CSP provides the $n$ modulo value to the Applicant.
-%%The Applicant generates a random salt $s$ and computes a private $w$ value from the password $P; w = H(P, s)$.
-%%Applicant next computes $x = w^2 \Mod{n}$ and submits the identifier $I, x, s$ to the CSP.
-%%
-%%\bigskip
-%
-%\begin{center}
-%	\begin{tabular}{rl|c|l}
-%		& Applicant & & CSP\\
-%		\hline
-%		1 & & $\xleftarrow{n}$ \\
-%		2 & $s \leftarrow_R \Bbb{Z}$ & $\xrightarrow{I, x, s}$ \\ & $w = H(P, s)$ & \\ & $x = w^2 \Mod{n}$ &
-%	\end{tabular}
-%\end{center}
-%
-%\bigskip
-%
-%CSP binds $x$ and $s$ as the authenticator to the credential $I$.
-%
-%\paragraph{Authentication}
-%
-%Authentication happens in two part, in the first part required data is exchanged between the Claimant and the Authenticator. The Claimant identifies himself and the Authenticator provides the semiprime modulus $n$ and the salt $s$.
-%The second part of the protocol is the ZKP-QRP \cite{GMR} protocol executed between the Claimant and the Authenticator.
-%\bigskip
-%
-%\paragraph{First Part (Setup)}
-%
-%The Claimant sends an identifier $I$ to the Authenticator, which responds with modulo $n$ and the salt $s$. The Claimant uses both values to compute the private input $w$ of the ZKP-QRP protocol.
-%
-%\bigskip
-%
-%
-%\begin{center}
-%	\begin{tabular}{rl|c|l}
-%  		& Claimant & & Authenticator\\
-%  		\hline
-%		1 & & $\xrightarrow{I}$ & \\
-%		2 & $w = H(P, s)$ & $\xleftarrow{n, s}$ & \\
-%	\end{tabular}
-%\end{center}
-%
-%\paragraph{Second Part (Verification)}
-%This part is same as the ZKP-QRP protocol described in the \cite{GMR}.
-%\bigskip
-%\begin{center}
-%	\begin{tabular}{rl|c|l}
-%		& Claimant & & Authenticator \\
-%		\hline
-%		1 & $u \leftarrow_R \Bbb{Z}_{n}^{*}$ & $\xrightarrow{y}$ \\
-%		& $y = u^2$ & \\
-%		2 & & $\xleftarrow{b}$ & $b \leftarrow_R \{0, 1\} $ \\
-%		3 & $z = uw^b \Mod n $ & $\xrightarrow{z}$ & verify $z^2 \equiv yx^b \Mod{n}$\\ 
-%	\end{tabular}
-%\end{center}
-%\bigskip
-%The second part is repeated $m$ times, for a probability of error of $\frac{1}{2^m}$
-
-% \subsubsection{Security}
-% Enrolment
-
-% Authentication
-
-%Unlike PAP, the pass-
-%   word never appears on the wire.  Unlike CHAP (and variants MS-CHAPv1
-%   [RFC2433] and MS-CHAPv2 [RFC2759]), access to a cleartext password is
-%   not required for the authenticator.  Unlike all of these authentica-
-%   tion protocols, SRP is resistant to dictionary attacks against the
-%   over-the-wire information.  SRP is also resistant to eavesdropping
-%   and active attacks.  As a side-effect, SRP also creates a session key
-%   that is resistant to man-in-the-middle attacks and can be used for
-%   data encryption.
-
+For this purpose, we've used a sequential execution for our authentication process.

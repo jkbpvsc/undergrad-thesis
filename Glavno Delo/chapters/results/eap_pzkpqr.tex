@@ -1,32 +1,33 @@
 \section{EAP Method Definition}
 \label{section:eap-84-definition}
-We want to encapsulate our extended zero-knowledge authentication system defined in \S\ref{label:protocol-design}  as an EAP method in the EAP framework we've explored in \S\ref{section:eap}.
-To achieve this we must define a new EAP method, which consists of messages exchanged between the \textit{peer} and the \textit{authenticator}, their data formats and how processes for handling them.
+We want to encapsulate our extended zero-knowledge authentication system defined in \S\ref{label:protocol-design} as an EAP method in the EAP framework we've explored in \S\ref{section:eap}.
+To achieve this, we must define a new EAP method, which comprises messages exchanged between the \textit{peer} and the \textit{authenticator}, their data formats and the processes for handling them.
 
 \paragraph{Terminology}
-In this section we will be using EAP terminology as described in \S\ref{section:eap}, which uses different names to describe parties involved, as the ones used in our system architecture in \S\ref{label:protocol-design} or as in the ZKP protocol in \S\ref{zkp-qrp}.
+In this section we will use EAP terminology as described in \S\ref{section:eap}, which uses different names to describe parties involved, as the ones used in our system architecture in \S\ref{label:protocol-design} or as in the ZKP protocol in \S\ref{zkp-qrp}.
 The two parties in EAP are called the peer and the authenticator, where the peer is authenticating with the authenticator.
-To draw parallels between our system architecture, where we use the names \textit{user} and \textit{authentication system}, the peer is the user and the authenticator is the authentication system.
+To draw parallels between our system architecture, where we use the names \textit{user} and \textit{authentication system}, the peer is the user, and the authenticator is the authentication system.
 In the ZKP protocol names \textit{prover} and \textit{verifier} are used, the peer is the prover, and the authenticator is the verifier.
 
 \bigskip
 \noindent
-To define an EAP method we need to break down our authentication system described in \S\ref{label:protocol-design} to EAP messages representing interactions between the user and the authentication system.
+To define an EAP method, we need to break down our authentication system described in \S\ref{label:protocol-design} to EAP messages representing interactions between the user and the authentication system.
 Each message defines its data format, the sender and recipient processes and local state changes.
-Our EAP method defines of two message pairs, the \textit{setup} message pair and the \textit{verification} message pair.
+Our EAP method defines two message pairs, the \textit{setup} message pair and the \textit{verification} message pair.
 The message pairs are not an identical mapping to the exchanges as described in \S\ref{zkp-qrp}, but are slightly interlaced to optimise the number of messages sent for a successful authentication.
 
-Our authentication system was designed for systems with multiple users, for this reason the authenticator needs to start the authentication process by querying the identity of the peer with the \textit{identity} (type 1) EAP message.
-The \textit{setup} message pair is used for discovery of ZKP parameters by the peer, and to provide the values for the first proof verification round to the authenticator.
-This message pair is exchange only once.
-The \textit{verification} message pair is used to exchange data required for a single round of proof verification. Since proof verification as described in \S\ref{zkp-qrp} requires $m$ iterations, this message pair is exchange $m$ times.
+We designed our authentication system for systems with multiple users. For this reason, the authenticator needs to start the authentication process by querying the identity of the peer with the \textit{identity} (Type 1) EAP message.
+The peer uses for discovery of ZKP parameters the \textit{setup} message pair, and to provide the values for the first proof verification round to the authenticator.
+This message pair is exchanged only once.
+The \textit{verification} message pair is used to exchange data required for a single round of proof verification. Since proof verification as described in \S\ref{zkp-qrp} requires $m$ iterations, this message pair is exchanged $m$ times.
 The protocol ends with the authenticator sending either a \textit{success} or a \textit{failure} message.
 
-\subsubsection{Authentication process overview}
-Let us examine the steps involved in authentication with our EAP method. We are going to be referencing messages displayed in the sequence diagram in \ref{fig:eap-84}.
-The purpose of this section is to visually aid the understanding of the authentication process, meaning that some nuances are left our for the purpose of simplification, a detailed definition of individual messages is in the next section.
 
-The mathematical variables have the same meaning as in the system architecture described in \S\ref{label:protocol-design}, this applies to all further sections.
+\subsubsection{Authentication process overview}
+Let us examine the steps involved in authentication with our EAP method. We are going to reference messages displayed in the sequence diagram in \ref{fig:eap-84}.
+The purpose of this section is a visual aid for a better understanding of the authentication process, meaning that we left some nuances out for simplification. A detailed definition of individual messages is in the next section.
+
+The mathematical variables have the same meaning as in the system architecture described in \S\ref{label:protocol-design}. This applies to all further sections.
 
 \begin{figure}[h!]
 	\centering
@@ -37,10 +38,10 @@ The mathematical variables have the same meaning as in the system architecture d
 
 \newpage
 \begin{description}
-	\item [Identity] This message is used to query the identity of the peer. In a system with multiple users this is required to identify the peer authenticating, but more specifically the authenticator needs to find the correct salt $s$ and quadratic residue $x$. 
-	\item [Setup] The peer needs both the salt $s$ and the modulus $n$ to compute the proof, however he only know the password $p$. Once the peer identifies himself, the authenticator needs to send him the salt $s$ and modulus $n$ in the \textit{setup request} message.
-	\item [Verification] With this message pair the peer and the authenticator exchange data to compute and verify the proof. The authenticator send the random bit $b$ and the peer responds with the proof $z$. The peer also sends the control value $y_{i+1}$ for the next verification round $i+1$, this is done as an optimisation to improve the speed of the process.
-	\item [Success/Failure] After each \textit{verification} message, the authenticator verifies the proof, and once it was successfully verified for $m$ rounds, the authenticator sends the \textit{success} message. However at anytime if the proof isn't valid the authenticator must send a \textit{failure} message.
+	\item [Identity] This message is used to query the identity of the peer. In a system with multiple users, this is required to identify the peer authenticating, and to find the correct salt $s$ and quadratic residue $x$.
+	\item [Setup] The peer needs both the salt $s$ and the modulus $n$ to compute the proof, however, he only knows the password $p$. Once the peer identifies himself, the authenticator needs to send him the salt $s$ and modulus $n$ in the \textit{setup request} message.
+	\item [Verification] With this message pair the peer and the authenticator exchange data to compute and verify the proof. The authenticator sends the random bit $b$ and the peer responds with the proof $z$. The peer also sends the control value $y_{i+1}$ for the next verification round $i+1$, this is done as an optimisation to improve the speed of the process.
+	\item [Success/Failure] After each \textit{verification} message, the authenticator verifies the proof, and once it's done successfully for $m$ rounds, the authenticator sends the \textit{success} message. However, if the proof isn't valid, the authenticator must send a \textit{failure} message.
 \end{description}
 
 \subsubsection{Method \textit{Type} and \textit{Sub-Type}}
@@ -53,13 +54,13 @@ The message pairs of the EAP method are identified by the \textit{sub-type} fiel
 
 \subsubsection{Key-Stretching Method}
 Our architecture does not specify a key-stretching method, and neither does this EAP method.
-We assume that in a practical implementation the method would be pre-defined and implicitly known by both parties, without the need for discovery.
+We assume that in a practical implementation the method would be pre-defined and implicitly known by both parties, with no discovery.
 
 \subsection{Setup Message Pair}
-In our architecture we assumed the modulus $n$ and salt $s$ are known by the user, however the EAP method needs to facilitate the discovery of this data.
+In our architecture we assumed the modulus $n$ and salt $s$ are known by the user, however, the EAP method needs to facilitate the discovery of this data.
 The response message additionally contains the control value $y_1$, used to verify the proof in the fist verification round. The data is already included in this message to improve the method performance.
 
-We are assuming that in a system with multiple users, the authenticator has identified the peer with the \textit{identity} message.
+We assume that in a system with multiple users, the authenticator has identified the peer with the \textit{identity} message.
 
 \subsubsection{Request} Message is used to deliver the salt $s$ and semiprime modulus $n$ to the peer.
 
@@ -115,10 +116,9 @@ The subscript of a variable $y_i$ denotes in which verification round $i$ is the
 The authenticator should store the $y_1$ control value locally to be used when verifying the proof $z_1$.
 
 \subsection{Verification Message Pair}
-The purpose of this message pair is to exchange data required to compute and verify the proof.
-It is continuously exchanged until the authentication is concluded.
+This message pair exchanges data required to compute and verify the proof.
+They continuously exchange it until the authenticator concludes the authentication.
 After $m$ successful rounds, when the authenticator reaches a confidence of $1 - 2^{-m}$ in the proof, the authentication is successful.
-
 To make our method more efficient, we reduce the number of exchanged messages between the parties by interlacing some data between iterations.
 On the round $i$, the response contains data required for the round $i+1$.
 
@@ -150,7 +150,7 @@ The control value is computed as $y_{i+1} = u_{i+1}^2 \Mod{n}$ and sent in the r
 
 \subsubsection{Response}
 
-The response transmits the proof $z_i$ and the control value $y_{i+1}$ to the authenticator, who verifies the proof and makes a decision on how to proceed.
+The response transmits the proof $z_i$ and the control value $y_{i+1}$ to the authenticator, who verifies the proof and decides on how to proceed.
 \paragraph{Data Format}
 
 \begin{center}
@@ -171,5 +171,5 @@ The response transmits the proof $z_i$ and the control value $y_{i+1}$ to the au
 
 \paragraph{Response Handling}
 The authenticator should verify the proof by asserting that $z_i^2 \equiv y_ix^{b_i} \Mod{n}$.
-If the verification fails the a \textit{failure} message must be sent to the peer, otherwise a \textit{success} message must be sent if the verification was successful for $m$ rounds.
+If the verification fails, the a \textit{failure} message must be sent to the peer, otherwise a \textit{success} message must be sent if the verification was successful for $m$ rounds.
 If that is not the case, the $y_{i+1}$ is stored by the authenticator and a new verification message request is sent.
