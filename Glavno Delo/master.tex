@@ -15,6 +15,7 @@
 \usepackage{cite}
 \usepackage[english]{babel}
 \usepackage[utf8]{inputenc}
+\usepackage{anyfontsize}
 \fontfamily{qcs}
 
 \newcommand{\Mod}[1]{\ (\mathrm{mod}\ #1)}
@@ -28,6 +29,8 @@
 \newcommand{\dlegendre}[3][]{\genlegendre{0}{#1}{#2}{#3}}
 \newcommand{\tlegendre}[3][]{\genlegendre{1}{#1}{#2}{#3}}
 
+\newtheorem*{remark}{Definition}
+
 \theoremstyle{definition}
 \newtheorem{definition}{Definition}[section]
 
@@ -37,26 +40,26 @@
 \maketitle
 \newpage
 
-\include{abstract}
+\input{abstract}
 
 \tableofcontents
 \newpage
 
 \pagenumbering{arabic}
 
-\include{chapters/introduction/introduction}
+\input{chapters/introduction/introduction}
 
-\include{chapters/methodologies/introduction}
-\include{chapters/methodologies/authentication}
-\include{chapters/methodologies/password-authentication}
-\include{chapters/methodologies/eap}
-\include{chapters/methodologies/interactive-zkps}
-\include{chapters/methodologies/languages-with-zkps}
+\input{chapters/methodologies/introduction}
+\input{chapters/methodologies/authentication}
+\input{chapters/methodologies/password-authentication}
+\input{chapters/methodologies/eap}
+\input{chapters/methodologies/interactive-zkps}
+\input{chapters/methodologies/languages-with-zkps}
 
-\include{chapters/results/intro}
-\include{chapters/results/pba-using-qr-zkp}
-\include{chapters/results/eap_pzkpqr}
-\include{chapters/results/conclusion}
+\input{chapters/results/intro}
+\input{chapters/results/pba-using-qr-zkp}
+\input{chapters/results/eap_pzkpqr}
+\input{chapters/results/conclusion}
 
 \bibliographystyle{plain}
 \bibliography{ref}

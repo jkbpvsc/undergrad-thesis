@@ -5,31 +5,29 @@ We will define our authentication system as a method in the extensible authentic
 Extensible authentication protocol \cite{aboba2004extensible} (EAP) is a general purpose authentication framework designed for network access authentication. 
 It runs directly over the data link layer, such as PPP \cite{simpson1994rfc1661} and IEEE 802 \cite{10.5555/18422.18423}.
 EAP defines a set of messages that support negotiation and execution of a variety of authentication protocols.
-EAP is a two-party protocol between a \textit{peer} and an \textit{authenticator} at each end of a link. The terms peer and authenticator are EAP terminology.
-
+EAP is a two-party protocol between a \textit{peer} and an \textit{authenticator} at each end of a link.  
 
 \subsection{Messages}
-The peer and the authenticator communicate by exchanging \textit{EAP messages}.
+The peer and the authenticator communicate by exchanging \textit{EAP messages} (Figure \ref{fig:eap-messages}).
 The protocol starts with the authenticator sending a message to the peer. They keep exchanging messages until the authenticator can either authenticate the peer or not.
 
 Messages are exchanged in a lock-step manner, where an authenticator sends a message and the peer responds to it. 
 The authenticator dictates the order of messages, meaning it can send a message at any point of communication, as opposed to the peer, which can only respond to messages from the authenticator.
 Any messages from the peer not in a response to the authenticator are discarded.
 \bigskip
-\begin{center}
-	\textbf{EAP}
-\end{center}
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=8cm]{images/eap-messages}
-	\caption{Peer and Authenticator Communication}
+	\caption{EAP Peer and Authenticator Communication}
 	\label{fig:eap-messages}
 \end{figure}
 
 \subsubsection{Message Structure}
-Messages are composed of fields, each field length is multiple of an octet of bits.
+Messages are composed of fields (Table \ref{table:eap-message}), each field length is multiple of an octet of bits.
+Each field has a special purpose:
 
-\begin{center}
+\begin{table}
+	\centering
 	\begin{tabular}{|c|c|c|c|c|c|}
 		\hline
 		Length (Octets) & 1 & 1 & 2 & 1 & $n \le 2^{16}$\\
@@ -37,38 +35,43 @@ Messages are composed of fields, each field length is multiple of an octet of bi
 		Field & Code & Identifier & Length & Type & Type Data\\
 		\hline
 	\end{tabular}
-\end{center}
-
-Each field has a special purpose.
+	\caption{EAP Message Structure}
+	\label{table:eap-message}
+\end{table}
 
 \paragraph{Code Field}
-The code field determines who the packet is intended for and how or even should the recipient respond.
+Determines who the packet is intended for and how or even should the recipient respond.
+The following code values are defined:
 
+\begin{quote}
 \begin{description}
 	\item[Request]\textit{Code 1}. Messages sent by the authenticator to the peer. Response is always expected.
 	\item[Response]\textit{Code 2}. Messages sent by the peer to the authenticator as a reply to a \textit{request} message.
 	\item[Success]\textit{Code 3}. Sent by the authenticator, when the peer is successfully authenticated. The peer doesn't respond to the message.
 	\item[Failure]\textit{Code 4}. Sent by the authenticator, when the peer cannot be authenticated. The peer doesn't respond to the message.
 \end{description}
+\end{quote}
 
 \paragraph{Identifier Field}
-The identifier field is used to create a session between the peer and the authenticator.
+Used to create a session between the peer and the authenticator.
 The authenticator uses the field to match request and response messages, each response message needs to have the same identifier as the request.
 The authenticator will discard response messages that don't have a matching identifier with the current request.
 The peer does not re-transmit a response message, but relies on the authenticator to re-transmit a request message after some time if the matching response is lost.
 
 \paragraph{Length Field}
-The length field determines the total size of the EAP message. Because EAP provides support for generic authentication methods, the final length of the messages is variable.
+Determines the total size of the EAP message. Because EAP provides support for generic authentication methods, the final length of the messages is variable.
 The length of the \textit{type data} field entirely depends on the authentication method used.
 
 \paragraph{\textit{Type} and \textit{Type Data} Field}
-The \textit{type} field determines how the message should be processed and how to interpret the \textit{type data} field.
+\label{text:eap:type}
+Determines how the message should be processed and how to interpret the \textit{type data} field.
 Most message types represent authentication methods, except for four special purpose types.
-
 The \textit{type} used is determined by the authenticator when sending the request message. The response message from a peer needs to be of the same type as the request, except where that type is not supported by the peer.
+The following types are defined:
 
-
+\begin{quote}
 \begin{description}
+	\label{def:eap-identitiy}
 	\item[Identity] \textit{Type 1}. Used to query the identity of the peer. The type is often used as an initial message from the authenticator the peer, however its use is entirely optional and EAP methods should rely on method-specific identity queries.
 	
 	\item[Notification]\textit{Type 2}. Used to convey an informative message to the peer, by the authenticator. Usage of this type is entirely optional.
@@ -93,17 +96,20 @@ The \textit{type} used is determined by the authenticator when sending the reque
 	A peer can respond to an unsupported request type with an \textit{expanded nak}, if he desires to use an EAP method supported with the expanded type.
 	\item[Experimental] \textit{Type 255}. This type is used for experimenting with new EAP Types and has not fixed format.
 \end{description}
+\end{quote}
 
-\subparagraph{Authentication Methods}
+\paragraph{Authentication Methods}
 The remaining types correspond to different authentication methods.
 IANA \cite{joseph2004eap} assigns type numbers to 49 different authentication methods.
-The original RFC \cite{aboba2004extensible} already assigned 3 authentication protocols.
+Authors of the original RFC \cite{aboba2004extensible} already assigned 3 authentication protocols:
 
+\begin{quote}
 \begin{description}
 	\item[MD5-Challenge] \textit{Type 4}. An EAP implementation of the PPP-CHAP protocol \cite{simon2008eap}.
 	\item[One-Time Password] \textit{Type 5}. An EAP implementation of the one-time password system \cite{haller1998one}.
 	\item[Generic Token Card] \textit{Type 6.} This type facilitates various challenge/response \textit{token card} implementations.
 \end{description}
+\end{quote}
 
 Some other notable examples are EAP-TLS \cite{simon2008eap}, EAP-PSK \cite{bersani2007eap}.
 EAP SRP-SHA1 \cite{ietf-pppext-eap-srp-03} is especially interesting as it uses a ZKP system to verify the peer's secret, similar to our own EAP method.
@@ -122,13 +128,13 @@ EAPOL is used in widely adopted wireless network security standards WPA2.
 In WPA2-Enterprise, EAPOL is used for communication between the supplicant and the authenticator.
 
 With WPA2-Enterprise, the authenticator functions in a pass-through mode and uses a RADIUS server to authenticate the supplicant.
-EAP packets between the authenticator and the authentications server (RADIUS) are encapsulated as RADIUS messages \cite{aboba2003radius, chen2005extensible, congdon2003ieee}
+EAP packets between the authenticator and the authentications server (RADIUS) are encapsulated as RADIUS messages \cite{aboba2003radius, chen2005extensible, congdon2003ieee}.
 
-\subsection{MD5-Challenge EAP method}
-Let us look at an example of an EAP authentication process and examine messages exchanged between the peer and the authenticator. This EAP instance uses the MD5-Challenge authentication method.
+\subsection{MD5-Challenge EAP Method}
+Let us look at an example of an EAP authentication process and examine the messages exchanged between the peer and the authenticator. This EAP instance uses the MD5-Challenge authentication method.
 MD5-Challenge is an EAP method analogous to PPP CHAP \cite{simpson1996ppp}. The message Type 4 denotes the method.
 
-\paragraph{PPP CHAP}
+\paragraph{PPP CHAP.}
 The PPP \textit{challenge handshake authentication protocol} is an authentication model based on a shared secret between the peer and the authenticator.
 The authenticator authenticates the user by first sending him a random challenge $c$, which the user concatenates with the secret $s$ and hashes with a hashing function $d = h(c | s)$.
 The hash digest $d$ is returned in the response and the authenticator compares the received hash with the locally computed hash, if they match the peer is authenticated.
@@ -139,7 +145,7 @@ Aside from a slightly different message format, the MD5-Challenge authentication
 \noindent
 Let us examine the individual steps in EAP authentication with this method. 
 The steps are visualised in the sequence diagram \ref{fig:eap-md5}.
-At each step we will describe what is happening and note contents of the EAP messages being exchanged, we are omitting the \textit{identifier}, \textit{length} and \textit{type-data} fields of the messages as their contents are dynamically determined when the protocol is running.
+At each step we will describe what is happening and note the contents of the EAP messages being exchanged, we are omitting the \textit{identifier}, \textit{length} and \textit{type-data} fields of the messages, as their contents are dynamically determined when the protocol is running.
 
 \begin{figure}[h]
 	\centering

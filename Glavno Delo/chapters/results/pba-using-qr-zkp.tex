@@ -2,31 +2,30 @@
 
 \section{System Architecture}
 \label{label:protocol-design}
-In this section we will define the architecture of our authentication system, to so we need to combine the model of password authentication we've examined in \S\ref{section:password-authentication} and the ZKP system for quadratic residuosity problem from \S\ref{zkp-qrp}.
+In this section we will define the architecture of our authentication system, to do so we need to combine the model of password authentication we've examined in \S\ref{section:password-authentication} and the ZKP system for quadratic residuosity problem from \S\ref{zkp-qrp}.
 
 \subsection{Password Verification}
 \label{section:zkp-password-verification}
 The purpose of password verification is to assert that the user authenticating knows the correct password $p$. 
 How can we do this with the ZKP protocol?
 The ZKP protocol proves that $x$ is a quadratic residue modulo $n$, by proving the knowledge of the root $w$, where  $w^2 \equiv x \Mod{n}$.
-To use this protocol as a password verification method, we can treat the root $w$ as the password $w = p$ known by the user.
-If the user assumes the role of prover and the authentication system the role of the verifier, when both follow the ZKP protocol, the user will prove that $x$ is a quadratic residue modulo $n$, to do this however the user needs to prove the knowledge of the password $w$. 
-With this, the system can assert that the password is valid.
+
+To use this protocol for password verification, we can use the password $p$ as the root $w$. The user and the authentication system can both follow the ZKP protocol, and the user will inevitably prove that he knows the password $w$, by proving that $x$ is a quadratic residue modulo $n$. With this, the system can assert that the user knows the correct password.
 
 \subsubsection{Vulnerability}
 To verify the proof provided by the user, the system needs to know the quadratic residue $x$.
 Because the root $w = p$ is a password, this introduces a vulnerability as mentioned in \S\ref{label:password-vulnerabilities}.
 An attacker with access to $x$ could crack the password $w$ in an offline attack with pre-computed tables.
-As mentioned in \S\ref{paragraph:password-hashing}, we need to use a key-stretching method to ensure adequate security against offline attacks.
+As mentioned in \S\ref{paragraph:password-hashing}, we need to use a key-stretching method to ensure adequate security against such offline attacks.
 
 \subsubsection{Theoretical Constraints of Key-Stretching Vulnerable Data}
 A common usage of a key-stretching method is to transform the vulnerable data stored in the authentication system.
 However, this approach doesn't work in our case.
 Let us explore how the authentication system verifies the proof, and why using key-stretching directly over stored data is an issue.
+
 We assume the system can verify the proof and use key-stretching methods directly over the vulnerable data. 
 However, we will see why this is not possible.
 
-\newpage
 \paragraph{Proof Verification with Key-Stretched Data}
 \label{paragraph:problems-with-key-stretch}
 On the last step of the protocol the system verifies that
@@ -55,40 +54,36 @@ and use the output as the root $w$.
 This way we've ensured the same level of protection as if we stretched the data stored in the system.
 Because we didn't change the value $x$, we can verify the proof without being affected by issues mentioned in \S\ref{paragraph:problems-with-key-stretch}.
 
-\newpage
 \subsection{Secure Authentication Process using ZKPs}
 By key-stretching the password to derive the root $w$, we've figured out how to secure our system while respecting the constraints imposed by the proof verification process.
 How does this change the authentication process we've described in \S\ref{section:zkp-password-verification}?
 
 \bigskip
 \noindent
-The process begins with the user computing the root $w$ from the password $w$ and salt $s$.
+In Table \ref{table:sap-zkp}, variables in with an $_i$ subscript (e.g. $y_i$) are unique to each iteration $i$.
 
 \begin{table}[h!]
 	\centering
 	\begin{tabular}{p{0.016\textwidth}|p{0.25\textwidth}|p{0.03\textwidth}|p{0.3\textwidth}}
   		& User & & Authentication System\\
   		\hline
-		1 & $w = H(P, s)$ & & \\ 
+		1 & $w = H(p, s)$ & & \\ 
+		\hline
+		2 & $u_i \leftarrow_R \Bbb{Z}_{n}$ &  \\
+		& $y_i = u_i^2$ & $\xrightarrow{y_i}$ \\
+		3 & & $\xleftarrow{b_i}$ & $b_i \leftarrow_R \{0, 1\} $ \\
+		4 & $z_i = u_iw^{b_i} \Mod n $ & $\xrightarrow{z_i}$ & check $z_i^2 \equiv y_ix^{b_i} \Mod{n}$\\ 
 	\end{tabular}
+	\caption{Secure Authentication Process using ZKPs}
+	\label{table:sap-zkp}
 \end{table}
 
+\bigskip
 \noindent
+The process (Table \ref{table:sap-zkp}) will now begin with the user computing the root $w$ from the password $p$ and salt $s$.
 Once the user computes the root $w$, he can authenticate by following ZKP protocol with the system, as mentioned in \S\ref{zkp-qrp}
 Earlier we argued the ZKP works as a password verification method because $p = w$, this argument isn't true anymore.
 However, even though $w \not = p$, the user can only derive $w$ knowing the password $p$, so when the user proves the knowledge of $w$, it can only be so because they know $p$ as well.
-
-\begin{table}[h!]
-	\centering
-	\begin{tabular}{p{0.016\textwidth}|p{0.25\textwidth}|p{0.03\textwidth}|p{0.3\textwidth}}
-  		&  & & \\
-		\hline
-		1 & $u \leftarrow_R \Bbb{Z}_{n}$ &  \\
-		& $y = u^2$ & $\xrightarrow{y}$ \\
-		2 & & $\xleftarrow{b}$ & $b \leftarrow_R \{0, 1\} $ \\
-		3 & $z = uw^b \Mod n $ & $\xrightarrow{z}$ & assert $z^2 \equiv yx^b \Mod{n}$\\ 
-	\end{tabular}
-\end{table}
 
 \noindent
 We repeat this part of the process $m$ times for a confidence of $1 - 2^{-m}$.
@@ -96,12 +91,29 @@ We repeat this part of the process $m$ times for a confidence of $1 - 2^{-m}$.
 \subsection{Considerations}
 \label{section:pefromance-considerations}
 \paragraph{Performance.}
-If we look at the steps that occur in our ZKP verification process, we can notice many iterations of data exchanges between the user and the system.
+If we look at the steps that occur in our ZKP verification process (Table \ref{table:sap-zkp}), we can notice iterations of data exchanges between the user and the system.
 In a real world environment, this can cause the authentication process to be slow because of network inefficiencies when transmitting data between the user and the authentication system.
-Can we improve this by running the steps in parallel instead of sequentially?
-If we inspect the data, we can see that at any step there are no dependencies to data from the previous step, meaning that technically nothing is preventing us from running this in parallel.
+However since iterations are mutually independent, we can execute them in parallel (Table \ref{table:zkp-qrp-parallel}).
 
-What we are proposing is theoretically called a 3-round interactive zero-knowledge proof.
+\begin{table*}[h!]
+	\centering
+	\resizebox{13cm}{!}{
+	\begin{tabular}{l|l|c|l}
+  		& Peer & & Authenticator\\
+  		\hline
+		1 & $w = H(p, s)$ & & \\ 
+		\hline
+		2 & $u_1,...,u_m \leftarrow_R \Bbb{Z}_{n}$ &  \\
+		& $y_1,...,y_m = u_1^2,...,u_m^2 \Mod{n}$ & $\xrightarrow{y_1,...,y_m}$ \\
+		3 & & $\xleftarrow{b_1,...,b_m}$ & $b_1,...,b_m \leftarrow_R \{0, 1\} $ \\
+		4 & $z_1,...,z_m = u_1w^{b_1},...,u_mw^{b_m} \Mod n $ & $\xrightarrow{z_1,...,z_m}$ & check $z_1^2, ..., z_m^2 \equiv y_1x^{b_1},...,y_mx^{b_m} \Mod{n}$\\
+	\end{tabular}
+	}
+	\caption{Parallel ZKP Construction}
+	\label{table:zkp-qrp-parallel}
+\end{table*}
+
+What we are proposing is theoretically called a 3-round interactive ZKP.
 The existence of these proofs is limited only to a class of problems \textit{BPP} \cite{goldreich1996composition}.
 Unfortunately, the quadratic residuosity problem is not believed to be in this class, so we assume a parallel proof to have a weaker notion of zero-knowledge.
 

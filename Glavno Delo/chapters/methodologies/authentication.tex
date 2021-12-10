@@ -3,44 +3,38 @@
 Authentication is the process of proving a claim or an assertion.
 Today, the term is most commonly used in information security \cite{shirey2007internet}, however, we can find the principles of authentication in fields of archeology, anthropology and others \cite{Odegaard2014}.
 
-In computer science, we commonly used authentication for establishing access rights between restricted system resources and users through digital identities.
+In computer science, we commonly use authentication for establishing access rights between protected system resources and users through digital identities.
 Government and international institutions have developed guidelines for managing digital identities and authentication processes \cite{grassi2017}.
 
 While systems can authenticate both humans and other computer systems, we are focusing on authentication of a human end-user.
 
-\subsubsection{Authentication Process Components}
+\subsection{Authentication Process Components}
 Authentication \cite{shirey2007internet} is verifying a claim that an entity or a resource has a certain attribute value.
 This is a broad definition, and it most frequently applies to the verification of a user's identity (e.g. at login), however we can make and verify claims about any subject or object.
 The process of authentication is done in two parts, \textit{identification} and \textit{verification}.
 A common application of authentication is to manage access of an external user to protected system resources.
 
-When designing an authentication system, it's important to understand all components of the authentication process.
-
-\paragraph{Identification.} Presenting an identifier to the authentication system that establishes the entity being authenticated, this is commonly a username or an email address.
-The identifier needs to be unique for the entity it identifies.
+\paragraph{Identification.} Presenting an identifier to the authentication system that establishes the entity being authenticated. This is commonly a username or an email address. The identifier needs to be unique for the entity it identifies.
 
 The process of identification is not necessarily externally visible, as the identity of the subject can be implicit in the environment. 
 For example, we can determine an identifier from the user’s IP address.
-Or a system might only have a single user that can authenticate.
-
+Or a system might only have a single user that needs to be authenticated.
 
 \paragraph{Verification.} Presenting or generating authentication information that can verify the claim.
-Commonly used authentication information are passwords, one time tokens, digital signatures.
+Commonly used authentication information are passwords, one time tokens, digital signatures, etc.
 
-Our system will verify the user's password with a zero-knowledge proof.
+Our system will verify the user's password using a ZKP.
 
-\subsubsection{Authentication Factors}
+\subsection{Authentication Factors}
 
 Authentication systems can rely on three groups of factors \cite{bignell2006authentication}.
 
-\begin{itemize}
-	\item \textbf{Knowledge factors} - Something the user \textbf{knows} (e.g, password, security question, PIN)
-	\item \textbf{Ownership factors} - Something the user \textbf{owns} (e.g, ID card, security tokens, mobile devices)
-	\item \textbf{Inherence factors} - Something the user \textbf{is} or \textbf{does} (e.g, static biometrics - fingerprints, retina, face. dynamic biometrics - voice patterns, typing rhythm)
-\end{itemize}
+\begin{description}
+	\item [Knowledge factors] Something the user \textbf{knows} (e.g. password, security question, PIN)
+	\item [Ownership factors] Something the user \textbf{owns} (e.g. ID card, security tokens, mobile devices)
+	\item [Inherence factors] Something the user \textbf{is} or \textbf{does} (e.g. static biometrics - fingerprints, retina, face. dynamic biometrics - voice patterns, typing rhythm)
+\end{description}
 
 \paragraph{Strong authentication.}
 As defined by governments and financial institutions \cite{cnss2006national, ecb2013recommendations}, strong authentication is a system using two or more factors. 
 We also referred to this as \textit{multi-factor authentication}. Our system will focus only on the user possessing a password (\textit{knowledge factor}), while the relying party can use additional authentication factors to improve security.
-
-\newpage
