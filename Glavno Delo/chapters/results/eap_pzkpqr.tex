@@ -13,7 +13,7 @@ In the ZKP protocol names \textit{prover} and \textit{verifier} are used, the pe
 \noindent
 To define an EAP method, we need to break down our authentication system described in \S\ref{label:protocol-design} to EAP messages representing interactions between the user and the authentication system.
 Each message defines its data format, the sender and recipient processes and local state changes.
-Our EAP method defines two messages, the \textit{setup} message and the \textit{verification} message.
+Our EAP method defines two messages, the \textit{setup phase} message and the \textit{verification phase} message.
 
 We designed our authentication system for multiple users. 
 For this reason, the authenticator needs to start the authentication process with the \textit{identification phase} by querying the identity of the peer with the \textit{identity} (Type 1) EAP message as described in \S\ref{def:eap-identitiy}.
@@ -61,22 +61,34 @@ The authentication process (Figure \ref{fig:eap-84}) consists of multiple phases
 \end{description}
 
 \subsubsection{Message Format}
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+	\hline
+	Length (Octets) & 1 & $k$\\
+	\hline
+	Field & Phase Type & Phase Data\\
+	\hline
+\end{tabular}
+\end{center}
+
+\noindent
 An EAP message is composed of many fields (Table \ref{table:eap-message}).
 The \textit{type} field as described in \S\ref{text:eap:type} determines the EAP method used by the peer and the authenticator to interpret the \textit{type-data} field.
 Our EAP method is indicated with \textit{type} value $84$.
 
-The \textit{type-data} field is composed of two sub fields, a \textit{sub-type} field and a \textit{message data} field.
-\textit{Sub-type} identifies the phase of the authentication process, while \textit{message data} holds specific data for that phase.
-We have defined 2 \textit{sub-type} values, that correspond with the phases of our authentication process:
+The \textit{type-data} field is composed of two sub fields, a \textit{phase type} field and a \textit{phase data} field.
+\textit{Phase} identifies the phase of the authentication process, while \textit{phase data} holds specific data for that phase.
+We have defined 2 \textit{phase} values, that correspond with the phases of our authentication process:
 
 \begin{quote}
 	\begin{description}
-		\item [Sub Type 1]: Setup Message (Figure \ref{fig:eap-84} - Setup Phase)
-		\item [Sub Type 2]: Verification Message (Figure \ref{fig:eap-84} - Verification Phase)
+		\item [Phase Type 1]: Setup Message (Figure \ref{fig:eap-84} - Setup Phase)
+		\item [Phase Type 2]: Verification Message (Figure \ref{fig:eap-84} - Verification Phase)
 	\end{description}
 \end{quote}
 
-The \textit{Identification Phase} in Figure \ref{fig:eap-84} doesn't have a corresponding sub type as the \textit{Identity} message as described in \S\ref{def:eap-identitiy} is a pre-defined EAP message type.
+The \textit{Identification Phase} in Figure \ref{fig:eap-84} doesn't have a corresponding \textit{phase type} value as the \textit{Identity} message as described in \S\ref{def:eap-identitiy} is a pre-defined EAP message type.
 
 Note also, that the architecture does not specify a key-stretching method, and neither does this EAP method.
 We assume that in a practical implementation the method would be pre-defined and implicitly known by both parties.
@@ -88,7 +100,7 @@ The response message additionally contains the control value $y_1$, used to veri
 
 \subsection*{Request Message} Message is used to deliver the salt $s$ and semiprime modulus $n$ to the peer.
 
-\paragraph{Message Data Format}
+\paragraph{Phase Data Format}
 
 \begin{center}
 \begin{tabular}{|c|c|c|c|}
@@ -119,7 +131,7 @@ The control value $y$ is included in the response message.
 The response contains the control value $y_1$ to the authenticator to be used in the first round of the verification process.
 The subscript of a variable $y_i$ denotes in which verification round $i$ is the variable used.
 
-\paragraph{Message Data Format}
+\paragraph{Phase Data Format}
 
 \begin{center}
 \begin{tabular}{|c|c|}
