@@ -61,12 +61,13 @@ The authentication process (Figure \ref{fig:eap-84}) consists of multiple phases
 \end{description}
 
 \subsubsection{Message Format}
-The EAP method \textit{type} as described in \S\ref{text:eap:type} determines how the peer and authenticator should interpret the message \textit{type-data}.
-We've decided to use the number $84$ as our message \textit{type}.
+An EAP message is composed of many fields (Table \ref{table:eap-message}).
+The \textit{type} field as described in \S\ref{text:eap:type} determines the EAP method used by the peer and the authenticator to interpret the \textit{type-data} field.
+Our EAP method is indicated with \textit{type} value $84$.
 
-Additionally our authentication method is using a secondary field, called \textit{sub type} to identify the phases of the authentication process.
-This field is defined within the \textit{type-data} field and is meant to be interpreted only by our authentication method.
-We have defined 2 sub types, that correspond with the phases of our authentication process:
+The \textit{type-data} field is composed of two sub fields, a \textit{sub-type} field and a \textit{message data} field.
+\textit{Sub-type} identifies the phase of the authentication process, while \textit{message data} holds specific data for that phase.
+We have defined 2 \textit{sub-type} values, that correspond with the phases of our authentication process:
 
 \begin{quote}
 	\begin{description}
@@ -87,7 +88,7 @@ The response message additionally contains the control value $y_1$, used to veri
 
 \subsection*{Request Message} Message is used to deliver the salt $s$ and semiprime modulus $n$ to the peer.
 
-\paragraph{Type-Data Format}
+\paragraph{Message Data Format}
 
 \begin{center}
 \begin{tabular}{|c|c|c|c|}
@@ -118,7 +119,7 @@ The control value $y$ is included in the response message.
 The response contains the control value $y_1$ to the authenticator to be used in the first round of the verification process.
 The subscript of a variable $y_i$ denotes in which verification round $i$ is the variable used.
 
-\paragraph{Type-Data Format}
+\paragraph{Message Data Format}
 
 \begin{center}
 \begin{tabular}{|c|c|}
@@ -150,7 +151,7 @@ On the round $i$, the response contains data required for the round $i+1$.
 
 \subsection*{Request Message}
 In the round $i$, the authenticator generates random bit $b_i$ stores it locally, and sends it to the peer.
-\paragraph{Type-Data Format}
+\paragraph{Message Data Format}
 
 \begin{center}
 \begin{tabular}{|c|c|}
@@ -178,7 +179,7 @@ The control value is computed as $y_{i+1} = u_{i+1}^2 \Mod{n}$ and sent in the r
 \subsection*{Response Message}
 The response transmits the proof $z_i$ and the control value $y_{i+1}$ to the authenticator, who verifies the proof and decides on how to proceed.
 
-\paragraph{Type-Data Format}
+\paragraph{Message Data Format}
 
 \begin{center}
 \begin{tabular}{|c|c|c|c|}
