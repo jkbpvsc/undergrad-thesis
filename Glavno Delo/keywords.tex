@@ -1,0 +1,161 @@
+\pagestyle{empty}
+\reversemarginpar
+\marginpar{
+\vspace{-1cm}
+\hspace{-2cm}
+\begin{sideways}
+\large POVŠIČ \hspace{8cm} ZAKLJUČNA NALOGA (FINAL PROJECT PAPAER) \hspace{8cm} 2022
+\end{sideways}
+}
+
+\begin{center}
+\vspace{-1cm}
+\noindent \large UNIVERZA NA PRIMORSKEM\\
+\large FAKULTETA ZA MATEMATIKO, NARAVOSLOVJE IN\\
+INFORMACIJSKE TEHNOLOGIJE
+
+
+\vspace*{\fill}
+\large ZAKLJUČNA NALOGA\\
+\large (FINAL PROJECT PAPER)\\
+\vspace{0.3cm}
+\textbf{\Large AVTENTIKACIJA Z DOKAZI NIČELNEGA ZNANJA}\\
+\Large (ZERO-KNOWLEDGE AUTHENTICATION)
+\vspace*{\fill}
+\vspace{1.8cm}
+\end{center}
+
+
+\begin{flushright}
+\noindent \large JAKOB POVŠIČ\\
+\vspace{2cm}
+\end{flushright}
+
+\newpage
+
+\pagestyle{empty}
+\begin{center}
+\noindent \large UNIVERZA NA PRIMORSKEM\\
+\large FAKULTETA ZA MATEMATIKO, NARAVOSLOVJE IN\\
+INFORMACIJSKE TEHNOLOGIJE
+
+
+\normalsize
+\vspace{6cm}
+Zaključna naloga\\
+\textbf{\large Avtentikacija z dokazi ničelnega znanja}\\
+\normalsize
+(Zero-Knowledge Authentication)\\
+\end{center}
+
+\begin{flushleft}
+\vspace{5cm}
+\noindent Ime in priimek: Jakob Povšič
+% v zgornjo vrstico dopišite ime in priimek študenta
+\\
+\noindent Študijski program: Računalništvo in informatika
+% v zgornjo vrstico dopišite ime študijskega programa
+\\
+\noindent Mentor: prof. dr. Andrej Brodnik
+% v zgornjo vrstico dopišite akademski naziv, ime in priimek mentorja
+\\
+\end{flushleft}
+
+\vspace{4cm}
+\begin{center}
+\large \textbf{Koper, Marec 2022}
+% dopišite mesec in leto oddaje zaključne naloge
+\end{center}
+\newpage
+
+\pagestyle{fancy}
+
+
+
+\section*{Ključna dokumentacijska informacija}
+
+\medskip
+\begin{center}
+\fbox{\parbox{\linewidth}{
+\vspace{0.2cm}
+\noindent
+Ime in PRIIMEK:\vspace{0.5cm} Jakob POVŠIČ\\
+Naslov zaključne naloge:\vspace{0.5cm} Avtentikacija z ničelnega dokazi\\
+Kraj:\vspace{0.5cm} Koper\\
+Leto:\vspace{0.5cm} 2022\\
+Število listov: 34\hspace{2cm} Število slik: 6\hspace{2.6cm} Število tabel: 12\hspace{2cm}\vspace{0.5cm}\\
+Število prilog: 0\hspace{1.9cm} Število strani prilog: 0\hspace{1cm} Število referenc: 57\vspace{0.5cm}\\
+Mentor:\vspace{0.5cm} prof. dr. Andrej Brodnik\\
+Ključne besede: Razširljivi aventikacijski protokol (EAP), Dokazi ničelnega znanja, avtentikacija, kriptografija, raztegovanje ključev, gesla, problem kvadratnih ostankov\vspace{0.5cm}\\
+Izvleček:\\
+V zaključnem delu se osredotočamo na zasnovo sistema za aventikacijo uporabnikov prek omreżja z uporabniskim imenom in geslom. Sistem uporablja dokaze ničelnega znanja (ZKP) kot mehanizem preverjanja gesla. Uporabljen ZKP protokol je zasnovan na problemu kvadratnih ostankov. Avtentikacijski sistem je oblikovan kot metoda v razširljivem aventikacijskem protokolu (EAP). Uporaba ZKP sistema nam poda varnostne lastnosti, ki so primerne za uporabno na nezaščitenih omrezjih.
+\vspace{0.2cm}
+}}
+\end{center}
+
+\newpage
+
+\section*{Key words documentation}
+
+\medskip
+
+\begin{center}
+\fbox{\parbox{\linewidth}{
+\vspace{0.2cm}
+\noindent
+Name and SURNAME: Jakob POVSIC\vspace{0.5cm}\\
+Title of final project paper:\vspace{0.5cm}\\
+Place: Koper\vspace{0.5cm}\\
+Year:2022\vspace{0.5cm}\\
+Number of pages: 34\hspace{1.6cm} Number of figures: 6\hspace{2.2cm}Number of tables: 12\vspace{0.5cm}\\
+Number of appendices: 0\hspace{0.6cm}Number of appendix pages: 0\hspace{0.8cm}Number of references: 57\vspace{0.5cm}\\
+Mentor: Prof. Andrej Brodnik, PhD\vspace{0.5cm}\\
+% opomba: za "title" vpišite eno od naslednjega:
+% Assist.~Prof. (če je naziv docent),
+% Assoc.~Prof. (če je naziv izredni profesor),
+% Prof. (če je naziv profesor)
+Keywords: Extensible Authentication Protocol, Zero-Knowledge Proofs, Authentication, Cryptography, Key-Stretching, Passwords, Quadratic Residuosity Problem\vspace{0.5cm}\\
+Abstract:\\In the thesis we focus on designing an authentication system to authenticate users over a network with a username and a password.
+The system uses the zero-knowledge proof (ZKP) system as a password verification mechanism.
+The ZKP protocol used is based on the quadratic residuosity problem.
+The authentication system is defined as a method in the extensible authentication protocol (EAP).
+Using a ZKP system yields interesting security properties that make the system favourable to be used over insecure networks.
+\vspace{0.2cm}
+}}
+\end{center}
+\newpage
+\section*{ACKNOWLEDGEMENT}
+I would like to express my gratitude towards Prof. Andrej Brodnik for his guidance, patience, and persistence, all of which were essential in making of this work.
+I would also like to thank my family and friends for supporting and believing in my efforts, and to my work colleagues for entrusting me with the responsibility of solving hard problems.
+
+
+\newpage
+
+% Dodamo kazala (po potrebi):
+\tableofcontents
+\addtocontents{toc}{\protect\thispagestyle{fancy}}
+\newpage
+\listoftables
+\addtocontents{lot}{\protect\thispagestyle{fancy}}
+\newpage
+\listoffigures
+\addtocontents{lof}{\protect\thispagestyle{fancy}}
+\newpage
+% ker priloge niso oštevilčene, tudi pikic do številk strani (ki jih ni) ne izpišemo
+\renewcommand{\cftdot}{}
+\thispagestyle{fancy}
+\newpage
+
+\chapter*{LIST OF ABBREVIATIONS}
+\thispagestyle{fancyplain}
+\begin{longtable}{@{}p{1cm}@{}p{\dimexpr\textwidth-1cm\relax}@{}}
+\nomenclature{$ZKP$}{Zero-Knowledge Proof}
+\nomenclature{$EAP$}{Extensible Authentication Protocol}
+\end{longtable}
+\newpage
+
+\normalsize
+
+
+
+
