@@ -30,6 +30,8 @@ In this section we present a simplified authentication process to present the ge
 The mathematical variables have the same meaning as in the system architecture described in \S\ref{label:protocol-design}. This applies to all further sections.
 \begin{table}[h!]
 	\centering
+	\caption{Improved ZKP Authentication with EAP}
+	\vspace{0.2cm}
 	\begin{tabular}{l|l|c|l}
   		& Peer & & Authenticator\\
   		\hline
@@ -41,7 +43,6 @@ The mathematical variables have the same meaning as in the system architecture d
 		4 & & $\xleftarrow{b_i}$ & $b_i \leftarrow_R \{0, 1\} $ \\
 		5 & $z_i = u_iw^{b_i} \Mod n $ & $\xrightarrow{z_i}$ & check $z_i^2 \equiv y_ix^{b_i} \Mod{n}$\\
 	\end{tabular}
-	\caption{Improved ZKP Authentication with EAP}
 	\label{table:zkp-qrp-2}
 \end{table}
 

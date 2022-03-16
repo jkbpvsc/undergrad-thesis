@@ -64,6 +64,8 @@ In Table \ref{table:sap-zkp}, variables in with an $_i$ subscript (e.g. $y_i$) a
 
 \begin{table}[h!]
 	\centering
+		\caption{Secure Authentication Process using ZKPs}
+		\vspace{0.1cm}
 	\begin{tabular}{p{0.016\textwidth}|p{0.25\textwidth}|p{0.03\textwidth}|p{0.3\textwidth}}
   		& User & & Authentication System\\
   		\hline
@@ -74,7 +76,6 @@ In Table \ref{table:sap-zkp}, variables in with an $_i$ subscript (e.g. $y_i$) a
 		3 & & $\xleftarrow{b_i}$ & $b_i \leftarrow_R \{0, 1\} $ \\
 		4 & $z_i = u_iw^{b_i} \Mod n $ & $\xrightarrow{z_i}$ & check $z_i^2 \equiv y_ix^{b_i} \Mod{n}$\\ 
 	\end{tabular}
-	\caption{Secure Authentication Process using ZKPs}
 	\label{table:sap-zkp}
 \end{table}
 
@@ -97,6 +98,8 @@ However since iterations are mutually independent, we can execute them in parall
 
 \begin{table*}[h!]
 	\centering
+		\caption{Parallel ZKP Construction}
+		\vspace{0.2cm}
 	\resizebox{13cm}{!}{
 	\begin{tabular}{l|l|c|l}
   		& Peer & & Authenticator\\
@@ -109,7 +112,6 @@ However since iterations are mutually independent, we can execute them in parall
 		4 & $z_1,...,z_m = u_1w^{b_1},...,u_mw^{b_m} \Mod n $ & $\xrightarrow{z_1,...,z_m}$ & check $z_1^2, ..., z_m^2 \equiv y_1x^{b_1},...,y_mx^{b_m} \Mod{n}$\\
 	\end{tabular}
 	}
-	\caption{Parallel ZKP Construction}
 	\label{table:zkp-qrp-parallel}
 \end{table*}
 
