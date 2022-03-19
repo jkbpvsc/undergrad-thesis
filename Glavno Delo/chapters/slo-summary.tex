@@ -1,46 +1,48 @@
 \chapter{Povzetek naloge v slovenskem jeziku}
-V zaključni nalogi najprej predstavimo avtentikacijske sisteme, mehanizme avtentikacije z glesli, ter njihove ranljivosti. Spoznamo se tudi z razširljivim atentikacijskim ogrodjem (EAP) v katerega je naš aventikacijski sistem vmeščen, in dokazz ničelnega znanja (ZKP), ki služijo kot naš mehanizem preverjanja veljavnosti gelsa.
+V zaključni nalogi najprej predstavimo avtentikacijske sisteme, mehanizem avtentikacije z gesli, ter njihove ranjivosti. Spoznamo se tudi z razširljivim avtentikacijskim ogrodjem (EAP) v katerega je naš avtentikacijski sistem umeščen, in dokazi ničelnega znanja (ZKP), ki služijo kot naš mehanizem preverjanja veljavnosti gesla.
 
-V postopku avtentikacije z geslom, se uporabnik najprej identificira z uporabniškim imenom, nato pa to overi z geslom, ki je poznano samo njemu.
+V postopku avtentikacije z geslom, se uporabnik najprej identificira z uporabniškim imenom, nato pa to dokaže z geslom, ki je poznano samo njemu.
 Sistem je zaradi svoje preprostosti zelo ranljiv za napade, ki jih na grobo ločimo na napade s povezavo in brez povezave. 
 V zasnovo avtentikacijskega sistema bomo vključili tehniko raztegovanja ključev, ki nas ščiti pred napadi brez povezave.
 
-Naš aventikacijski sistem bo vmeščen kot metoda v razširljivo avtentikacijsko ogrodje (EAP).
-EAP je splosno namensko avtentikacijsko ogrodnje, zasnovano za mrezno avtentikacijo.
-EAP definira skupek sporocil, prek katerih lahko se overjevalnik in vrstnik vskladita in izvršita množico avtentikacijskih protokolov.
-EAP je pogosto uporabljen v brezzicnih sistemih avtentikacije.
+Naš avtentikacijski sistem bo umeščen kot metoda v razširljivo avtentikacijsko ogrodje (EAP).
+EAP je splošno namensko avtentikacijsko ogrodje, zasnovano za omrežno avtentikacijo.
+EAP definira knjižnico metod in sporočil, prek katerih lahko se avtentikacijski sistem in vrstnik uskladita in izvršita množico avtentikacijskih protokolov. 
+EAP je pogosto uporabljen kot avtentikacijski sistem za v brezžična omrežja.
 
-Kot mehanizem preverjanja gesel uporabljamo dokaze nicelnega znanja (ZKP).
-ZKP so način dokazovanja matematicnih trditev, ki lahko dokazejo, da je trditev resnicna brez, da bi razkrili zakaj je trditev resnicna.
-Za razliko od izrekov so ZKP verjetnostni, s tem ko prepricajo preverjevalca, da je nekaj res z zanemarljivo moznostjo napake.
-ZKP-ji so popularno orodoje v kritpovalutah kot Zcash, Ethereum ter Solana. Uporabljajo se tudi v sistemih digitalne identiete kot Idemix.
+Kot mehanizem preverjanja gesla uporabljamo dokaze ničelnega znanja (ZKP).
+ZKP je način dokazovanja matematičnih trditev, ki lahko dokaže, da je trditev resnična brez, da bi razkrili zakaj je trditev resnična.
+Za razliko od matematičnih izrekov je ZKP verjetnostni, ker preverjevalca prepriča, da je trditev resnična z zanemarljivo majhno verjetnostjo napake.
+ZKP-ji so popularno orodje v kriptovalutah kot Zcash, Monero, Ethereum, ter Solana. Uporabljajo se tudi v sistemih digitalne identitete kot Idemix.
 
 %- interaktivni sistemi dokazovanja
-Interaktivni dokazni sistemi so teoreticno ogrodje v katerem so definirani interaktivni ZKP. V takem sistemu dokazovalec poskusa prepricati preverjevalca v resnicnost neke trditve.
-V takem sistemu velja, da iskreni dokazovalec lahko preprica preverjevalca v resnicnost neke trditve, ter da prevarantski dokazovalec nebo nikoli preprical preverjevalca, ki pravilno sledi protokolu.
+
+Interaktivni sistemi dokazovanja so teoretično ogrodje v katerem so definirani interaktivni ZKP. V takem sistemu poskuša dokazovalec prepričati preverjevalca v resničnost neke trditve. 
+V takem sistemu velja, da iskreni dokazovalec lahko preprica preverjevalca v resnicnost neke trditve, ter da goljufivi dokazovalec nebo nikoli preprical preverjevalca, ki pravilno sledi protokolu.
 
 %- nicelno znanje
-Dokazi nicelnega znanja dokazejo resnicnost trditve brez, da bi razkrivali zakaj je resnicna.
-Kljucna ideja za nicelnim znanjem je nerazlocljivost podatkov, ki jih prejme preverjevalec in podatki, ki bi lahko bili ustvarjeni, brez poznavanja skrivne komponente.
+Dokazi ničelnega znanja dokažejo resničnost trditve brez, da bi razkrivali zakaj je resnična. Naprimer, da sta dve žogi različne barve, brez, da razkrijemo barv samih.
+Osrednja ideja za ničelnim znanjem je, da napadalec ne more ločiti med podatki, ki so bili izmenjani med izvanjanjem ZKP protokola in podatki, ki so bili ustvarjalni, da oponašajo izvajanje ZKP protokola.
+Takšne podatke lahko ustvari kdorkoli, zato lahko sklepamo, da dokler so “pravi” podatki ne razločljivi, iz njih ne moremo izčrpati nič novega “znanja”.
+
 %- primerni problemi za dokaze nicelnega znanja
-Zmoznost dokazovanja neke trditve z dokazi nicelnega znanja je odvisna od problema za katerega trditev obstaja.
-Vrsta problema doloca tudi nacin uporabe ZKP-ja, z preprostimi protokoli lahko dokazemo poznavanje skrivnost, z naprednimi pa tudi, da se je poljubno vezje pravilno izvedno.
-Nas mehanizem preverjanja gesla je uporablja preprosti ZKP protokol osnovan na problemu kvadratnih ostankov.
+Zmožnost dokazovanja neke trditve z dokazi ničelnega znanja je odvisna od matematičnega problema za katerega trditev obstaja.
+Vrsta problema določa tudi način uporabe ZKP-ja. S preprostimi protokoli lahko dokažemo poznavanje skrivnost. Z napredni ZKP lahko dokažemo skoraj karkoli je mogoče preveriti v poljubnem algoritmu.
+Naš mehanizem preverjanja gesla uporablja preprosti ZKP protokol osnovan na problemu kvadratnih ostankov.
 %- problem kvadratnih ostankov
-Problem kvadratnih ostankov se pojavi v modularni aritmetiki pri racunanju kvadratnih ostankov, kjer je modulo zmnozek dveh neznanih prastevil. Lastnosti tega problema ga naredijo primernega za funkcijo "zapornih vrat", kjer je operacija lahko v eno stran in zelo tezka v obrato, ce ne poznamo kljuca.
-Problem je tezek, ker se v njemu skriva problem razčlenjevanja pra stevil, za katerega vemo, da ucinkoviti algoritmi ne obstajajo.
-V ZKP protokolu nam dokazovalec dokaze, da pozna "skrivni" kjuc brez, da bi ga sam razkril.
+Problem kvadratnih ostankov se pojavi v modularni aritmetiki pri računanju kvadratnih ostankov, kjer je modulo zmnožek dveh neznanih praštevil.
+Problem kvadratnih ostankov je težak, ker se v njemu skriva problem razčlenjevanja praštevil, za katerega učinkoviti algoritmi ne obstajajo.
+Lastnosti tega problema ga naredijo primernega za funkcijo "zapornih vrat", kjer je operacija v eno stran lahka in zelo težka v nasprotno, če ne poznamo ključa. Da je neko steviko kvadratni ostanek modulo n, lahko učinkovito dokažemo z obstojem korena iz katerega ostanek izhaja. ZKP protokol omogoči dokaz da je neko število kvadratni ostanek modulo n, s tem da dokaze obstoj korena, brez da bi razkril koren sam.
+
 %- razredi racunske kompleksnosti
 % naaah
 
 %- sistemska arhitektura
-Oglejmo si arhitekturo avtentikacijskega sistema, v kateri smo zdruzili mehanizem varne aventikacije z gesli in ZKP protokolim za problem kvadratnih ostankov.
-
-V procesu avtenikacije z gesli se uporabnik identificira s tem ko dokaze, da pozna skrivnost, ki je v principu znana samo njemu.
-Postopek dokazovanja poznavanja skrivnosti lahko nadomestimo z ZKP protokolom, ce tretirmo geslo kot skrivno komponento, ki jo dokazuje protokol. S tem ko uporabnik skozi ZKP protokol dokaze, da pozna skrivno komponento, dokaze, da pozna svoje geslo.
-Gesla nesmemo uporabiti neposredno kot skrivno komponento, ker nam to ustvari ranljivost na napade brez povezave, zato moremo geslo najprej preoblikovati z metodo raztegovanja kljucev.
-
-Postopek avtnetikacije lahko dodano pohitrimo s tem, da zaporedne korake postopka izvajamo vzporedno. S tem skrajsamo cas aventikacije na kostantno dolzino.
+Oglejmo si arhitekturo avtentikacijskega sistema, v kateri smo združili mehanizem varne avtentikacije z gesli in ZKP za problem kvadratnih ostankov.
+V procesu avtentikacije z gesli uporabnik dokaze, da pozna geslo, s tem, da ga poslje preko omrežja in sistem preveri če se ujema z lokanili podatki.
+Postopek dokazovanja poznavanja gesla lahko nadomestimo z ZKP protokolom, če smatramo geslo kot obstoj korena, ki ga dokazuje protokol. 
+S tem ko uporabnik skozi ZKP protokol dokaze, da koren obstaja, dokaze, da pozna geslo.
+Gesla ne smemo uporabiti neposredno kot skrivno komponento, ker je ranljivo na napade brez povezave. Geslo moremo najprej preoblikovati z metodo raztegovanja ključev.
 
 %- preverjanje gesla
 %- uporaba raztegovanja kljucev
@@ -48,12 +50,26 @@ Postopek avtnetikacije lahko dodano pohitrimo s tem, da zaporedne korake postopk
 %- premisleki
 %
 %- definicija eap metode
-Nas avtentikacijski protokol bomo ovili v EAP ogrodju.
+
+Nas avtentikacijski protokol bomo implementirali znotraj EAP ogrodja.
+Definirali bomo novo EAP metodo, ki se izvaja v treh fazah.
+V prvi fazi se vrstnik identificira protokolu, 
+v naslednji fazi nastavitve, vrstnik in sistem vzpostavita parametre za izvršitev ZKP protokola in metodo raztegovanja ključev.
+V zadnji fazi (fazi preverjanja), si vrstnik in avtentikacijski sistem izmenično posiljata izzive in dokaze dokler se avtentikacijski sistem ne odloči, da je prepričan in sprejme dokaz vrstnika..
+Ce se pri katerem koli koraku zalomi je proces prekinjen.
+Za fazi nastavitve in preverjanja metoda definira dve novi sporočili.
 
 %- faza nastavitve
 %- faza preverjanja
 %
 %- zakljucek
+
+Medtem ko ta protokol deluje je veliko stvari, ki bi jih lahko izboljšali.
+Iterativna izvedba protokola ni idealna za uporabo prek omrežja, kjer čas pošiljanja paketov zelo poslabša čas izvajanja protokola.
+Postopek avtentikacije lahko pohitrimo s tem, da zaporedne korake postopka izvajamo vzporedno. S tem skrajšamo čas avtentikacije na konstantno dolžino.
+Uporabljen ZKP protokol je eden prvih, ki je bil zasnovan, mogoče bi bilo bolje če bi uporabili moderen protokol.
+
+
 
 
 
